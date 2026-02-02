@@ -1444,7 +1444,7 @@ async function buildEODText(dateStr){
   return txt;
 }
 
-function copyEODfunction copyEOD(){navigator.clipboard.writeText(document.getElementById('eodText').value);document.getElementById('eodCopied').classList.remove('hidden');setTimeout(()=>document.getElementById('eodCopied').classList.add('hidden'),2000)}
+function copyEOD(){navigator.clipboard.writeText(document.getElementById('eodText').value);document.getElementById('eodCopied').classList.remove('hidden');setTimeout(()=>document.getElementById('eodCopied').classList.add('hidden'),2000)}
 async function shareEOD(){if(navigator.share){try{await navigator.share({title:'EOD Report',text:document.getElementById('eodText').value});return}catch(e){}}saveEOD()}
 function saveEOD(){downloadTextFile(document.getElementById('eodText').value,'eod_'+getToday()+'.txt')}
 function downloadTextFile(text,filename){const blob=new Blob([text],{type:'text/plain'}),link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download=filename;link.click()}
@@ -1656,7 +1656,7 @@ async function renderActivePanelSummary(){
     html+='<div class="card" style="background:#f0f9ff;border:1px solid #93c5fd">'+
       '<div style="display:flex;justify-content:space-between;align-items:center">'+
       '<div><div style="font-weight:800;color:#1e3a8a">🎫 Tickets today</div><div style="font-size:12px;color:#1e40af">Total '+day.length+' | Resolved '+resolved+' | Pending '+pending+'</div></div>'+
-      '<button class="btn btn-pink" onclick="showScreen('ticketsScreen')">Open</button>'+
+      '<button class="btn btn-pink" onclick="showScreen(\'ticketsScreen\')">Open</button>'+
       '</div></div>';
   }
   if(follow.length){
@@ -1700,8 +1700,8 @@ async function renderProjectsList(){
       (p.notes?('<div style="font-size:12px;color:#666;margin-top:6px">'+escapeHtml(p.notes).slice(0,160)+'</div>'):'')+
       '</div><div style="text-align:right">'+badge+'</div></div>'+
       '<div class="btn-row" style="margin-top:10px">'+
-      '<button class="btn btn-sm btn-cyan btn-half" onclick="editProject(\\''+p.id+'\\')">Edit</button>'+
-      '<button class="btn btn-sm btn-red btn-half" onclick="deleteProject(\\''+p.id+'\\')">Delete</button>'+
+      '<button class="btn btn-sm btn-cyan btn-half" onclick="editProject(\''+p.id+'\')">Edit</button>'+
+      '<button class="btn btn-sm btn-red btn-half" onclick="deleteProject(\''+p.id+'\')">Delete</button>'+
       '</div></div>';
   }).join('');
 }
@@ -1899,8 +1899,8 @@ async function renderTicketsToday(){
       '</div><div style="text-align:right">'+closed+'<div style="font-size:12px;color:#666;margin-top:4px">'+(t.status||'').replaceAll('_',' ')+'</div></div>'+
       '</div>'+
       '<div class="btn-row" style="margin-top:10px">'+
-        '<button class="btn btn-sm btn-indigo btn-half" onclick="openTicketEditor(\\''+t.id+'\\')">Edit</button>'+
-        '<button class="btn btn-sm btn-red btn-half" onclick="deleteTicket(\\''+t.id+'\\')">Delete</button>'+
+        '<button class="btn btn-sm btn-indigo btn-half" onclick="openTicketEditor(\''+t.id+'\')">Edit</button>'+
+        '<button class="btn btn-sm btn-red btn-half" onclick="deleteTicket(\''+t.id+'\')">Delete</button>'+
       '</div>'+
     '</div>';
   }).join('');
