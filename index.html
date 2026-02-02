@@ -3,6 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1a365d">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>Work Command Center v13</title>
 <style>
@@ -63,7 +68,7 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
 <body>
 <div class="clock-bar">
   <div class="clock-time" id="clockTime">--:--:--</div>
-  <div class="clock-date" id="clockDate">Loading...</div>
+  <div class="clock-date" id="clockDate">Starting… (open in Safari)</div>
   <div class="save-status" id="saveStatus">Saved ✅</div>
   <div class="export-reminder hidden" id="exportReminder"></div>
 </div>
@@ -2091,5 +2096,17 @@ async function exportDailyBundle(){
 
 initDB().then(()=>{showScreen('menuScreen');updateKronosStatus();updateSaveStatus();updateExportReminder().catch(()=>{})}).catch(e=>alert('DB Error: '+e.message));
 </script>
+
+<script>
+(function(){
+  // Service worker for offline cache (only works when served over http/https)
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('./sw.js').catch(function(){});
+    });
+  }
+})();
+</script>
+
 </body>
 </html>
