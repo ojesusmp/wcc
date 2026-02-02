@@ -1,0 +1,2095 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Work Command Center v13</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:#f5f5f5;max-width:500px;margin:0 auto}
+.clock-bar{background:#1a365d;color:white;padding:8px 12px;text-align:center;position:sticky;top:0;z-index:200}
+.clock-time{font-size:18px;font-weight:700;font-family:monospace}
+.clock-date{font-size:11px;opacity:0.85}
+.container{padding:12px;padding-bottom:70px}
+.card{background:white;border-radius:12px;padding:14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,0.1)}
+.btn{padding:12px 16px;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin:4px;transition:all 0.2s}
+.btn:active{opacity:0.7}
+.btn-full{width:100%;margin:4px 0}
+.btn-half{flex:1}
+.btn-sm{padding:8px 12px;font-size:12px}
+.btn-blue{background:#1a365d;color:white}
+.btn-green{background:#38a169;color:white}
+.btn-purple{background:#805ad5;color:white}
+.btn-yellow{background:#d69e2e;color:white}
+.btn-gray{background:#e2e8f0;color:#333}
+.btn-red{background:#e53e3e;color:white}
+.btn-teal{background:#319795;color:white}
+.btn-orange{background:#dd6b20;color:white}
+.btn-pink{background:#d53f8c;color:white}
+.btn-indigo{background:#5a67d8;color:white}
+.btn-cyan{background:#0891b2;color:white}
+.btn-row{display:flex;flex-wrap:wrap;gap:4px;margin:8px 0}
+input,select,textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;font-size:16px;margin-bottom:10px;font-family:inherit}
+textarea{min-height:80px;resize:vertical}
+h1{font-size:18px;margin-bottom:12px;color:#1a365d}
+h2{font-size:16px;margin-bottom:10px;color:#333}
+.section-title{font-size:12px;color:#888;margin:12px 0 6px;text-transform:uppercase;font-weight:600}
+.entry{padding:10px;border-bottom:1px solid #eee;font-size:13px}
+.entry:last-child{border-bottom:none}
+.time{color:#888;font-family:monospace;font-size:11px;display:block;margin-bottom:2px}
+.output{background:#1a202c;color:#e2e8f0;padding:12px;border-radius:8px;font-family:monospace;font-size:12px;white-space:pre-wrap;margin:10px 0;min-height:200px;max-height:350px;overflow-y:auto;width:100%;box-sizing:border-box;resize:none}
+.hidden{display:none}
+.modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal-content{background:white;border-radius:12px;width:100%;max-width:400px;max-height:85vh;overflow:hidden;display:flex;flex-direction:column}
+.modal-header{padding:16px;border-bottom:1px solid #ddd}
+.modal-body{flex:1;overflow-y:auto;padding:12px}
+.modal-footer{padding:12px;border-top:1px solid #ddd}
+.info-box{background:#bee3f8;border:1px solid #3182ce;border-radius:8px;padding:10px;margin:8px 0;font-size:12px}
+.warning-box{background:#fed7d7;border:1px solid #e53e3e;border-radius:8px;padding:10px;margin:8px 0;font-size:12px}
+.success-box{background:#c6f6d5;border:1px solid #38a169;border-radius:8px;padding:10px;margin:8px 0;font-size:12px}
+.time-compare{display:flex;justify-content:space-around;align-items:center;padding:16px;gap:16px}
+.time-box{flex:1;text-align:center;padding:16px;border-radius:12px;background:#f7fafc}
+.time-box-label{font-size:12px;color:#666;margin-bottom:4px}
+.time-box-value{font-size:28px;font-weight:700}
+.time-entry-item{display:flex;justify-content:space-between;align-items:center;padding:10px;border-bottom:1px solid #eee}
+.kronos-time{font-size:11px;color:#38a169;font-weight:600}
+
+.save-status{font-size:12px;opacity:.9;margin-top:2px}
+.export-reminder{font-size:12px;margin-top:4px;padding:4px 8px;border-radius:8px;background:#b91c1c;color:#fff;cursor:pointer;display:inline-block}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;z-index:9999;background:#111;color:#fff;padding:10px 14px;border-radius:12px;font-size:13px;max-width:92%;text-align:center;box-shadow:0 8px 20px rgba(0,0,0,.25)}
+</style>
+</head>
+<body>
+<div class="clock-bar">
+  <div class="clock-time" id="clockTime">--:--:--</div>
+  <div class="clock-date" id="clockDate">Loading...</div>
+  <div class="save-status" id="saveStatus">Saved ✅</div>
+  <div class="export-reminder hidden" id="exportReminder"></div>
+</div>
+<div class="container">
+<div id="toast" class="toast hidden"></div>
+
+<!-- MAIN MENU -->
+<div id="menuScreen">
+  <h1>🔧 Work Command Center v13</h1>
+  <div id="kronosStatus"></div>
+  <div id="activePanel"></div>
+
+  <div class="card" style="padding:12px">
+    <div class="section-title">⚡ Quick Log (15 min)</div>
+    <div class="btn-row" style="margin-top:6px">
+      <button class="btn btn-sm btn-gray btn-half" onclick="quickLog15('nonproject_meeting')">+15 Meeting</button>
+      <button class="btn btn-sm btn-gray btn-half" onclick="quickLog15('comms')">+15 Comms</button>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-sm btn-gray btn-half" onclick="quickLog15('admin')">+15 Admin</button>
+      <button class="btn btn-sm btn-gray btn-half" onclick="quickLog15('nonproject_travel')">+15 Travel</button>
+    </div>
+    <div style="font-size:11px;color:#666;margin-top:6px">Tip: tap fast now, add details later in Clarity notes.</div>
+  </div>
+
+  <button class="btn btn-blue btn-full" onclick="showScreen('newSessionScreen')" style="padding:16px;font-size:16px">▶️ Start New Session</button>
+
+  <div class="btn-row">
+    <button class="btn btn-pink btn-half" onclick="showScreen('ticketsScreen')">🎫 Tickets</button>
+    <button class="btn btn-cyan btn-half" onclick="showScreen('projectsScreen')">🧩 Projects</button>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-orange btn-half" onclick="showScreen('kronosScreen')">⏰ Kronos</button>
+    <button class="btn btn-purple btn-half" onclick="showQuickNote()">📝 Quick Note</button>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-indigo btn-half" onclick="showScreen('clarityTimeScreen')">⏱️ Clarity Time</button>
+    <button class="btn btn-teal btn-half" onclick="showScreen('concurScreen')">💳 Concur</button>
+  </div>
+  <button class="btn btn-green btn-full" onclick="showCloseDayScreen()">✅ Close My Day</button>
+  <button class="btn btn-gray btn-full" onclick="exportSnapshotNow()" style="margin-top:8px">💾 Quick Backup Now</button>
+  <div class="btn-row">
+    <button class="btn btn-gray btn-half" onclick="showScreen('todayScreen')">📊 Today</button>
+    <button class="btn btn-green btn-half" onclick="showCloseDayScreen()">📝 EOD</button>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-indigo btn-half" onclick="showHistory()">📅 History</button>
+    <button class="btn btn-purple btn-half" onclick="showScreen('weeklyReportsScreen')">📊 Weekly</button>
+  </div>
+  <button class="btn btn-gray btn-full" onclick="showScreen('settingsScreen')">⚙️ Settings</button>
+</div>
+
+<!-- KRONOS SCREEN -->
+<div id="kronosScreen" class="hidden">
+  <h1>⏰ Kronos Time Clock</h1>
+  <div class="card">
+    <div class="btn-row">
+      <button class="btn btn-green btn-half" onclick="kronosPunch('in')" style="padding:20px">🟢 Clock In</button>
+      <button class="btn btn-red btn-half" onclick="kronosPunch('out')" style="padding:20px">🔴 Clock Out</button>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-yellow btn-half" onclick="kronosPunch('lunch_start')" style="padding:20px">🍴 Start Lunch</button>
+      <button class="btn btn-teal btn-half" onclick="kronosPunch('lunch_end')" style="padding:20px">🍴 End Lunch</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-title">Today's Punches</div>
+    <div id="kronosPunchesList"></div>
+  </div>
+  <div class="card">
+    <div class="section-title">PTO / Time Off</div>
+    <div class="btn-row">
+      <input type="number" id="ptoHours" placeholder="Hours" min="0" max="8" step="0.25" style="flex:1">
+      <input type="text" id="ptoReason" placeholder="Reason" style="flex:2">
+    </div>
+    <button class="btn btn-purple btn-full" onclick="addPTO()">+ Add PTO</button>
+    <div id="ptoList" style="margin-top:8px"></div>
+  </div>
+  <div class="card">
+    <div class="section-title">Manual Entry</div>
+    <select id="manualPunchType" style="margin-bottom:8px">
+      <option value="in">Clock In</option>
+      <option value="out">Clock Out</option>
+      <option value="lunch_start">Start Lunch</option>
+      <option value="lunch_end">End Lunch</option>
+    </select>
+    <input type="time" id="manualPunchTime">
+    <button class="btn btn-orange btn-full" onclick="addManualPunch()">+ Add Manual</button>
+  </div>
+  <button class="btn btn-gray btn-full" onclick="showScreen('menuScreen')">← Back</button>
+</div>
+
+<!-- CLARITY TIME SCREEN -->
+<div id="clarityTimeScreen" class="hidden">
+  <h1>⏱️ Clarity Time Entry</h1>
+  <div class="card">
+    <div class="section-title">Add Time Entry</div>
+    <select id="clarityEntryCategory"></select>
+    <div class="btn-row">
+      <input type="number" id="clarityEntryHours" placeholder="Hours" min="0" max="12" step="1" style="flex:1">
+      <input type="number" id="clarityEntryMinutes" placeholder="Minutes" min="0" max="45" step="15" style="flex:1">
+    </div>
+    <div class="btn-row" style="margin-top:8px">
+      <button class="btn btn-sm btn-indigo" onclick="quickAddClarityMinutes(15)">+15m</button>
+      <button class="btn btn-sm btn-indigo" onclick="quickAddClarityMinutes(30)">+30m</button>
+      <button class="btn btn-sm btn-indigo" onclick="quickAddClarityMinutes(60)">+60m</button>
+    </div>
+    <p style="font-size:11px;color:#888;margin:6px 0 8px">15-minute increments (7-min rounding)</p>
+    <input type="text" id="clarityEntryNotes" placeholder="Notes (optional)">
+    <button class="btn btn-indigo btn-full" onclick="addClarityEntry()">+ Add Time Entry</button>
+  </div>
+  <div class="card">
+    <div class="section-title">Today's Clarity Time</div>
+    <div id="clarityEntryList"></div>
+    <div id="clarityTotalDisplay" style="margin-top:12px;padding-top:12px;border-top:2px solid #ddd"></div>
+  </div>
+  <button class="btn btn-purple btn-full" onclick="showScreen('clarityCategoriesScreen')">⚙️ Manage Categories</button>
+  <button class="btn btn-gray btn-full" onclick="showScreen('menuScreen')">← Back</button>
+</div>
+
+<!-- CLARITY CATEGORIES -->
+<div id="clarityCategoriesScreen" class="hidden">
+  <h1>⚙️ Clarity Categories</h1>
+  <div class="card">
+    <div class="section-title">Standard Categories</div>
+    <div id="clarityStandardList"></div>
+  </div>
+  <div class="card">
+    <div class="section-title">Project Categories</div>
+    <div id="clarityProjectList"></div>
+    <button class="btn btn-purple btn-full" onclick="showAddClarityProject()" style="margin-top:8px">+ Add Project</button>
+  </div>
+  <button class="btn btn-orange btn-full" onclick="resetDefaultClarity()">🔄 Reset Defaults</button>
+  <button class="btn btn-gray btn-full" onclick="showScreen('clarityTimeScreen')">← Back</button>
+</div>
+
+<!-- ADD CLARITY PROJECT -->
+<div id="clarityEditScreen" class="hidden">
+  <h1>+ Add Project Category</h1>
+  <div class="card">
+    <div class="section-title">Project ID (short)</div>
+    <input type="text" id="clarityEditId" placeholder="e.g., ftr, win11">
+    <div class="section-title">Project Name</div>
+    <input type="text" id="clarityEditName" placeholder="e.g., FTR - Field Tech Refresh">
+  </div>
+  <button class="btn btn-green btn-full" onclick="saveClarity()">💾 Save</button>
+  <button class="btn btn-gray btn-full" onclick="showScreen('clarityCategoriesScreen')">← Cancel</button>
+</div>
+
+<!-- CONCUR SCREEN -->
+<div id="concurScreen" class="hidden">
+  <h1>💳 Concur Expenses</h1>
+  <div class="card">
+    <div class="section-title">Add Expense</div>
+    <select id="concurType" onchange="updateConcurForm()">
+      <option value="">-- Type --</option>
+      <option value="mileage">🚗 Mileage</option>
+      <option value="lodging">🏨 Lodging</option>
+      <option value="rental">🚙 Rental Car</option>
+      <option value="meal">🍽️ Meal</option>
+    </select>
+  </div>
+  <div id="concurMileageFields" class="hidden card">
+    <div class="section-title">From</div>
+    <select id="concurFromType" onchange="updateMileageFrom()">
+      <option value="practice">Practice (has COID)</option>
+      <option value="address">Other Address</option>
+    </select>
+    <div id="concurFromPracticeDiv">
+      <div id="concurFromPracticeDisplay" style="display:none" class="info-box"></div>
+      <button class="btn btn-teal btn-full" onclick="pickMileageFrom()">🏥 Select Practice</button>
+    </div>
+    <div id="concurFromAddrDiv" class="hidden">
+      <input type="text" id="concurFromAddr" placeholder="Address (e.g., Home, Hotel, etc.)">
+    </div>
+    <div class="section-title">To</div>
+    <select id="concurToType" onchange="updateMileageTo()">
+      <option value="practice">Practice (has COID)</option>
+      <option value="address">Other Address</option>
+    </select>
+    <div id="concurToPracticeDiv">
+      <div id="concurToPracticeDisplay" style="display:none" class="info-box"></div>
+      <button class="btn btn-teal btn-full" onclick="pickMileageTo()">🏥 Select Practice</button>
+    </div>
+    <div id="concurToAddrDiv" class="hidden">
+      <input type="text" id="concurToAddr" placeholder="Address (e.g., Home, Hotel, etc.)">
+    </div>
+  </div>
+  <div id="concurLodgingFields" class="hidden card">
+    <div class="section-title">Location</div>
+    <input type="text" id="concurLodgingLoc" placeholder="Hotel name, city">
+    <div class="section-title">Amount</div>
+    <input type="number" id="concurLodgingAmt" placeholder="0.00" step="0.01">
+  </div>
+  <div id="concurRentalFields" class="hidden card">
+    <div class="section-title">Description</div>
+    <input type="text" id="concurRentalDesc" placeholder="Rental company, vehicle">
+    <div class="section-title">Amount</div>
+    <input type="number" id="concurRentalAmt" placeholder="0.00" step="0.01">
+  </div>
+  <div id="concurMealFields" class="hidden card">
+    <div class="section-title">Meal Type</div>
+    <select id="concurMealType">
+      <option value="breakfast">🌅 Breakfast</option>
+      <option value="lunch">☀️ Lunch</option>
+      <option value="dinner">🌙 Dinner</option>
+    </select>
+    <div class="section-title">Dining</div>
+    <select id="concurMealWith" onchange="updateMealCompanion()">
+      <option value="solo">Solo</option>
+      <option value="others">With Others</option>
+    </select>
+    <div id="concurCompanionField" class="hidden">
+      <div class="section-title">Companion's 3/4 ID</div>
+      <input type="text" id="concurCompanionId" placeholder="HCA employee ID">
+    </div>
+    <div class="section-title">Amount</div>
+    <input type="number" id="concurMealAmt" placeholder="0.00" step="0.01">
+  </div>
+  <div id="concurAddBtn" class="hidden">
+    <button class="btn btn-teal btn-full" onclick="addConcurEntry()">+ Add Expense</button>
+  </div>
+  <div class="card">
+    <div class="section-title">Today's Expenses</div>
+    <div id="concurEntryList"></div>
+  </div>
+  <button class="btn btn-gray btn-full" onclick="showScreen('menuScreen')">← Back</button>
+</div>
+
+<!-- CLOSE MY DAY -->
+<div id="closeDayScreen" class="hidden">
+  <h1>✅ Close My Day</h1>
+  <div class="card">
+    <div class="time-compare">
+      <div class="time-box">
+        <div class="time-box-label">⏰ Kronos</div>
+        <div class="time-box-value" id="closeDayKronos">0:00</div>
+      </div>
+      <div style="font-size:24px;color:#888">=</div>
+      <div class="time-box">
+        <div class="time-box-label">⏱️ Clarity</div>
+        <div class="time-box-value" id="closeDayClarity">0:00</div>
+      </div>
+    </div>
+    <div id="closeDayStatus"></div>
+  </div>
+  <div id="closeDayIssues"></div>
+  <div id="closeDayActions"></div>
+  <button class="btn btn-gray btn-full" onclick="showScreen('menuScreen')">← Back</button>
+</div>
+
+<!-- WEEKLY REPORTS -->
+<div id="weeklyReportsScreen" class="hidden">
+  <h1>📊 Weekly Reports</h1>
+  <div class="card">
+    <div class="section-title">Select Week</div>
+    <input type="date" id="weekStartDate" onchange="updateWeekDisplay()">
+    <div id="weekRangeDisplay" style="font-size:12px;color:#666;margin-top:4px"></div>
+  </div>
+  <div class="card">
+    <div class="section-title">Generate Reports</div>
+    <button class="btn btn-orange btn-full" onclick="generateWeeklyKronos()">⏰ Kronos Weekly</button>
+    <button class="btn btn-indigo btn-full" onclick="generateWeeklyClarity()">⏱️ Clarity Weekly</button>
+    <button class="btn btn-teal btn-full" onclick="generateWeeklyConcur()">💳 Concur Weekly</button>
+    <button class="btn btn-green btn-full" onclick="generateWeeklyBundle()">📦 Weekly Bundle (All)</button>
+  </div>
+  <button class="btn btn-gray btn-full" onclick="showScreen('menuScreen')">← Back</button>
+</div>
+
+<!-- WEEKLY OUTPUT -->
+<div id="weeklyOutputScreen" class="hidden">
+  <h1 id="weeklyOutputTitle">📊 Weekly Report</h1>
+  <textarea class="output" id="weeklyOutputText" readonly></textarea>
+  <div class="btn-row">
+    <button class="btn btn-green btn-half" onclick="copyWeekly()">📋 Copy</button>
+    <button class="btn btn-blue btn-half" onclick="shareWeekly()">📤 Share</button>
+  </div>
+  <button class="btn btn-purple btn-full" onclick="saveWeekly()">💾 Save as File</button>
+  <div id="weeklyCopied" class="hidden"><div class="success-box">✅ Copied!</div></div>
+  <button class="btn btn-gray btn-full" onclick="showScreen('weeklyReportsScreen')">← Back</button>
+</div>
+
+<!-- TODAY -->
+<div id="todayScreen" class="hidden">
+  <h1>📊 Today's Sessions</h1>
+  <div id="todayStats" class="card"></div>
+  <div id="todayList"></div>
+  <button class="btn btn-gray btn-full" onclick="showScreen('menuScreen')">← Back</button>
+</div>
+
+<!-- EOD -->
+<div id="eodScreen" class="hidden">
+  <h1 id="eodTitle">📝 End of Day</h1>
+  <textarea class="output" id="eodText" readonly></textarea>
+  <div class="btn-row">
+    <button class="btn btn-green btn-half" onclick="copyEOD()">📋 Copy</button>
+    <button class="btn btn-blue btn-half" onclick="shareEOD()">📤 Share</button>
+  </div>
+  <button class="btn btn-purple btn-full" onclick="saveEOD()">💾 Save as File</button>
+  <div id="eodCopied" class="hidden"><div class="success-box">✅ Copied!</div></div>
+  <button class="btn btn-gray btn-full" onclick="showScreen('menuScreen')">← Back</button>
+</div>
+
+<!-- HISTORY -->
+<div id="historyScreen" class="hidden">
+  <h1>📅 History</h1>
+  <div class="card">
+    <div class="section-title">Select Date</div>
+    <input type="date" id="historyDate" onchange="loadHistoryDate()">
+    <div class="btn-row" style="margin-top:8px">
+      <button class="btn btn-sm btn-gray" onclick="historyPrevDay()">← Prev</button>
+      <button class="btn btn-sm btn-gray" onclick="historyToday()">Today</button>
+      <button class="btn btn-sm btn-gray" onclick="historyNextDay()">Next →</button>
+    </div>
+  </div>
+  <div id="historyStats" class="card"></div>
+  <div id="historyKronosList" class="card"></div>
+  <button class="btn btn-gray btn-full" onclick="showScreen('menuScreen')">← Back</button>
+</div>
+
+
+<!-- TICKETS -->
+<div id="ticketsScreen" class="hidden">
+  <h1>🎫 Tickets & Work Items</h1>
+  <div class="card">
+    <button class="btn btn-pink btn-full" onclick="startTicketCard()">+ New Ticket Card</button>
+    <button class="btn btn-gray btn-full" onclick="startWorkItem()">+ New Work Item (no ticket)</button>
+  </div>
+  <div id="ticketsTodayList"></div>
+  <button class="btn btn-gray btn-full" onclick="showScreen('menuScreen')">← Back</button>
+</div>
+
+<!-- ADD/EDIT TICKET CARD -->
+<div id="ticketEditScreen" class="hidden">
+  <h1 id="ticketEditTitle">+ Ticket Card</h1>
+  <div class="card">
+    <div class="section-title">Ticket # (optional)</div>
+    <input type="text" id="ticketNumber" placeholder="INC######### or RITM...">
+    <div class="section-title">Subject (1 line)</div>
+    <input type="text" id="ticketSubject" placeholder="Printer not printing, Webex update, etc.">
+    <div class="section-title">Location (optional)</div>
+    <input type="text" id="ticketLocation" placeholder="Practice / Hospital / Building">
+    <div class="btn-row">
+      <input type="text" id="ticketDevice" placeholder="Device ID (optional)" style="flex:1">
+      <input type="text" id="ticketIp" placeholder="IP (optional)" style="flex:1">
+    </div>
+
+    <div class="section-title">Project (optional)</div>
+    <select id="ticketProject"></select>
+
+    <div class="section-title">Status</div>
+    <select id="ticketStatus">
+      <option value="in_progress">In Progress</option>
+      <option value="resolved">Resolved</option>
+      <option value="pending_customer">Pending Customer</option>
+      <option value="pending_internal">Pending Internal</option>
+      <option value="escalated_onsite">Escalated Onsite</option>
+    </select>
+
+    <div class="section-title">Quick Action Log</div>
+    <input type="text" id="ticketActionInput" placeholder="Type action and tap Add (timestamped)">
+    <button class="btn btn-indigo btn-full" onclick="addTicketAction()">+ Add Action</button>
+    <div id="ticketActionList" style="margin-top:8px"></div>
+
+    <div class="section-title">Follow-up needed?</div>
+    <select id="ticketFollowUp">
+      <option value="no">No</option>
+      <option value="yes">Yes</option>
+    </select>
+    <div class="section-title">Follow-up note (optional)</div>
+    <input type="text" id="ticketFollowUpNote" placeholder="What needs to happen next">
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-green btn-half" onclick="saveTicketCard()">💾 Save</button>
+    <button class="btn btn-orange btn-half" onclick="closeTicketCard()">✅ Close</button>
+  </div>
+  <button class="btn btn-gray btn-full" onclick="showScreen('ticketsScreen')">← Back</button>
+</div>
+
+<!-- PROJECTS -->
+<div id="projectsScreen" class="hidden">
+  <h1>🧩 Light Projects</h1>
+  <div class="card">
+    <button class="btn btn-cyan btn-full" onclick="showAddProject()">+ Add Project</button>
+    <div style="font-size:12px;color:#666;margin-top:6px">Keep it light: name + due date + notes. Link tickets to projects.</div>
+  </div>
+  <div id="projectsList"></div>
+  <button class="btn btn-gray btn-full" onclick="showScreen('menuScreen')">← Back</button>
+</div>
+
+<div id="projectEditScreen" class="hidden">
+  <h1 id="projectEditTitle">+ Add Project</h1>
+  <div class="card">
+    <div class="section-title">Project Name</div>
+    <input type="text" id="projectName" placeholder="FTR, Windows 11, etc.">
+    <div class="section-title">Due Date</div>
+    <input type="date" id="projectDue">
+    <div class="section-title">Notes (optional)</div>
+    <textarea id="projectNotes" placeholder="What needs to be done. Keep it short."></textarea>
+    <div class="section-title">Status</div>
+    <select id="projectStatus">
+      <option value="active">Active</option>
+      <option value="completed">Completed</option>
+      <option value="on_hold">On Hold</option>
+    </select>
+  </div>
+  <button class="btn btn-green btn-full" onclick="saveProject()">💾 Save</button>
+  <button class="btn btn-gray btn-full" onclick="showScreen('projectsScreen')">← Cancel</button>
+</div>
+
+<!-- SETTINGS -->
+<div id="settingsScreen" class="hidden">
+  <h1>⚙️ Settings</h1>
+  <div class="card">
+    <button class="btn btn-indigo btn-full" onclick="showScreen('clarityCategoriesScreen')">📊 Clarity Categories</button>
+    <button class="btn btn-teal btn-full" onclick="showScreen('practicesScreen')">🏥 Manage Practices</button>
+    <button class="btn btn-cyan btn-full" onclick="showScreen('projectsScreen')">🧩 Light Projects</button>
+  </div>
+  <div class="card">
+    <div class="section-title">Data Export</div>
+    <button class="btn btn-purple btn-full" onclick="exportAllData()">💾 Full Backup</button>
+  </div>
+  <div class="card">
+    <div class="section-title">⚠️ Danger Zone</div>
+    <button class="btn btn-red btn-full" onclick="clearAllData()">🗑️ Clear All Data</button>
+  </div>
+  <button class="btn btn-gray btn-full" onclick="showScreen('menuScreen')">← Back</button>
+</div>
+
+<!-- PRACTICES SCREEN -->
+<div id="practicesScreen" class="hidden">
+  <h1>🏥 Practices</h1>
+  <div class="card">
+    <button class="btn btn-purple btn-full" onclick="showAddPractice()">+ Add Practice</button>
+  </div>
+  <div id="practicesList"></div>
+  <button class="btn btn-gray btn-full" onclick="showScreen('settingsScreen')">← Back</button>
+</div>
+
+<!-- ADD/EDIT PRACTICE -->
+<div id="practiceEditScreen" class="hidden">
+  <h1 id="practiceEditTitle">+ Add Practice</h1>
+  <div class="card">
+    <div class="section-title">COID (optional)</div>
+    <input type="text" id="practiceEditCoid" placeholder="e.g., 12345">
+    <div class="section-title">Practice Name</div>
+    <input type="text" id="practiceEditName" placeholder="e.g., Main Street Family Medicine">
+    <div class="section-title">Address (optional)</div>
+    <input type="text" id="practiceEditAddress" placeholder="Full address for mileage">
+  </div>
+  <button class="btn btn-green btn-full" onclick="savePractice()">💾 Save</button>
+  <button class="btn btn-gray btn-full" onclick="showScreen('practicesScreen')">← Cancel</button>
+</div>
+
+<!-- NEW SESSION -->
+<div id="newSessionScreen" class="hidden">
+  <h1>▶️ What are you doing?</h1>
+  <div class="card">
+    <div class="section-title">Ticket / Work Item</div>
+    <div class="btn-row">
+      <button class="btn btn-pink btn-half" onclick="startTicketCard()">🎫 Ticket Card</button>
+      <button class="btn btn-gray btn-half" onclick="startWorkItem()">🧾 Work Item</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-title">Support Work</div>
+    <div class="btn-row">
+      <button class="btn btn-blue btn-half" onclick="quickSession('Remote Technical')">🖥️ Remote</button>
+      <button class="btn btn-blue btn-half" onclick="quickSession('In-Person Technical')">🏢 In-Person</button>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-teal btn-half" onclick="quickSession('Remote ECW')">🏥 ECW Remote</button>
+      <button class="btn btn-teal btn-half" onclick="quickSession('In-Person ECW')">🏥 ECW In-Person</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-title">Other Work</div>
+    <div class="btn-row">
+      <button class="btn btn-purple btn-half" onclick="quickSession('Network')">🌐 Network</button>
+      <button class="btn btn-purple btn-half" onclick="quickSession('Imaging')">💿 Imaging</button>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-gray btn-half" onclick="quickSession('Admin')">📧 Admin</button>
+      <button class="btn btn-orange btn-half" onclick="quickSession('Non-Project Travel')">🚗 Travel</button>
+    </div>
+  </div>
+  <button class="btn btn-gray btn-full" onclick="showScreen('menuScreen')">← Cancel</button>
+</div>
+
+<!-- MODALS -->
+<div id="quickNoteModal" class="modal hidden" style="display:none">
+  <div class="modal-content">
+    <div class="modal-header"><h2>📝 Quick Note</h2></div>
+    <div class="modal-body">
+      <textarea id="quickNoteText" placeholder="Note..." style="min-height:150px"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-purple btn-full" onclick="saveQuickNote()">💾 Save</button>
+      <button class="btn btn-gray btn-full" onclick="closeQuickNoteModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="ptoModal" class="modal hidden" style="display:none">
+  <div class="modal-content">
+    <div class="modal-header"><h2>⏳ Add PTO</h2></div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:#666;margin-bottom:12px">Kronos shows less than 8 hours.</p>
+      <div class="section-title">Hours</div>
+      <input type="number" id="ptoModalHours" placeholder="Hours" min="0" max="8" step="0.25">
+      <div class="section-title">Reason</div>
+      <input type="text" id="ptoModalReason" placeholder="PTO, Sick, etc.">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-purple btn-full" onclick="savePTOFromModal()">💾 Add</button>
+      <button class="btn btn-gray btn-full" onclick="closePTOModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="otModal" class="modal hidden" style="display:none">
+  <div class="modal-content">
+    <div class="modal-header"><h2>⏰ Overtime</h2></div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:#666;margin-bottom:12px">Kronos shows more than 8 hours.</p>
+      <div class="section-title">Reason</div>
+      <textarea id="otModalReason" placeholder="Why overtime..."></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-orange btn-full" onclick="saveOTFromModal()">💾 Save</button>
+      <button class="btn btn-gray btn-full" onclick="closeOTModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="practicePickerModal" class="modal hidden" style="display:none">
+  <div class="modal-content">
+    <div class="modal-header"><h2>🏥 Select Practice</h2></div>
+    <div class="modal-body">
+      <input type="text" id="practicePickerSearch" placeholder="Search by name or COID..." oninput="filterPracticePicker()">
+      <div id="practicePickerList" style="max-height:300px;overflow-y:auto"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-purple btn-full" onclick="showQuickAddPractice()">+ Add New Practice</button>
+      <button class="btn btn-gray btn-full" onclick="closePracticePicker()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="quickAddPracticeModal" class="modal hidden" style="display:none">
+  <div class="modal-content">
+    <div class="modal-header"><h2>+ Add Practice</h2></div>
+    <div class="modal-body">
+      <div class="section-title">COID (optional)</div>
+      <input type="text" id="quickPracticeCoid" placeholder="e.g., 12345">
+      <div class="section-title">Practice Name</div>
+      <input type="text" id="quickPracticeName" placeholder="e.g., Main Street Family Medicine">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-green btn-full" onclick="saveQuickPractice()">💾 Save & Select</button>
+      <button class="btn btn-gray btn-full" onclick="closeQuickAddPractice()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const DB_NAME='WorkCommandCenter',DB_VERSION=10;let db=null;
+
+async function initDB(){return new Promise((res,rej)=>{const r=indexedDB.open(DB_NAME,DB_VERSION);r.onerror=()=>rej(r.error);r.onsuccess=()=>{db=r.result;res(db)};r.onupgradeneeded=e=>{const d=e.target.result;['sessions','kronos','notes','settings','clarityEntries','concurEntries','practices','projects'].forEach(s=>{if(!d.objectStoreNames.contains(s))d.createObjectStore(s,{keyPath:s==='kronos'?'date':'id'})})}})}
+
+let __lastSavedAt=null;
+window.__wccDirty=false;
+function updateSaveStatus(){
+  const el=document.getElementById('saveStatus');
+  if(!el) return;
+  if(window.__wccDirty){ el.textContent='Unsaved ✍️'; return; }
+  if(__lastSavedAt){ el.textContent='Saved ✅ ' + __lastSavedAt; }
+  else { el.textContent='Saved ✅'; }
+}
+function markDirty(){ window.__wccDirty=true; updateSaveStatus(); }
+function markSaved(){ window.__wccDirty=false; __lastSavedAt=getTime(); updateSaveStatus(); }
+function showToast(msg){
+  const t=document.getElementById('toast');
+  if(!t) return;
+  t.textContent=msg;
+  t.classList.remove('hidden');
+  clearTimeout(t.__timer);
+  t.__timer=setTimeout(()=>t.classList.add('hidden'),2500);
+}
+window.addEventListener('beforeunload', (e)=>{ if(window.__wccDirty){ e.preventDefault(); e.returnValue=''; } });
+document.addEventListener('input', (e)=>{
+  const t=e.target;
+  if(!t) return;
+  const tag=(t.tagName||'').toLowerCase();
+  if(tag==='textarea' || (tag==='input' && !['button','submit','checkbox','radio'].includes((t.type||'').toLowerCase()))){
+    if(t.closest('.container')) markDirty();
+  }
+});
+
+async function dbPut(s,d){return new Promise((res,rej)=>{const t=db.transaction(s,'readwrite'),r=t.objectStore(s).put(d);r.onsuccess=()=>{markSaved();res(r.result)};r.onerror=()=>rej(r.error)})}
+async function dbGet(s,k){return new Promise((res,rej)=>{const t=db.transaction(s,'readonly'),r=t.objectStore(s).get(k);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+async function dbGetAll(s){return new Promise((res,rej)=>{const t=db.transaction(s,'readonly'),r=t.objectStore(s).getAll();r.onsuccess=()=>res(r.result||[]);r.onerror=()=>rej(r.error)})}
+async function dbDelete(s,k){return new Promise((res,rej)=>{const t=db.transaction(s,'readwrite'),r=t.objectStore(s).delete(k);r.onsuccess=()=>res();r.onerror=()=>rej(r.error)})}
+
+function getTime(){const d=new Date();return{display:d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}),display12:d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true}),full:d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}),iso:d.toISOString(),ms:d.getTime()}}
+function getToday(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function getTimestamp(){const d=new Date();return getToday()+'_'+String(d.getHours()).padStart(2,'0')+String(d.getMinutes()).padStart(2,'0')}
+
+function updateClock(){const n=new Date();document.getElementById('clockTime').textContent=n.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});document.getElementById('clockDate').textContent=n.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'})}
+setInterval(updateClock,1000);updateClock();
+
+// 7-minute rounding
+function getKronosRounded(timeStr){
+  const[h,m]=timeStr.split(':').map(Number);
+  let rm;
+  if(m>=53||m<=7)rm=0;
+  else if(m>=8&&m<=22)rm=15;
+  else if(m>=23&&m<=37)rm=30;
+  else rm=45;
+  let rh=h;
+  if(m>=53)rh=(h+1)%24;
+  return String(rh).padStart(2,'0')+':'+String(rm).padStart(2,'0');
+}
+async function updateExportReminder(){
+  const el=document.getElementById('exportReminder');
+  if(!el) return;
+  const now=new Date();
+  const hh=now.getHours(), mm=now.getMinutes();
+  const after=(hh>16)||(hh===16&&mm>=15);
+  if(!after){ el.classList.add('hidden'); return; }
+  const today=getToday();
+  const s=await dbGet('settings','lastDailyExportDate');
+  const last=s? s.value : null;
+  if(last===today){ el.classList.add('hidden'); return; }
+  el.textContent='Reminder: Export Daily Bundle';
+  el.onclick=()=>showCloseDayScreen();
+  el.classList.remove('hidden');
+}
+setInterval(()=>{updateExportReminder().catch(()=>{})},60000);
+
+
+function roundTo15Min(minutes){
+  const r=minutes%15;
+  if(r<=7)return minutes-r;
+  return minutes+(15-r);
+}
+
+function showScreen(id){
+  if(window.__wccDirty){
+    const ok = confirm('You have unsaved text.\n\nOK = Stay and save\nCancel = Leave without saving');
+    if(ok) return;
+    window.__wccDirty=false;
+    updateSaveStatus();
+  }
+  document.querySelectorAll('.container > div').forEach(el=>el.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  if(id==='menuScreen')updateMenuScreen();
+  if(id==='kronosScreen'){renderKronosPunches();renderPTOList()}
+  if(id==='clarityTimeScreen')initClarityTimeScreen();
+  if(id==='clarityCategoriesScreen')renderClarityCategories();
+  if(id==='concurScreen')initConcurScreen();
+  if(id==='practicesScreen')renderPracticesList();
+  if(id==='todayScreen')updateTodayScreen();
+  if(id==='weeklyReportsScreen')initWeeklyReports();
+  if(id==='ticketsScreen')renderTicketsToday();
+  if(id==='projectsScreen')renderProjectsList();
+}
+
+async function updateMenuScreen(){await updateKronosStatus();await renderMenuProjectAlerts();await renderActivePanelSummary()}
+
+// KRONOS
+async function getKronosToday(){const today=getToday();let r=await dbGet('kronos',today);if(!r)r={date:today,punches:[],pto:[],overtimeReason:null};if(!r.pto)r.pto=[];return r}
+
+async function kronosPunch(type){
+  const r=await getKronosToday(),t=getTime(),kt=getKronosRounded(t.display);
+  r.punches.push({type,time:t.display,kronosTime:kt,full:t.full,ms:t.ms});
+  await dbPut('kronos',r);
+  renderKronosPunches();updateKronosStatus();
+}
+
+async function addManualPunch(){
+  const type=document.getElementById('manualPunchType').value,tv=document.getElementById('manualPunchTime').value;
+  if(!tv){alert('Select time');return}
+  const r=await getKronosToday(),kt=getKronosRounded(tv);
+  r.punches.push({type,time:tv,kronosTime:kt,manual:true});
+  r.punches.sort((a,b)=>a.time.localeCompare(b.time));
+  await dbPut('kronos',r);
+  document.getElementById('manualPunchTime').value='';
+  renderKronosPunches();updateKronosStatus();
+}
+
+async function addPTO(){
+  const hours=parseFloat(document.getElementById('ptoHours').value)||0;
+  const reason=document.getElementById('ptoReason').value.trim();
+  if(!hours||!reason){alert('Enter hours and reason');return}
+  const r=await getKronosToday();
+  r.pto.push({hours,reason,time:getTime()});
+  await dbPut('kronos',r);
+  document.getElementById('ptoHours').value='';document.getElementById('ptoReason').value='';
+  renderPTOList();
+}
+
+async function renderPTOList(){
+  const r=await getKronosToday();
+  if(!r.pto?.length){document.getElementById('ptoList').innerHTML='';return}
+  document.getElementById('ptoList').innerHTML=r.pto.map((p,i)=>'<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #eee"><span>'+p.hours+'h - '+p.reason+'</span><button class="btn btn-sm btn-red" onclick="deletePTO('+i+')">X</button></div>').join('');
+}
+
+async function deletePTO(idx){
+  const r=await getKronosToday();
+  r.pto.splice(idx,1);
+  await dbPut('kronos',r);
+  renderPTOList();
+}
+
+async function renderKronosPunches(){
+  const r=await getKronosToday(),labels={in:'🟢 Clock In',out:'🔴 Clock Out',lunch_start:'🍴 Lunch Start',lunch_end:'🍴 Lunch End'};
+  if(!r.punches.length){document.getElementById('kronosPunchesList').innerHTML='<p style="color:#888;text-align:center">No punches</p>';return}
+  document.getElementById('kronosPunchesList').innerHTML=r.punches.map(p=>'<div class="entry" style="display:flex;justify-content:space-between"><span>'+labels[p.type]+'</span><span><span class="kronos-time">'+p.kronosTime+'</span>'+(p.manual?' (manual)':'')+'</span></div>').join('');
+}
+
+async function updateKronosStatus(){
+  const r=await getKronosToday();
+  if(!r.punches.length){document.getElementById('kronosStatus').innerHTML='';return}
+  const last=r.punches[r.punches.length-1],labels={in:'🟢 Clocked In',out:'🔴 Clocked Out',lunch_start:'🍴 On Lunch',lunch_end:'🟢 Back'};
+  document.getElementById('kronosStatus').innerHTML='<div class="card" style="background:#e6fffa;border:1px solid #319795;padding:10px"><div style="display:flex;justify-content:space-between"><span style="font-weight:600">'+labels[last.type]+'</span><span class="kronos-time">'+last.kronosTime+'</span></div></div>';
+}
+
+function calculateKronosHours(kronos){
+  if(!kronos.punches?.length)return 0;
+  let total=0,clockIn=null;
+  kronos.punches.forEach(p=>{
+    const[h,m]=p.kronosTime.split(':').map(Number);
+    const mins=h*60+m;
+    if(p.type==='in')clockIn=mins;
+    else if(p.type==='out'&&clockIn!==null){total+=mins-clockIn;clockIn=null}
+    else if(p.type==='lunch_start'&&clockIn!==null){total+=mins-clockIn;clockIn=null}
+    else if(p.type==='lunch_end')clockIn=mins;
+  });
+  if(kronos.pto?.length)kronos.pto.forEach(p=>{total+=p.hours*60});
+  return total;
+}
+
+// CLARITY CATEGORIES
+const DEFAULT_CLARITY=[
+  {id:'inperson_technical',name:'In-Person Technical',type:'standard'},
+  {id:'inperson_ecw',name:'In-Person ECW',type:'standard'},
+  {id:'remote_technical',name:'Remote Technical',type:'standard'},
+  {id:'remote_ecw',name:'Remote ECW',type:'standard'},
+  {id:'network',name:'Network',type:'standard'},
+  {id:'imaging',name:'Imaging',type:'standard'},
+  {id:'admin',name:'Admin',type:'standard'},
+  {id:'comms',name:'Other Communications',type:'standard'},
+  {id:'pto',name:'PTO',type:'standard'},
+  {id:'nonproject_travel',name:'Non-Project Travel',type:'standard'},
+  {id:'nonproject_meeting',name:'Non-Project Meeting',type:'standard'}
+];
+
+async function getClarityCategories(){const d=await dbGet('settings','clarityCategories');return d?.value||DEFAULT_CLARITY}
+
+async function renderClarityCategories(){
+  const c=await getClarityCategories();
+  const standard=c.filter(x=>x.type==='standard'||!x.type);
+  const projects=c.filter(x=>x.type==='project');
+  document.getElementById('clarityStandardList').innerHTML=standard.map(x=>'<div style="padding:8px 0;border-bottom:1px solid #eee"><b>'+x.name+'</b></div>').join('');
+  document.getElementById('clarityProjectList').innerHTML=projects.length?projects.map(x=>'<div style="padding:8px 0;border-bottom:1px solid #eee;display:flex;justify-content:space-between"><span><b>'+x.name+'</b></span><button class="btn btn-sm btn-red" onclick="deleteClarity(\''+x.id+'\')">X</button></div>').join(''):'<p style="color:#888;font-size:13px">No project categories</p>';
+}
+
+function showAddClarityProject(){document.getElementById('clarityEditId').value='';document.getElementById('clarityEditName').value='';showScreen('clarityEditScreen')}
+
+async function saveClarity(){
+  const id=document.getElementById('clarityEditId').value.trim().toLowerCase().replace(/\s+/g,'_');
+  const name=document.getElementById('clarityEditName').value.trim();
+  if(!id||!name){alert('ID and Name required');return}
+  const c=await getClarityCategories();
+  if(c.some(x=>x.id===id)){alert('ID exists');return}
+  c.push({id,name,type:'project'});
+  await dbPut('settings',{id:'clarityCategories',value:c});
+  showScreen('clarityCategoriesScreen');
+}
+
+async function deleteClarity(id){
+  if(!confirm('Delete?'))return;
+  const c=(await getClarityCategories()).filter(x=>x.id!==id);
+  await dbPut('settings',{id:'clarityCategories',value:c});
+  renderClarityCategories();
+}
+
+async function resetDefaultClarity(){
+  if(!confirm('Reset to defaults?'))return;
+  await dbPut('settings',{id:'clarityCategories',value:DEFAULT_CLARITY});
+  renderClarityCategories();
+}
+
+// CLARITY TIME ENTRIES
+async function initClarityTimeScreen(){
+  const c=await getClarityCategories();
+  document.getElementById('clarityEntryCategory').innerHTML='<option value="">-- Category --</option>'+c.map(x=>'<option value="'+x.id+'">'+x.name+'</option>').join('');
+  document.getElementById('clarityEntryHours').value='';
+  document.getElementById('clarityEntryMinutes').value='';
+  document.getElementById('clarityEntryNotes').value='';
+  await renderClarityEntries();
+  await suggestClarityCategoryFromActiveSession(c);
+}
+
+async function addClarityEntry(){
+  const category=document.getElementById('clarityEntryCategory').value;
+  const hours=parseInt(document.getElementById('clarityEntryHours').value)||0;
+  const minutes=parseInt(document.getElementById('clarityEntryMinutes').value)||0;
+  const notes=document.getElementById('clarityEntryNotes').value.trim();
+  if(!category){alert('Select category');return}
+  const totalMinutes=hours*60+minutes;
+  if(totalMinutes<=0){alert('Enter time');return}
+  const roundedMinutes=roundTo15Min(totalMinutes);
+  const c=await getClarityCategories();
+  const catObj=c.find(x=>x.id===category);
+  const entry={id:'CL'+Date.now(),date:getToday(),category,categoryName:catObj?.name||category,minutes:roundedMinutes,rawMinutes:totalMinutes,notes,time:getTime()};
+  await dbPut('clarityEntries',entry);
+  document.getElementById('clarityEntryHours').value='';
+  document.getElementById('clarityEntryMinutes').value='';
+  document.getElementById('clarityEntryNotes').value='';
+  await renderClarityEntries();
+}
+
+async function renderClarityEntries(){
+  const entries=await dbGetAll('clarityEntries');
+  const todayEntries=entries.filter(e=>e.date===getToday());
+  if(!todayEntries.length){
+    document.getElementById('clarityEntryList').innerHTML='<p style="color:#888;text-align:center">No time entries</p>';
+    document.getElementById('clarityTotalDisplay').innerHTML='<div style="text-align:center;font-size:18px;font-weight:700">Total: 0:00</div>';
+    return;
+  }
+  let total=0;
+  document.getElementById('clarityEntryList').innerHTML=todayEntries.map(e=>{
+    total+=e.minutes;
+    return'<div class="time-entry-item"><div><b>'+e.categoryName+'</b>'+(e.notes?' - '+e.notes:'')+'</div><div style="text-align:right"><span style="font-weight:600">'+Math.floor(e.minutes/60)+':'+String(e.minutes%60).padStart(2,'0')+'</span><br><button class="btn btn-sm btn-red" onclick="deleteClarityEntry(\''+e.id+'\')">X</button></div></div>';
+  }).join('');
+  document.getElementById('clarityTotalDisplay').innerHTML='<div style="text-align:center;font-size:18px;font-weight:700">Total: '+Math.floor(total/60)+':'+String(total%60).padStart(2,'0')+'</div>';
+}
+
+async function deleteClarityEntry(id){await dbDelete('clarityEntries',id);await renderClarityEntries()}
+
+async function getClarityTotalToday(){
+  const entries=await dbGetAll('clarityEntries');
+  return entries.filter(e=>e.date===getToday()).reduce((sum,e)=>sum+e.minutes,0);
+}
+
+// CONCUR
+function updateConcurForm(){
+  const t=document.getElementById('concurType').value;
+  ['Mileage','Lodging','Rental','Meal'].forEach(f=>document.getElementById('concur'+f+'Fields').classList.add('hidden'));
+  if(t)document.getElementById('concur'+t.charAt(0).toUpperCase()+t.slice(1)+'Fields').classList.remove('hidden');
+  document.getElementById('concurAddBtn').classList.toggle('hidden',!t);
+}
+
+function updateMealCompanion(){
+  document.getElementById('concurCompanionField').classList.toggle('hidden',document.getElementById('concurMealWith').value!=='others');
+}
+
+async function initConcurScreen(){
+  document.getElementById('concurType').value='';
+  updateConcurForm();
+  // Reset mileage state
+  mileageFromPractice=null;mileageToPractice=null;
+  document.getElementById('concurFromType').value='practice';
+  document.getElementById('concurToType').value='practice';
+  updateMileageFrom();updateMileageTo();
+  await renderConcurEntries();
+}
+
+// MILEAGE PRACTICE SELECTION
+let mileageFromPractice=null,mileageToPractice=null,practicePickerCallback=null;
+
+function updateMileageFrom(){
+  const isPractice=document.getElementById('concurFromType').value==='practice';
+  document.getElementById('concurFromPracticeDiv').classList.toggle('hidden',!isPractice);
+  document.getElementById('concurFromAddrDiv').classList.toggle('hidden',isPractice);
+  if(!isPractice)mileageFromPractice=null;
+}
+
+function updateMileageTo(){
+  const isPractice=document.getElementById('concurToType').value==='practice';
+  document.getElementById('concurToPracticeDiv').classList.toggle('hidden',!isPractice);
+  document.getElementById('concurToAddrDiv').classList.toggle('hidden',isPractice);
+  if(!isPractice)mileageToPractice=null;
+}
+
+function pickMileageFrom(){
+  showPracticePicker(p=>{
+    mileageFromPractice=p;
+    document.getElementById('concurFromPracticeDisplay').innerHTML='<b>'+p.name+'</b><br>COID: '+p.coid;
+    document.getElementById('concurFromPracticeDisplay').style.display='block';
+  });
+}
+
+function pickMileageTo(){
+  showPracticePicker(p=>{
+    mileageToPractice=p;
+    document.getElementById('concurToPracticeDisplay').innerHTML='<b>'+p.name+'</b><br>COID: '+p.coid;
+    document.getElementById('concurToPracticeDisplay').style.display='block';
+  });
+}
+
+// PRACTICE PICKER
+function showPracticePicker(callback){
+  practicePickerCallback=callback;
+  document.getElementById('practicePickerSearch').value='';
+  document.getElementById('practicePickerModal').classList.remove('hidden');
+  document.getElementById('practicePickerModal').style.display='flex';
+  renderPracticePickerList();
+}
+
+function closePracticePicker(){
+  document.getElementById('practicePickerModal').classList.add('hidden');
+  document.getElementById('practicePickerModal').style.display='none';
+}
+
+async function filterPracticePicker(){await renderPracticePickerList()}
+
+async function renderPracticePickerList(){
+  const search=document.getElementById('practicePickerSearch').value.toLowerCase();
+  let practices=await dbGetAll('practices');
+  if(search)practices=practices.filter(p=>p.name.toLowerCase().includes(search)||p.coid.toLowerCase().includes(search));
+  practices.sort((a,b)=>a.name.localeCompare(b.name));
+  document.getElementById('practicePickerList').innerHTML=practices.length?practices.map(p=>'<div style="padding:12px;border-bottom:1px solid #eee;cursor:pointer" onclick="selectPractice(\''+p.id+'\')"><b>'+p.name+'</b><br><span style="font-size:12px;color:#666">COID: '+p.coid+'</span></div>').join(''):'<p style="padding:20px;color:#888;text-align:center">No practices found. Add one below.</p>';
+}
+
+async function selectPractice(id){
+  const p=await dbGet('practices',id);
+  closePracticePicker();
+  if(practicePickerCallback&&p)practicePickerCallback(p);
+}
+
+function showQuickAddPractice(){
+  closePracticePicker();
+  document.getElementById('quickPracticeCoid').value='';
+  document.getElementById('quickPracticeName').value='';
+  document.getElementById('quickAddPracticeModal').classList.remove('hidden');
+  document.getElementById('quickAddPracticeModal').style.display='flex';
+}
+
+function closeQuickAddPractice(){
+  document.getElementById('quickAddPracticeModal').classList.add('hidden');
+  document.getElementById('quickAddPracticeModal').style.display='none';
+}
+
+async function saveQuickPractice(){
+  const coid=document.getElementById('quickPracticeCoid').value.trim();
+  const name=document.getElementById('quickPracticeName').value.trim();
+  if(!name){alert('Practice Name is required');return}
+
+  // If COID provided, merge/update if it already exists
+  if(coid){
+    const all=await dbGetAll('practices');
+    const dup=all.find(x=>x.coid===coid);
+    if(dup){
+      dup.name=name||dup.name;
+      await dbPut('practices',dup);
+      closeQuickAddPractice();
+      if(practicePickerCallback)practicePickerCallback(dup);
+      return;
+    }
+  }
+
+  const p={id:'P'+Date.now(),coid:coid||'',name,address:''};
+  await dbPut('practices',p);
+  closeQuickAddPractice();
+  if(practicePickerCallback)practicePickerCallback(p);
+}
+
+// PRACTICES MANAGEMENT
+async function renderPracticesList(){
+  const practices=await dbGetAll('practices');
+  practices.sort((a,b)=>a.name.localeCompare(b.name));
+  document.getElementById('practicesList').innerHTML=practices.length?practices.map(p=>'<div class="card"><div style="display:flex;justify-content:space-between;align-items:start"><div><b>'+p.name+'</b><br><span style="font-size:12px;color:#666">COID: '+p.coid+'</span>'+(p.address?'<br><span style="font-size:11px;color:#888">'+p.address+'</span>':'')+'</div><div><button class="btn btn-sm btn-gray" onclick="editPractice(\''+p.id+'\')">✏️</button> <button class="btn btn-sm btn-red" onclick="deletePractice(\''+p.id+'\')">🗑</button></div></div></div>').join(''):'<p style="color:#888;text-align:center;padding:20px">No practices. Add your first one.</p>';
+}
+
+function showAddPractice(){
+  document.getElementById('practiceEditTitle').textContent='+ Add Practice';
+  document.getElementById('practiceEditCoid').value='';
+  document.getElementById('practiceEditCoid').dataset.editId='';
+  document.getElementById('practiceEditName').value='';
+  document.getElementById('practiceEditAddress').value='';
+  showScreen('practiceEditScreen');
+}
+
+async function editPractice(id){
+  const p=await dbGet('practices',id);
+  if(!p)return;
+  document.getElementById('practiceEditTitle').textContent='Edit Practice';
+  document.getElementById('practiceEditCoid').value=p.coid;
+  document.getElementById('practiceEditCoid').dataset.editId=id;
+  document.getElementById('practiceEditName').value=p.name;
+  document.getElementById('practiceEditAddress').value=p.address||'';
+  showScreen('practiceEditScreen');
+}
+
+async function savePractice(){
+  const coid=document.getElementById('practiceEditCoid').value.trim();
+  const name=document.getElementById('practiceEditName').value.trim();
+  const address=document.getElementById('practiceEditAddress').value.trim();
+  if(!name){alert('Practice Name is required');return}
+  const editId=document.getElementById('practiceEditCoid').dataset.editId;
+
+  // COID can repeat for satellite/related locations.
+  // Warn (don’t block) if the same COID already exists.
+  if(coid){
+    const all=await dbGetAll('practices');
+    const dup=all.find(x=>x.coid===coid && x.id!==editId);
+    if(dup){
+      const ok=confirm('A practice/location with COID '+coid+' already exists ("'+(dup.name||'')+'").\n\nUse the same COID for a satellite/related location?');
+      if(!ok)return;
+    }
+  }
+
+  const p={id:editId||'P'+Date.now(),coid:coid||'',name,address:address||''};
+  await dbPut('practices',p);
+  document.getElementById('practiceEditCoid').dataset.editId='';
+  showScreen('practicesScreen');
+}
+
+async function deletePractice(id){
+  if(!confirm('Delete this practice?'))return;
+  await dbDelete('practices',id);
+  renderPracticesList();
+}
+
+async function addConcurEntry(){
+  const type=document.getElementById('concurType').value;
+  if(!type){alert('Select type');return}
+  let entry={id:'CON'+Date.now(),date:getToday(),type,time:getTime()};
+  if(type==='mileage'){
+    const fromType=document.getElementById('concurFromType').value;
+    const toType=document.getElementById('concurToType').value;
+    // FROM
+    if(fromType==='practice'){
+      if(!mileageFromPractice){alert('Select FROM practice');return}
+      entry.fromType='practice';
+      entry.fromPracticeId=mileageFromPractice.id;
+      entry.fromPracticeName=mileageFromPractice.name;
+      if(!mileageFromPractice.coid){
+        if(confirm('This FROM practice is missing a COID. Concur requires a COID for practice travel. Edit this practice now?')){editPractice(mileageFromPractice.id)}
+        return;
+      }
+      entry.fromCoid=mileageFromPractice.coid;
+      entry.fromDisplay=mileageFromPractice.name+(mileageFromPractice.coid?(' (COID: '+mileageFromPractice.coid+')'):'');
+    }else{
+      entry.fromType='address';
+      entry.fromAddr=document.getElementById('concurFromAddr').value.trim();
+      if(!entry.fromAddr){alert('Enter FROM address');return}
+      entry.fromDisplay=entry.fromAddr;
+    }
+    // TO
+    if(toType==='practice'){
+      if(!mileageToPractice){alert('Select TO practice');return}
+      entry.toType='practice';
+      entry.toPracticeId=mileageToPractice.id;
+      entry.toPracticeName=mileageToPractice.name;
+      if(!mileageToPractice.coid){
+        if(confirm('This TO practice is missing a COID. Concur requires a COID for practice travel. Edit this practice now?')){editPractice(mileageToPractice.id)}
+        return;
+      }
+      entry.toCoid=mileageToPractice.coid;
+      entry.toDisplay=mileageToPractice.name+(mileageToPractice.coid?(' (COID: '+mileageToPractice.coid+')'):'');
+    }else{
+      entry.toType='address';
+      entry.toAddr=document.getElementById('concurToAddr').value.trim();
+      if(!entry.toAddr){alert('Enter TO address');return}
+      entry.toDisplay=entry.toAddr;
+    }
+  }else if(type==='lodging'){
+    entry.location=document.getElementById('concurLodgingLoc').value.trim();
+    entry.amount=parseFloat(document.getElementById('concurLodgingAmt').value)||0;
+    if(!entry.location){alert('Enter location');return}
+  }else if(type==='rental'){
+    entry.description=document.getElementById('concurRentalDesc').value.trim();
+    entry.amount=parseFloat(document.getElementById('concurRentalAmt').value)||0;
+  }else if(type==='meal'){
+    entry.mealType=document.getElementById('concurMealType').value;
+    entry.dining=document.getElementById('concurMealWith').value;
+    entry.companionId=entry.dining==='others'?document.getElementById('concurCompanionId').value.trim():null;
+    entry.amount=parseFloat(document.getElementById('concurMealAmt').value)||0;
+    if(entry.dining==='others'&&!entry.companionId){alert('Enter companion ID');return}
+  }
+  await dbPut('concurEntries',entry);
+  // Reset form
+  document.getElementById('concurType').value='';updateConcurForm();
+  mileageFromPractice=null;mileageToPractice=null;
+  document.getElementById('concurFromPracticeDisplay').style.display='none';
+  document.getElementById('concurToPracticeDisplay').style.display='none';
+  ['concurFromAddr','concurToAddr','concurLodgingLoc','concurLodgingAmt','concurRentalDesc','concurRentalAmt','concurMealAmt','concurCompanionId'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
+  await renderConcurEntries();
+}
+
+async function renderConcurEntries(){
+  const entries=await dbGetAll('concurEntries');
+  const todayEntries=entries.filter(e=>e.date===getToday());
+  if(!todayEntries.length){document.getElementById('concurEntryList').innerHTML='<p style="color:#888;text-align:center">No expenses</p>';return}
+  const icons={mileage:'🚗',lodging:'🏨',rental:'🚙',meal:'🍽️'};
+  document.getElementById('concurEntryList').innerHTML=todayEntries.map(e=>{
+    let desc='';
+    if(e.type==='mileage'){
+      const from=e.fromDisplay||e.fromAddr||'?';
+      const to=e.toDisplay||e.toAddr||'?';
+      desc=from+' → '+to;
+    }
+    else if(e.type==='lodging')desc=e.location+' - $'+(e.amount?.toFixed(2)||'0.00');
+    else if(e.type==='rental')desc=e.description+' - $'+(e.amount?.toFixed(2)||'0.00');
+    else if(e.type==='meal')desc=e.mealType+' ('+e.dining+') - $'+(e.amount?.toFixed(2)||'0.00');
+    return'<div class="time-entry-item"><div>'+icons[e.type]+' <b>'+e.type+'</b><br><span style="font-size:11px;color:#666">'+desc+'</span></div><button class="btn btn-sm btn-red" onclick="deleteConcurEntry(\''+e.id+'\')">X</button></div>';
+  }).join('');
+}
+
+async function deleteConcurEntry(id){await dbDelete('concurEntries',id);await renderConcurEntries()}
+
+// CLOSE MY DAY
+async function showCloseDayScreen(){showScreen('closeDayScreen');await updateCloseDayStatus()}
+
+
+// Close My Day validation helpers
+function fmtHM(mins){
+  const h=Math.floor(mins/60),m=Math.round(mins%60);
+  return h+':'+String(m).padStart(2,'0');
+}
+async function getCloseDayBalance(){
+  const kronos=await getKronosToday();
+  const kronosMinutes=calculateKronosHours(kronos);
+  const clarityMinutes=await getClarityTotalToday();
+  return {kronos,kronosMinutes,clarityMinutes};
+}
+function validateDayForEOD(balance){
+  const {kronos,kronosMinutes,clarityMinutes}=balance;
+  if(kronosMinutes!==clarityMinutes){
+    const diff=Math.abs(kronosMinutes-clarityMinutes);
+    return {ok:false,code:'mismatch',message:'Mismatch: '+fmtHM(diff)+' difference. Fix Kronos or Clarity first.'};
+  }
+  if(kronosMinutes<480){
+    const rem=480-kronosMinutes;
+    return {ok:false,code:'under8',remainingMinutes:rem,message:'Under 8 hours by '+fmtHM(rem)+'. Review what is missing (service/travel) and add time or PTO if applicable.'};
+  }
+  if(kronosMinutes>480 && !kronos.overtimeReason){
+    const over=kronosMinutes-480;
+    return {ok:false,code:'ot_reason',overMinutes:over,message:'Over 8 hours by '+fmtHM(over)+'. Add an OT reason before generating EOD.'};
+  }
+  return {ok:true,code:'ok',message:'OK'};
+}
+
+async function updateCloseDayStatus(){
+  const balance=await getCloseDayBalance();
+  const {kronos,kronosMinutes,clarityMinutes}=balance;
+  const kh=Math.floor(kronosMinutes/60),km=kronosMinutes%60;
+  const ch=Math.floor(clarityMinutes/60),cm=clarityMinutes%60;
+  document.getElementById('closeDayKronos').textContent=kh+':'+String(km).padStart(2,'0');
+  document.getElementById('closeDayClarity').textContent=ch+':'+String(cm).padStart(2,'0');
+
+  const v=validateDayForEOD(balance);
+  const isMatch=kronosMinutes===clarityMinutes;
+
+  // Background cue: green = ready, red = mismatch, yellow = needs PTO/OT reason
+  const bg = v.ok ? '#c6f6d5' : (!isMatch ? '#fed7d7' : '#fef3c7');
+  document.getElementById('closeDayKronos').parentElement.style.background=bg;
+  document.getElementById('closeDayClarity').parentElement.style.background=bg;
+
+  let status='',issues='',actions='';
+
+  if(v.ok){
+    const totalLabel = kronosMinutes===480 ? '8 hours' : (fmtHM(kronosMinutes)+' total');
+    status='<div class="success-box">✅ Ready. Kronos and Clarity match ('+totalLabel+').</div>';
+    actions='<button class="btn btn-green btn-full" onclick="showEOD()">📝 Generate EOD</button>'+
+    '<button class="btn btn-purple btn-full" onclick="exportDailyBundle()">📦 Export Daily Bundle (ZIP)</button>';
+  }else{
+    if(v.code==='mismatch'){
+      const diff=Math.abs(kronosMinutes-clarityMinutes);
+      status='<div class="warning-box">⚠️ Mismatch: '+fmtHM(diff)+' difference</div>';
+    }else if(v.code==='under8'){
+      status='<div class="warning-box">⚠️ Under 8 hours: '+fmtHM(kronosMinutes)+' logged</div>';
+      const remH=(v.remainingMinutes/60);
+      // Build a quick diagnostic view to help spot missing time (service/travel)
+      const allClarity=await dbGetAll('clarityEntries');
+      const todaysClarity=allClarity.filter(e=>e.date===getToday());
+      const allConcur=await dbGetAll('concurEntries');
+      const todaysMileage=allConcur.filter(e=>e.date===getToday() && e.type==='mileage');
+      const allSessions=await dbGetAll('sessions');
+      const todaysSessions=allSessions.filter(s=>s.date===getToday());
+      const clarityLines = todaysClarity.length ? todaysClarity.map(e=>{
+        const hh=Math.floor(e.minutes/60),mm=String(e.minutes%60).padStart(2,'0');
+        return `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #fde68a"><span><b>${e.categoryName}</b>${e.notes?(' - '+e.notes):''}</span><span style="font-weight:600">${hh}:${mm}</span></div>`;
+      }).join('') : '<div style="color:#92400e;font-size:12px">No Clarity entries yet.</div>';
+      const mileageLines = todaysMileage.length ? todaysMileage.map(e=>{
+        return `<div style="padding:6px 0;border-bottom:1px solid #fde68a"><b>Mileage</b>: ${e.fromDisplay} → ${e.toDisplay}</div>`;
+      }).join('') : '<div style="color:#92400e;font-size:12px">No mileage entries logged.</div>';
+      const sessionLines = todaysSessions.length ? todaysSessions.map(s=>{
+        const dur = (s.durationMinutes!=null) ? (s.durationMinutes+'m') : 'active';
+        return `<div style="padding:6px 0;border-bottom:1px solid #fde68a"><b>${s.subject||'Session'}</b> <span style="color:#92400e;font-size:12px">(${dur})</span></div>`;
+      }).join('') : '<div style="color:#92400e;font-size:12px">No sessions saved today.</div>';
+      issues+=`<div class="card" style="background:#fef3c7;border:1px solid #f59e0b">
+        <p style="font-weight:700;color:#92400e">🔍 Under 8 hours — find what’s missing</p>
+        <p style="font-size:12px;color:#92400e;margin-top:6px">Remaining to reach 8:00: <b>${fmtHM(v.remainingMinutes)}</b></p>
+        <div style="margin-top:10px">
+          <div style="font-weight:600;color:#92400e;margin-bottom:6px">Clarity entries today</div>
+          <div style="max-height:160px;overflow:auto;padding-right:6px">${clarityLines}</div>
+        </div>
+        <div style="margin-top:12px">
+          <div style="font-weight:600;color:#92400e;margin-bottom:6px">Mileage today (travel)</div>
+          <div style="max-height:120px;overflow:auto;padding-right:6px">${mileageLines}</div>
+        </div>
+        <div style="margin-top:12px">
+          <div style="font-weight:600;color:#92400e;margin-bottom:6px">Sessions today (service)</div>
+          <div style="max-height:120px;overflow:auto;padding-right:6px">${sessionLines}</div>
+        </div>
+        <div class="btn-row" style="margin-top:12px">
+          <button class="btn btn-indigo btn-half" onclick="showScreen('clarityTimeScreen')">⏱️ Add time</button>
+          <button class="btn btn-teal btn-half" onclick="showScreen('concurScreen')">💳 Add travel</button>
+        </div>
+        <button class="btn btn-purple btn-full" onclick="showPTOModal(${remH.toFixed(2)})" style="margin-top:10px">+ Add PTO (if you took PTO)</button>
+      </div>`;
+    }else if(v.code==='ot_reason'){
+      status='<div class="warning-box">⚠️ Over 8 hours: '+fmtHM(kronosMinutes)+' logged</div>';
+      issues+='<div class="card" style="background:#fed7e2;border:1px solid #d53f8c"><p style="font-weight:600;color:#702459">⏰ OT reason required</p><p style="font-size:12px;color:#702459;margin-top:6px">Over: <b>'+fmtHM(v.overMinutes)+'</b></p><button class="btn btn-orange btn-full" onclick="showOTModal()" style="margin-top:10px">+ Add OT Reason</button></div>';
+    }
+  }
+
+  actions+='<div class="btn-row" style="margin-top:8px"><button class="btn btn-indigo btn-half" onclick="showScreen(\'clarityTimeScreen\')">⏱️ Clarity</button><button class="btn btn-orange btn-half" onclick="showScreen(\'kronosScreen\')">⏰ Kronos</button></div>';
+  document.getElementById('closeDayStatus').innerHTML=status;
+  document.getElementById('closeDayIssues').innerHTML=issues;
+  document.getElementById('closeDayActions').innerHTML=actions;
+}
+
+function showPTOModal(suggestHours){document.getElementById('ptoModalHours').value=(suggestHours?Number(suggestHours).toFixed(2):'');document.getElementById('ptoModalReason').value='';document.getElementById('ptoModal').classList.remove('hidden');document.getElementById('ptoModal').style.display='flex'}
+function closePTOModal(){document.getElementById('ptoModal').classList.add('hidden');document.getElementById('ptoModal').style.display='none'}
+async function savePTOFromModal(){
+  const hours=parseFloat(document.getElementById('ptoModalHours').value)||0;
+  const reason=document.getElementById('ptoModalReason').value.trim();
+  if(!hours||!reason){alert('Enter hours and reason');return}
+  const r=await getKronosToday();r.pto.push({hours,reason,time:getTime()});
+  await dbPut('kronos',r);closePTOModal();updateCloseDayStatus();updateKronosStatus();
+}
+
+function showOTModal(){document.getElementById('otModalReason').value='';document.getElementById('otModal').classList.remove('hidden');document.getElementById('otModal').style.display='flex'}
+function closeOTModal(){document.getElementById('otModal').classList.add('hidden');document.getElementById('otModal').style.display='none'}
+async function saveOTFromModal(){
+  const reason=document.getElementById('otModalReason').value.trim();
+  if(!reason){alert('Enter reason');return}
+  const r=await getKronosToday();r.overtimeReason=reason;
+  await dbPut('kronos',r);closeOTModal();updateCloseDayStatus();
+}
+
+// QUICK NOTE
+function showQuickNote(){document.getElementById('quickNoteText').value='';document.getElementById('quickNoteModal').classList.remove('hidden');document.getElementById('quickNoteModal').style.display='flex'}
+function closeQuickNoteModal(){document.getElementById('quickNoteModal').classList.add('hidden');document.getElementById('quickNoteModal').style.display='none'}
+async function saveQuickNote(){
+  const t=document.getElementById('quickNoteText').value.trim();
+  if(!t){closeQuickNoteModal();return}
+  await dbPut('notes',{id:'N'+Date.now(),date:getToday(),time:getTime(),text:t});
+  closeQuickNoteModal();alert('Saved!');
+}
+
+// QUICK SESSION - adds clarity entry
+async function quickSession(category){
+  const c=await getClarityCategories();
+  const cat=c.find(x=>x.name.toLowerCase().includes(category.toLowerCase().split(' ')[0]));
+  if(cat){
+    document.getElementById('clarityEntryCategory').value=cat.id;
+  }
+  showScreen('clarityTimeScreen');
+}
+
+// TODAY
+async function updateTodayScreen(){
+  const entries=await dbGetAll('clarityEntries');
+  const todayEntries=entries.filter(e=>e.date===getToday());
+  const kronos=await getKronosToday();
+  const kronosMin=calculateKronosHours(kronos);
+  const clarityMin=todayEntries.reduce((s,e)=>s+e.minutes,0);
+  document.getElementById('todayStats').innerHTML='<div style="display:flex;justify-content:space-around;text-align:center"><div><div style="font-size:24px;font-weight:700">'+Math.floor(kronosMin/60)+':'+String(kronosMin%60).padStart(2,'0')+'</div><div style="font-size:11px;color:#888">Kronos</div></div><div><div style="font-size:24px;font-weight:700">'+Math.floor(clarityMin/60)+':'+String(clarityMin%60).padStart(2,'0')+'</div><div style="font-size:11px;color:#888">Clarity</div></div><div><div style="font-size:24px;font-weight:700">'+todayEntries.length+'</div><div style="font-size:11px;color:#888">Entries</div></div></div>';
+  document.getElementById('todayList').innerHTML=todayEntries.length?todayEntries.map(e=>'<div class="card"><b>'+e.categoryName+'</b> - '+Math.floor(e.minutes/60)+':'+String(e.minutes%60).padStart(2,'0')+'<br><span style="font-size:11px;color:#666">'+e.time.display12+(e.notes?' | '+e.notes:'')+'</span></div>').join(''):'<p style="color:#888;text-align:center;padding:20px">No entries today</p>';
+}
+
+// EOD
+async function showEOD(){
+  const balance=await getCloseDayBalance();
+  const v=validateDayForEOD(balance);
+  if(!v.ok){
+    await showCloseDayScreen();
+    alert(v.message);
+    return;
+  }
+  const txt = await buildEODText(getToday());
+  document.getElementById('eodText').value=txt;
+  document.getElementById('eodTitle').textContent='📝 EOD - '+getToday();
+  showScreen('eodScreen');
+}
+
+async function buildEODText(dateStr){
+  const entries=await dbGetAll('clarityEntries');
+  const dayEntries=entries.filter(e=>e.date===dateStr);
+  const kronos=await dbGet('kronos',dateStr) || {date:dateStr,punches:[],pto:[],overtimeReason:null};
+  const notes=await dbGetAll('notes');
+  const dayNotes=notes.filter(n=>n.date===dateStr);
+  const allSessions=await dbGetAll('sessions');
+  const dayTickets=allSessions.filter(s=>s.date===dateStr && (s.type==='ticket' || s.type==='work_item'));
+  const projects=await dbGetAll('projects');
+  const activeProjects=projects.filter(p=>p.status!=='completed');
+
+  const kLabels={in:'Clock In',out:'Clock Out',lunch_start:'Lunch Start',lunch_end:'Lunch End'};
+  let txt='WORK / HCA — END-OF-DAY REPORT\n'+dateStr+'\n'+'='.repeat(44)+'\n\n';
+
+  // Tickets summary
+  if(dayTickets.length){
+    const byStatus={}; dayTickets.forEach(t=>{byStatus[t.status]=(byStatus[t.status]||0)+1});
+    txt+='TICKETS & WORK ITEMS\n';
+    txt+='Total: '+dayTickets.length+' | ';
+    const order=['resolved','in_progress','pending_internal','pending_customer','escalated_onsite'];
+    txt+=order.filter(k=>byStatus[k]).map(k=>k.replace('_',' ') + ': ' + byStatus[k]).join(' | ');
+    txt+='\n\n';
+    dayTickets.forEach((t,i)=>{
+      const title = (t.ticketNumber? (t.ticketNumber+' – ') : '') + (t.subject||'Work Item');
+      txt+=(i+1)+'️⃣ '+title+'\n';
+      if(t.location) txt+='Location: '+t.location+'\n';
+      if(t.device||t.ip) txt+='Device/IP: '+[t.device||null, t.ip||null].filter(Boolean).join(' | ')+'\n';
+      txt+='Status: '+(t.status||'in_progress').replaceAll('_',' ') + (t.assignee?(' – '+t.assignee):'')+'\n';
+      if(t.projectName) txt+='Project: '+t.projectName+'\n';
+      if(t.actions?.length){
+        txt+='Actions:\n';
+        t.actions.forEach(a=>{txt+='- ['+a.time.display+'] '+a.text+'\n'});
+      }
+      if(t.followUp==='yes' || t.followUpNote) txt+='Follow-up: '+(t.followUpNote||'Yes')+'\n';
+      txt+='\n';
+    });
+  }else{
+    txt+='TICKETS & WORK ITEMS\n(no ticket cards logged today)\n\n';
+  }
+
+  // Kronos
+  txt+='KRONOS PUNCHES\n';
+  if(kronos.punches?.length)kronos.punches.forEach(p=>{txt+='  '+p.kronosTime+' - '+kLabels[p.type]+(p.manual?' [manual]':'')+'\n'});
+  else txt+='  (no punches)\n';
+  if(kronos.pto?.length){txt+='\nPTO:\n';kronos.pto.forEach(p=>{txt+='  '+p.hours+'h - '+p.reason+'\n'})}
+  if(kronos.overtimeReason)txt+='\nOVERTIME: '+kronos.overtimeReason+'\n';
+
+  // Clarity
+  txt+='\nCLARITY TIME\n';
+  const catTotals={};let total=0;
+  dayEntries.forEach(e=>{catTotals[e.categoryName]=(catTotals[e.categoryName]||0)+e.minutes;total+=e.minutes});
+  for(const[cat,min]of Object.entries(catTotals))txt+='  '+cat+': '+Math.floor(min/60)+':'+String(min%60).padStart(2,'0')+'\n';
+  txt+='  TOTAL: '+Math.floor(total/60)+':'+String(total%60).padStart(2,'0')+'\n';
+
+  // Concur
+  const conc=await dbGetAll('concurEntries');
+  const dayConc=conc.filter(e=>e.date===dateStr);
+  if(dayConc.length){
+    txt+='\nCONCUR (EXPENSES)\n';
+    dayConc.forEach(e=>{
+      if(e.type==='mileage') txt+='  Mileage: '+(e.fromDisplay||e.fromAddr||'?')+' → '+(e.toDisplay||e.toAddr||'?')+'\n';
+      else if(e.type==='lodging') txt+='  Lodging: '+e.location+' - $'+(e.amount?.toFixed(2)||'0.00')+'\n';
+      else if(e.type==='rental') txt+='  Rental: '+(e.description||'')+' - $'+(e.amount?.toFixed(2)||'0.00')+'\n';
+      else if(e.type==='meal') txt+='  Meal: '+e.mealType+' ('+e.dining+') - $'+(e.amount?.toFixed(2)||'0.00')+(e.companionId?(' | Companion: '+e.companionId):'')+'\n';
+    });
+  }
+
+  // Notes
+  if(dayNotes.length){txt+='\nQUICK NOTES\n';dayNotes.forEach(n=>{txt+='  ['+n.time.display+'] '+n.text+'\n'})}
+
+  // Projects due soon
+  const soon = getProjectsDueSoon(activeProjects, 14);
+  if(soon.length){
+    txt+='\nPROJECTS (DUE SOON)\n';
+    soon.forEach(p=>{txt+='  - '+p.name+' (Due '+p.dueDate+')\n'; if(p.notes) txt+='    Notes: '+p.notes.replace(/\n/g,' ')+'\n';});
+  }
+  return txt;
+}
+
+function copyEODfunction copyEOD(){navigator.clipboard.writeText(document.getElementById('eodText').value);document.getElementById('eodCopied').classList.remove('hidden');setTimeout(()=>document.getElementById('eodCopied').classList.add('hidden'),2000)}
+async function shareEOD(){if(navigator.share){try{await navigator.share({title:'EOD Report',text:document.getElementById('eodText').value});return}catch(e){}}saveEOD()}
+function saveEOD(){downloadTextFile(document.getElementById('eodText').value,'eod_'+getToday()+'.txt')}
+function downloadTextFile(text,filename){const blob=new Blob([text],{type:'text/plain'}),link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download=filename;link.click()}
+
+// HISTORY
+let selectedHistoryDate=null;
+function showHistory(){selectedHistoryDate=getToday();document.getElementById('historyDate').value=selectedHistoryDate;loadHistoryDate();showScreen('historyScreen')}
+function historyPrevDay(){const d=new Date(selectedHistoryDate);d.setDate(d.getDate()-1);selectedHistoryDate=d.toISOString().split('T')[0];document.getElementById('historyDate').value=selectedHistoryDate;loadHistoryDate()}
+function historyNextDay(){const d=new Date(selectedHistoryDate);d.setDate(d.getDate()+1);if(d>new Date())return;selectedHistoryDate=d.toISOString().split('T')[0];document.getElementById('historyDate').value=selectedHistoryDate;loadHistoryDate()}
+function historyToday(){selectedHistoryDate=getToday();document.getElementById('historyDate').value=selectedHistoryDate;loadHistoryDate()}
+
+async function loadHistoryDate(){
+  selectedHistoryDate=document.getElementById('historyDate').value;
+  const entries=await dbGetAll('clarityEntries');
+  const dayEntries=entries.filter(e=>e.date===selectedHistoryDate);
+  const k=await dbGet('kronos',selectedHistoryDate);
+  const catTotals={};let total=0;
+  dayEntries.forEach(e=>{catTotals[e.categoryName]=(catTotals[e.categoryName]||0)+e.minutes;total+=e.minutes});
+  let html='<div class="section-title">Clarity Summary</div>';
+  if(Object.keys(catTotals).length){
+    for(const[c,m]of Object.entries(catTotals))html+='<div style="display:flex;justify-content:space-between;font-size:13px"><span>'+c+'</span><span>'+Math.floor(m/60)+':'+String(m%60).padStart(2,'0')+'</span></div>';
+    html+='<div style="border-top:1px solid #ddd;margin-top:8px;padding-top:8px;font-weight:600">TOTAL: '+Math.floor(total/60)+':'+String(total%60).padStart(2,'0')+'</div>';
+  }else html+='<p style="color:#888;font-size:13px">No entries</p>';
+  document.getElementById('historyStats').innerHTML=html;
+  const kLabels={in:'🟢 In',out:'🔴 Out',lunch_start:'🍴 Lunch',lunch_end:'🍴 Back'};
+  document.getElementById('historyKronosList').innerHTML=k?.punches?.length?'<div class="section-title">Kronos</div>'+k.punches.map(p=>'<div style="display:flex;justify-content:space-between;padding:4px 0"><span>'+kLabels[p.type]+'</span><span class="kronos-time">'+p.kronosTime+'</span></div>').join(''):'<p style="color:#888;text-align:center">No Kronos punches</p>';
+}
+
+// WEEKLY REPORTS
+function initWeeklyReports(){
+  const today=new Date(),dow=today.getDay(),sunday=new Date(today);
+  sunday.setDate(today.getDate()-dow);
+  document.getElementById('weekStartDate').value=sunday.toISOString().split('T')[0];
+  updateWeekDisplay();
+}
+
+function updateWeekDisplay(){
+  const startDate=document.getElementById('weekStartDate').value;
+  if(!startDate)return;
+  const start=new Date(startDate+'T12:00:00'),end=new Date(start);
+  end.setDate(start.getDate()+6);
+  document.getElementById('weekRangeDisplay').textContent=start.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' - '+end.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+}
+
+function getWeekDates(startDateStr){
+  const dates=[],start=new Date(startDateStr+'T12:00:00');
+  for(let i=0;i<7;i++){const d=new Date(start);d.setDate(start.getDate()+i);dates.push(d.toISOString().split('T')[0])}
+  return dates;
+}
+
+async function generateWeeklyKronos(){
+  const startDate=document.getElementById('weekStartDate').value;
+  if(!startDate){alert('Select week');return}
+  const dates=getWeekDates(startDate);
+  const kLabels={in:'Clock In',out:'Clock Out',lunch_start:'Lunch Start',lunch_end:'Lunch End'};
+  let txt='KRONOS WEEKLY REPORT\n'+document.getElementById('weekRangeDisplay').textContent+'\n'+'='.repeat(40)+'\n\n';
+  let weekTotal=0;
+  for(const date of dates){
+    const k=await dbGet('kronos',date);
+    const dayName=new Date(date+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
+    txt+=dayName+'\n'+'-'.repeat(26)+'\n';
+    if(k?.punches?.length){
+      k.punches.forEach(p=>{txt+='  '+p.kronosTime+' - '+kLabels[p.type]+(p.manual?' [manual]':'')+'\n'});
+      const dayMin=calculateKronosHours(k);weekTotal+=dayMin;
+      txt+='  TOTAL: '+Math.floor(dayMin/60)+':'+String(dayMin%60).padStart(2,'0')+'\n';
+      if(k.pto?.length)k.pto.forEach(p=>{txt+='  PTO: '+p.hours+'h - '+p.reason+'\n'});
+      if(k.overtimeReason)txt+='  OT: '+k.overtimeReason+'\n';
+    }else txt+='  (no punches)\n';
+    txt+='\n';
+  }
+  txt+='='.repeat(40)+'\nWEEK TOTAL: '+Math.floor(weekTotal/60)+':'+String(weekTotal%60).padStart(2,'0')+' ('+(weekTotal/60).toFixed(2)+' hours)\n';
+  document.getElementById('weeklyOutputTitle').textContent='⏰ Kronos Weekly';
+  document.getElementById('weeklyOutputText').value=txt;
+  showScreen('weeklyOutputScreen');
+}
+
+async function generateWeeklyClarity(){
+  const startDate=document.getElementById('weekStartDate').value;
+  if(!startDate){alert('Select week');return}
+  const dates=getWeekDates(startDate);
+  const allEntries=await dbGetAll('clarityEntries');
+  const categories=await getClarityCategories();
+  const catTotals={};let weekTotal=0;
+  let txt='CLARITY WEEKLY REPORT\n'+document.getElementById('weekRangeDisplay').textContent+'\n'+'='.repeat(40)+'\n\n';
+  for(const date of dates){
+    const dayEntries=allEntries.filter(e=>e.date===date);
+    const dayName=new Date(date+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
+    txt+=dayName+'\n'+'-'.repeat(26)+'\n';
+    if(dayEntries.length){
+      let dayTotal=0;
+      dayEntries.forEach(e=>{
+        txt+='  '+e.categoryName+': '+Math.floor(e.minutes/60)+':'+String(e.minutes%60).padStart(2,'0')+(e.notes?' ('+e.notes+')':'')+'\n';
+        catTotals[e.category]=(catTotals[e.category]||0)+e.minutes;
+        dayTotal+=e.minutes;
+      });
+      weekTotal+=dayTotal;
+      txt+='  DAY TOTAL: '+Math.floor(dayTotal/60)+':'+String(dayTotal%60).padStart(2,'0')+'\n';
+    }else txt+='  (no entries)\n';
+    txt+='\n';
+  }
+  txt+='='.repeat(40)+'\nCATEGORY SUMMARY\n';
+  for(const[catId,mins]of Object.entries(catTotals)){
+    const cat=categories.find(c=>c.id===catId);
+    txt+='  '+(cat?.name||catId)+': '+Math.floor(mins/60)+':'+String(mins%60).padStart(2,'0')+'\n';
+  }
+  txt+='\nWEEK TOTAL: '+Math.floor(weekTotal/60)+':'+String(weekTotal%60).padStart(2,'0')+' ('+(weekTotal/60).toFixed(2)+' hours)\n';
+  document.getElementById('weeklyOutputTitle').textContent='⏱️ Clarity Weekly';
+  document.getElementById('weeklyOutputText').value=txt;
+  showScreen('weeklyOutputScreen');
+}
+
+async function generateWeeklyConcur(){
+  const startDate=document.getElementById('weekStartDate').value;
+  if(!startDate){alert('Select week');return}
+  const dates=getWeekDates(startDate);
+  const allEntries=await dbGetAll('concurEntries');
+  const icons={mileage:'🚗',lodging:'🏨',rental:'🚙',meal:'🍽️'};
+  let txt='CONCUR WEEKLY REPORT\n'+document.getElementById('weekRangeDisplay').textContent+'\n'+'='.repeat(40)+'\n\n';
+  let mileageCount=0,lodgingTotal=0,rentalTotal=0,mealTotal=0;
+  for(const date of dates){
+    const dayEntries=allEntries.filter(e=>e.date===date);
+    if(!dayEntries.length)continue;
+    const dayName=new Date(date+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
+    txt+=dayName+'\n'+'-'.repeat(26)+'\n';
+    dayEntries.forEach(e=>{
+      if(e.type==='mileage'){
+        const from=e.fromDisplay||e.fromAddr||'?';
+        const to=e.toDisplay||e.toAddr||'?';
+        txt+='  '+icons.mileage+' '+from+' → '+to+'\n';
+        mileageCount++;
+      }
+      else if(e.type==='lodging'){txt+='  '+icons.lodging+' '+e.location+' - $'+(e.amount?.toFixed(2)||'0.00')+'\n';lodgingTotal+=e.amount||0}
+      else if(e.type==='rental'){txt+='  '+icons.rental+' '+e.description+' - $'+(e.amount?.toFixed(2)||'0.00')+'\n';rentalTotal+=e.amount||0}
+      else if(e.type==='meal'){txt+='  '+icons.meal+' '+e.mealType+' ('+e.dining+(e.companionId?' - '+e.companionId:'')+') - $'+(e.amount?.toFixed(2)||'0.00')+'\n';mealTotal+=e.amount||0}
+    });
+    txt+='\n';
+  }
+  txt+='='.repeat(40)+'\nSUMMARY\n  Mileage trips: '+mileageCount+'\n  Lodging: $'+lodgingTotal.toFixed(2)+'\n  Rental: $'+rentalTotal.toFixed(2)+'\n  Meals: $'+mealTotal.toFixed(2)+'\n\nTOTAL EXPENSES: $'+(lodgingTotal+rentalTotal+mealTotal).toFixed(2)+'\n';
+  document.getElementById('weeklyOutputTitle').textContent='💳 Concur Weekly';
+  document.getElementById('weeklyOutputText').value=txt;
+  showScreen('weeklyOutputScreen');
+}
+
+function copyWeekly(){navigator.clipboard.writeText(document.getElementById('weeklyOutputText').value);document.getElementById('weeklyCopied').classList.remove('hidden');setTimeout(()=>document.getElementById('weeklyCopied').classList.add('hidden'),2000)}
+async function shareWeekly(){if(navigator.share){try{await navigator.share({title:'Weekly Report',text:document.getElementById('weeklyOutputText').value});return}catch(e){}}saveWeekly()}
+function saveWeekly(){const title=document.getElementById('weeklyOutputTitle').textContent.replace(/[^\w]/g,'_');downloadTextFile(document.getElementById('weeklyOutputText').value,title+'_'+getToday()+'.txt')}
+
+// EXPORT
+async function exportAllData(){
+  const k=await dbGetAll('kronos'),n=await dbGetAll('notes'),c=await getClarityCategories(),cl=await dbGetAll('clarityEntries'),co=await dbGetAll('concurEntries'),p=await dbGetAll('practices');
+  const data={type:'full_backup',exported:getTime().iso,kronos:k,notes:n,clarityCategories:c,clarityEntries:cl,concurEntries:co,practices:p};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),link=document.createElement('a');
+  link.href=URL.createObjectURL(blob);link.download='wcc_backup_'+getTimestamp()+'.json';link.click();
+}
+
+async function clearAllData(){
+  if(!confirm('DELETE ALL DATA?'))return;
+  if(!confirm('ARE YOU SURE?'))return;
+  try{ if(db) db.close(); }catch(e){}
+  const req=indexedDB.deleteDatabase(DB_NAME);
+  req.onsuccess=()=>location.reload();
+  req.onerror=()=>alert('Could not delete database: '+(req.error?req.error.message:'unknown error'));
+  req.onblocked=()=>alert('Delete is blocked. Close other tabs with this app open and try again.');
+}
+
+
+// ==============================
+// QUICK LOG (15 MIN) — low friction
+async function quickLog15(categoryId){
+  const cats=await getClarityCategories();
+  const cat=cats.find(c=>c.id===categoryId);
+  if(!cat){alert('Category not found. Add it in Settings → Clarity Categories.');return}
+  const entry={id:'CL'+Date.now(),date:getToday(),category:categoryId,categoryName:cat.name,minutes:15,rawMinutes:15,notes:'',time:getTime()};
+  await dbPut('clarityEntries',entry);
+  if(document.getElementById('clarityTimeScreen') && !document.getElementById('clarityTimeScreen').classList.contains('hidden')){
+    await renderClarityEntries();
+  }
+  // small confirmation without disrupting flow
+  try{navigator.vibrate&&navigator.vibrate(30)}catch(e){}
+}
+
+// ==============================
+// PROJECTS — light tracking (name + due date + notes)
+let editingProjectId=null;
+
+async function renderMenuProjectAlerts(){
+  const projects=await dbGetAll('projects');
+  const active=projects.filter(p=>p.status!=='completed');
+  const soon=getProjectsDueSoon(active,14);
+  if(!soon.length){return}
+  const html='<div class="card" style="background:#e0f2fe;border:1px solid #0891b2">'+
+    '<div style="font-weight:800;color:#0c4a6e">🧩 Projects due soon</div>'+
+    soon.map(p=>'<div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(8,145,178,0.25)"><b>'+escapeHtml(p.name)+'</b> — Due <b>'+p.dueDate+'</b>'+(p.notes?('<div style="font-size:12px;color:#0c4a6e;margin-top:4px">'+escapeHtml(p.notes).slice(0,120)+'</div>'):'')+'</div>').join('')+
+    '<button class="btn btn-cyan btn-full" style="margin-top:10px" onclick="showScreen(\'projectsScreen\')">Open Projects</button>'+
+    '</div>';
+  document.getElementById('activePanel').innerHTML=html;
+}
+
+async function renderActivePanelSummary(){
+  // Keep it minimal — only show something if tickets or follow-ups exist
+  const allSessions=await dbGetAll('sessions');
+  const day=allSessions.filter(s=>s.date===getToday() && (s.type==='ticket' || s.type==='work_item'));
+  const follow=day.filter(t=>t.followUp==='yes' || (t.followUpNote&&t.followUpNote.trim()));
+  if(!day.length && !follow.length){return}
+  let html='';
+  if(day.length){
+    const resolved=day.filter(t=>t.status==='resolved').length;
+    const pending=day.length-resolved;
+    html+='<div class="card" style="background:#f0f9ff;border:1px solid #93c5fd">'+
+      '<div style="display:flex;justify-content:space-between;align-items:center">'+
+      '<div><div style="font-weight:800;color:#1e3a8a">🎫 Tickets today</div><div style="font-size:12px;color:#1e40af">Total '+day.length+' | Resolved '+resolved+' | Pending '+pending+'</div></div>'+
+      '<button class="btn btn-pink" onclick="showScreen('ticketsScreen')">Open</button>'+
+      '</div></div>';
+  }
+  if(follow.length){
+    html+='<div class="card" style="background:#fff7ed;border:1px solid #fb923c">'+
+      '<div style="font-weight:800;color:#9a3412">📌 Follow-ups</div>'+
+      follow.slice(0,4).map(t=>'<div style="margin-top:8px;font-size:12px;color:#9a3412"><b>'+escapeHtml((t.ticketNumber||'Item') )+'</b>: '+escapeHtml((t.followUpNote||'Follow-up needed'))+'</div>').join('')+
+      (follow.length>4?('<div style="margin-top:6px;font-size:12px;color:#9a3412">+'+(follow.length-4)+' more</div>'):'')+
+      '</div>';
+  }
+  // Append, don’t overwrite project alerts if present
+  const ap=document.getElementById('activePanel');
+  ap.innerHTML = (ap.innerHTML||'') + html;
+}
+
+function getProjectsDueSoon(projects,days){
+  const now=new Date(getToday()+'T12:00:00');
+  const max=new Date(now);max.setDate(now.getDate()+days);
+  return projects
+    .filter(p=>p.dueDate && new Date(p.dueDate+'T12:00:00')<=max)
+    .sort((a,b)=>new Date(a.dueDate)-new Date(b.dueDate));
+}
+
+async function renderProjectsList(){
+  const projects=await dbGetAll('projects');
+  projects.sort((a,b)=> (a.dueDate||'9999-12-31').localeCompare(b.dueDate||'9999-12-31'));
+  if(!projects.length){
+    document.getElementById('projectsList').innerHTML='<div class="card"><p style="color:#888;text-align:center">No projects yet.</p></div>';
+    return;
+  }
+  const today=getToday();
+  document.getElementById('projectsList').innerHTML=projects.map(p=>{
+    const due=p.dueDate||'';
+    const dueSoon=due && due<=addDaysISO(today,14) && p.status==='active';
+    const badge = p.status==='completed' ? '<span style="color:#16a34a;font-weight:800">✅ Completed</span>' :
+                  p.status==='on_hold' ? '<span style="color:#b45309;font-weight:800">⏸ On Hold</span>' :
+                  (dueSoon?'<span style="color:#dc2626;font-weight:800">⏳ Due soon</span>':'<span style="color:#2563eb;font-weight:800">🟦 Active</span>');
+    return '<div class="card">'+
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">'+
+      '<div style="flex:1"><div style="font-weight:800">'+escapeHtml(p.name)+'</div>'+
+      (due?('<div style="font-size:12px;color:#666;margin-top:2px">Due: <b>'+due+'</b></div>'):'')+
+      (p.notes?('<div style="font-size:12px;color:#666;margin-top:6px">'+escapeHtml(p.notes).slice(0,160)+'</div>'):'')+
+      '</div><div style="text-align:right">'+badge+'</div></div>'+
+      '<div class="btn-row" style="margin-top:10px">'+
+      '<button class="btn btn-sm btn-cyan btn-half" onclick="editProject(\\''+p.id+'\\')">Edit</button>'+
+      '<button class="btn btn-sm btn-red btn-half" onclick="deleteProject(\\''+p.id+'\\')">Delete</button>'+
+      '</div></div>';
+  }).join('');
+}
+
+function showAddProject(){
+  editingProjectId=null;
+  document.getElementById('projectEditTitle').textContent='+ Add Project';
+  document.getElementById('projectName').value='';
+  document.getElementById('projectDue').value='';
+  document.getElementById('projectNotes').value='';
+  document.getElementById('projectStatus').value='active';
+  showScreen('projectEditScreen');
+}
+
+async function editProject(id){
+  const p=await dbGet('projects',id);
+  if(!p){return}
+  editingProjectId=id;
+  document.getElementById('projectEditTitle').textContent='Edit Project';
+  document.getElementById('projectName').value=p.name||'';
+  document.getElementById('projectDue').value=p.dueDate||'';
+  document.getElementById('projectNotes').value=p.notes||'';
+  document.getElementById('projectStatus').value=p.status||'active';
+  showScreen('projectEditScreen');
+}
+
+async function saveProject(){
+  const name=document.getElementById('projectName').value.trim();
+  const due=document.getElementById('projectDue').value;
+  const notes=document.getElementById('projectNotes').value.trim();
+  const status=document.getElementById('projectStatus').value;
+  if(!name){alert('Project name required');return}
+  const id=editingProjectId||('PRJ'+Date.now());
+  await dbPut('projects',{id,name,dueDate:due,notes,status,updatedAt:getTime()});
+  showScreen('projectsScreen');
+}
+
+async function deleteProject(id){
+  if(!confirm('Delete this project?'))return;
+  await dbDelete('projects',id);
+  await renderProjectsList();
+}
+
+// ==============================
+// TICKETS — simple, timestamped action log
+let editingTicketId=null;
+let editingTicketType='ticket'; // 'ticket' or 'work_item'
+let ticketActions=[];
+
+async function startTicketCard(){editingTicketType='ticket';await openTicketEditor(null)}
+async function startWorkItem(){editingTicketType='work_item';await openTicketEditor(null)}
+
+async function openTicketEditor(id){
+  editingTicketId=id;
+  ticketActions=[];
+  document.getElementById('ticketEditTitle').textContent = id ? 'Edit Ticket Card' : (editingTicketType==='ticket' ? '+ Ticket Card' : '+ Work Item');
+  // reset fields
+  document.getElementById('ticketNumber').value='';
+  document.getElementById('ticketSubject').value='';
+  document.getElementById('ticketLocation').value='';
+  document.getElementById('ticketDevice').value='';
+  document.getElementById('ticketIp').value='';
+  document.getElementById('ticketStatus').value='in_progress';
+  document.getElementById('ticketFollowUp').value='no';
+  document.getElementById('ticketFollowUpNote').value='';
+  document.getElementById('ticketActionInput').value='';
+  await fillProjectDropdown();
+  if(id){
+    const t=await dbGet('sessions',id);
+    if(t){
+      editingTicketType=t.type||editingTicketType;
+      document.getElementById('ticketNumber').value=t.ticketNumber||'';
+      document.getElementById('ticketSubject').value=t.subject||'';
+      document.getElementById('ticketLocation').value=t.location||'';
+      document.getElementById('ticketDevice').value=t.device||'';
+      document.getElementById('ticketIp').value=t.ip||'';
+      document.getElementById('ticketStatus').value=t.status||'in_progress';
+      document.getElementById('ticketFollowUp').value=t.followUp||'no';
+      document.getElementById('ticketFollowUpNote').value=t.followUpNote||'';
+      document.getElementById('ticketProject').value=t.projectId||'';
+      ticketActions = Array.isArray(t.actions) ? t.actions : [];
+    }
+  }else{
+    // default: if only 2 projects due this week, don't force
+  }
+  renderTicketActionList();
+  showScreen('ticketEditScreen');
+}
+
+function addTicketAction(){
+  const v=document.getElementById('ticketActionInput').value.trim();
+  if(!v){return}
+  ticketActions.push({time:getTime(),text:v});
+  document.getElementById('ticketActionInput').value='';
+  renderTicketActionList();
+}
+
+function renderTicketActionList(){
+  const el=document.getElementById('ticketActionList');
+  if(!ticketActions.length){el.innerHTML='<p style="color:#888;font-size:12px">No actions yet.</p>';return}
+  el.innerHTML=ticketActions.map((a,i)=>
+    '<div style="display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid #eee">'+
+    '<div><span class="time">'+a.time.display+'</span>'+escapeHtml(a.text)+'</div>'+
+    '<button class="btn btn-sm btn-red" onclick="deleteTicketAction('+i+')">X</button>'+
+    '</div>'
+  ).join('');
+}
+
+function deleteTicketAction(i){
+  ticketActions.splice(i,1);
+  renderTicketActionList();
+}
+
+async function fillProjectDropdown(){
+  const projects=await dbGetAll('projects');
+  const active=projects.filter(p=>p.status!=='completed');
+  const opts = ['<option value=\"\">-- None --</option>']
+    .concat(active.map(p=>'<option value=\"'+p.id+'\">'+escapeHtml(p.name)+(p.dueDate?(' (Due '+p.dueDate+')'):'')+'</option>'));
+  document.getElementById('ticketProject').innerHTML=opts.join('');
+}
+
+async function saveTicketCard(){
+  const ticketNumber=document.getElementById('ticketNumber').value.trim();
+  const subject=document.getElementById('ticketSubject').value.trim();
+  if(editingTicketType==='ticket' && !ticketNumber && !subject){alert('Enter a ticket # or a subject');return}
+  if(editingTicketType==='work_item' && !subject){alert('Enter a subject');return}
+
+  const projectId=document.getElementById('ticketProject').value||null;
+  let projectName=null;
+  if(projectId){
+    const p=await dbGet('projects',projectId);
+    projectName=p?.name||null;
+  }
+  const id=editingTicketId||('T'+Date.now());
+  const existing = editingTicketId ? await dbGet('sessions',id) : null;
+  const createdAt = existing?.createdAt || getTime();
+
+  const data={
+    id,
+    type:editingTicketType,
+    date:getToday(),
+    createdAt,
+    updatedAt:getTime(),
+    closedAt: existing?.closedAt || null,
+    ticketNumber: ticketNumber || null,
+    subject: subject || null,
+    location: document.getElementById('ticketLocation').value.trim()||null,
+    device: document.getElementById('ticketDevice').value.trim()||null,
+    ip: document.getElementById('ticketIp').value.trim()||null,
+    status: document.getElementById('ticketStatus').value,
+    followUp: document.getElementById('ticketFollowUp').value,
+    followUpNote: document.getElementById('ticketFollowUpNote').value.trim()||null,
+    projectId,
+    projectName,
+    actions: ticketActions
+  };
+  await dbPut('sessions',data);
+  editingTicketId=id;
+  alert('Saved');
+}
+
+async function closeTicketCard(){
+  await saveTicketCard();
+  const t=await dbGet('sessions',editingTicketId);
+  if(!t){return}
+  t.closedAt=getTime();
+  t.updatedAt=getTime();
+  await dbPut('sessions',t);
+  showScreen('ticketsScreen');
+}
+
+async function renderTicketsToday(){
+  const all=await dbGetAll('sessions');
+  const today=all.filter(s=>s.date===getToday() && (s.type==='ticket' || s.type==='work_item'))
+    .sort((a,b)=> (b.updatedAt?.ms||0)-(a.updatedAt?.ms||0));
+  if(!today.length){
+    document.getElementById('ticketsTodayList').innerHTML='<div class="card"><p style="color:#888;text-align:center">No ticket cards yet today.</p></div>';
+    return;
+  }
+  const iconStatus = (st)=>{
+    const map={resolved:'✅',in_progress:'🟦',pending_customer:'🟡',pending_internal:'🟡',escalated_onsite:'🚗'};
+    return map[st]||'🟦';
+  };
+  document.getElementById('ticketsTodayList').innerHTML = today.map(t=>{
+    const title=(t.ticketNumber?('<b>'+escapeHtml(t.ticketNumber)+'</b> – '):'')+escapeHtml(t.subject||'Work Item');
+    const sub=[t.location?escapeHtml(t.location):null, t.projectName?('Project: '+escapeHtml(t.projectName)):null].filter(Boolean).join(' | ');
+    const follow=(t.followUp==='yes' || t.followUpNote)?('<div style="margin-top:6px;font-size:12px;color:#b45309">📌 '+escapeHtml(t.followUpNote||'Follow-up needed')+'</div>'):'';
+    const closed=t.closedAt?'<span style="color:#16a34a;font-weight:800">Closed</span>':'<span style="color:#2563eb;font-weight:800">Open</span>';
+    return '<div class="card">'+
+      '<div style="display:flex;justify-content:space-between;gap:10px">'+
+      '<div style="flex:1"><div>'+iconStatus(t.status)+' '+title+'</div>'+
+      (sub?('<div style="font-size:12px;color:#666;margin-top:4px">'+sub+'</div>'):'')+
+      (t.actions?.length?('<div style="font-size:12px;color:#666;margin-top:6px">Actions: '+t.actions.length+'</div>'):'')+
+      follow+
+      '</div><div style="text-align:right">'+closed+'<div style="font-size:12px;color:#666;margin-top:4px">'+(t.status||'').replaceAll('_',' ')+'</div></div>'+
+      '</div>'+
+      '<div class="btn-row" style="margin-top:10px">'+
+        '<button class="btn btn-sm btn-indigo btn-half" onclick="openTicketEditor(\\''+t.id+'\\')">Edit</button>'+
+        '<button class="btn btn-sm btn-red btn-half" onclick="deleteTicket(\\''+t.id+'\\')">Delete</button>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+async function deleteTicket(id){
+  if(!confirm('Delete this ticket card?'))return;
+  await dbDelete('sessions',id);
+  await renderTicketsToday();
+}
+
+// ==============================
+// DAILY BUNDLE EXPORT (ZIP, no dependencies)
+function escapeHtml(s){return String(s||'').replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]))}
+function addDaysISO(iso,days){const d=new Date(iso+'T12:00:00');d.setDate(d.getDate()+days);return d.toISOString().split('T')[0]}
+
+function crc32(buf){
+  let crc = 0 ^ (-1);
+  for (let i = 0; i < buf.length; i++) {
+    crc = (crc >>> 8) ^ CRC_TABLE[(crc ^ buf[i]) & 0xFF];
+  }
+  return (crc ^ (-1)) >>> 0;
+}
+const CRC_TABLE = (() => {
+  let c, table = new Uint32Array(256);
+  for (let n = 0; n < 256; n++) {
+    c = n;
+    for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+    table[n] = c >>> 0;
+  }
+  return table;
+})();
+
+function u16(v){const a=new Uint8Array(2);a[0]=v&255;a[1]=(v>>>8)&255;return a}
+function u32(v){const a=new Uint8Array(4);a[0]=v&255;a[1]=(v>>>8)&255;a[2]=(v>>>16)&255;a[3]=(v>>>24)&255;return a}
+function concat(arrays){
+  let total=0;arrays.forEach(a=>total+=a.length);
+  const out=new Uint8Array(total);let off=0;
+  arrays.forEach(a=>{out.set(a,off);off+=a.length});
+  return out;
+}
+
+function makeZip(fileMap){
+  // fileMap: { "path/name.txt": "content" }
+  const encoder=new TextEncoder();
+  const localParts=[];
+  const centralParts=[];
+  let offset=0;
+  let fileCount=0;
+
+  for(const [name,content] of Object.entries(fileMap)){
+    fileCount++;
+    const data = (content instanceof Uint8Array) ? content : encoder.encode(String(content));
+    const crc = crc32(data);
+    const nameBytes = encoder.encode(name);
+    // Local file header
+    const localHeader = concat([
+      u32(0x04034b50), // signature
+      u16(20), // version
+      u16(0), // flags
+      u16(0), // method store
+      u16(0), // mod time
+      u16(0), // mod date
+      u32(crc),
+      u32(data.length),
+      u32(data.length),
+      u16(nameBytes.length),
+      u16(0), // extra len
+      nameBytes
+    ]);
+    localParts.push(localHeader, data);
+
+    // Central directory header
+    const centralHeader = concat([
+      u32(0x02014b50),
+      u16(20),u16(20),
+      u16(0),u16(0),
+      u16(0),u16(0),
+      u32(crc),
+      u32(data.length),
+      u32(data.length),
+      u16(nameBytes.length),
+      u16(0),u16(0),
+      u16(0),u16(0),
+      u32(0),
+      u32(offset),
+      nameBytes
+    ]);
+    centralParts.push(centralHeader);
+
+    offset += localHeader.length + data.length;
+  }
+
+  const centralDir = concat(centralParts);
+  const end = concat([
+    u32(0x06054b50),
+    u16(0),u16(0),
+    u16(fileCount),u16(fileCount),
+    u32(centralDir.length),
+    u32(offset),
+    u16(0)
+  ]);
+
+  const zipData = concat([...localParts, centralDir, end]);
+  return new Blob([zipData],{type:'application/zip'});
+}
+
+function downloadBlob(blob,filename){
+  const link=document.createElement('a');
+  link.href=URL.createObjectURL(blob);
+  link.download=filename;
+  link.click();
+  setTimeout(()=>URL.revokeObjectURL(link.href),2000);
+}
+
+async function exportSnapshotNow(){
+  try{
+    const dateStr=getToday();
+    const ts=new Date();
+    const hhmm=ts.toTimeString().slice(0,5).replace(':','');
+    const kronos=await dbGet('kronos',dateStr) || {date:dateStr,punches:[],pto:[],overtimeReason:null};
+    const clarityAll=await dbGetAll('clarityEntries');
+    const clarity=clarityAll.filter(e=>e.date===dateStr);
+    const concurAll=await dbGetAll('concurEntries');
+    const concur=concurAll.filter(e=>e.date===dateStr);
+    const notesAll=await dbGetAll('notes');
+    const notes=notesAll.filter(n=>n.date===dateStr);
+    const sessionsAll=await dbGetAll('sessions');
+    const sessions=sessionsAll.filter(s=>s.date===dateStr);
+    const practices=await dbGetAll('practices');
+    const projects=await dbGetAll('projects');
+    const settings=await dbGetAll('settings');
+    const snapshot={schema:'wcc.snapshot.v13',date:dateStr,generatedAt:getTime(),kronos,clarityEntries:clarity,concurEntries:concur,quickNotes:notes,sessions,practices,projects,settings};
+    const base='WCC_SNAPSHOT_'+dateStr+'_'+hhmm;
+    const files={ [base+'/snapshot_'+dateStr+'_'+hhmm+'.json']: JSON.stringify(snapshot,null,2) };
+    const zip=makeZip(files);
+    downloadBlob(zip, base+'.zip');
+    await dbPut('settings',{id:'lastSnapshotAt',value: new Date().toISOString()});
+    showToast('Snapshot exported: '+base+'.zip');
+  }catch(err){ alert('Snapshot failed: '+err); }
+}
+
+async function exportDailyBundle(){
+  const balance=await getCloseDayBalance();
+  const v=validateDayForEOD(balance);
+  if(!v.ok){alert(v.message);return}
+
+  const dateStr=getToday();
+  const eodText=await buildEODText(dateStr);
+
+  const kronos=await dbGet('kronos',dateStr) || {date:dateStr,punches:[],pto:[],overtimeReason:null};
+  const clarityAll=await dbGetAll('clarityEntries');
+  const clarity=clarityAll.filter(e=>e.date===dateStr);
+  const concurAll=await dbGetAll('concurEntries');
+  const concur=concurAll.filter(e=>e.date===dateStr);
+  const notesAll=await dbGetAll('notes');
+  const notes=notesAll.filter(n=>n.date===dateStr);
+  const sessionsAll=await dbGetAll('sessions');
+  const tickets=sessionsAll.filter(s=>s.date===dateStr && (s.type==='ticket' || s.type==='work_item'));
+  const projects=await dbGetAll('projects');
+
+  const dailyJson={
+    schema:'wcc.daily.v13',
+    date:dateStr,
+    generatedAt:getTime(),
+    kronos,
+    clarityEntries:clarity,
+    concurEntries:concur,
+    quickNotes:notes,
+    tickets,
+    projects
+  };
+
+  const base='WCC_'+dateStr;
+  const files={
+    [base+'/eod_'+dateStr+'.txt']: eodText,
+    [base+'/daily_'+dateStr+'.json']: JSON.stringify(dailyJson,null,2),
+    [base+'/clarity_'+dateStr+'.json']: JSON.stringify(clarity,null,2),
+    [base+'/concur_'+dateStr+'.json']: JSON.stringify(concur,null,2),
+    [base+'/tickets_'+dateStr+'.json']: JSON.stringify(tickets,null,2),
+    [base+'/kronos_'+dateStr+'.json']: JSON.stringify(kronos,null,2),
+    [base+'/notes_'+dateStr+'.json']: JSON.stringify(notes,null,2)
+  };
+
+  const zip=makeZip(files);
+  downloadBlob(zip, base+'.zip');
+  await dbPut('settings',{id:'lastDailyExportDate',value:dateStr});
+  showToast('Daily bundle exported: '+base+'.zip');
+  updateExportReminder().catch(()=>{});
+}
+
+// ==============================
+
+initDB().then(()=>{showScreen('menuScreen');updateKronosStatus();updateSaveStatus();updateExportReminder().catch(()=>{})}).catch(e=>alert('DB Error: '+e.message));
+</script>
+</body>
+</html>
