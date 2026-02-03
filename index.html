@@ -124,6 +124,10 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
 <!-- KRONOS SCREEN -->
 <div id="kronosScreen" class="hidden">
   <h1>⏰ Kronos Time Clock</h1>
+  <div id="kronosLockBanner" class="hidden">
+    <div class="warning-box">🔒 Day locked — EOD already exported. Punches are read-only.</div>
+  </div>
+  <div id="kronosAddSection">
   <div class="card">
     <div class="btn-row">
       <button class="btn btn-green btn-half" onclick="kronosPunch('in')" style="padding:20px">🟢 Clock In</button>
@@ -133,10 +137,6 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
       <button class="btn btn-yellow btn-half" onclick="kronosPunch('lunch_start')" style="padding:20px">🍴 Start Lunch</button>
       <button class="btn btn-teal btn-half" onclick="kronosPunch('lunch_end')" style="padding:20px">🍴 End Lunch</button>
     </div>
-  </div>
-  <div class="card">
-    <div class="section-title">Today's Punches</div>
-    <div id="kronosPunchesList"></div>
   </div>
   <div class="card">
     <div class="section-title">PTO / Time Off</div>
@@ -158,13 +158,21 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
     <input type="time" id="manualPunchTime">
     <button class="btn btn-orange btn-full" onclick="addManualPunch()">+ Add Manual</button>
   </div>
+  </div>
+  <div class="card">
+    <div class="section-title">Today's Punches</div>
+    <div id="kronosPunchesList"></div>
+  </div>
   <button class="btn btn-gray btn-full" onclick="showScreen('menuScreen')">← Back</button>
 </div>
 
 <!-- CLARITY TIME SCREEN -->
 <div id="clarityTimeScreen" class="hidden">
   <h1>⏱️ Clarity Time Entry</h1>
-  <div class="card">
+  <div id="clarityLockBanner" class="hidden">
+    <div class="warning-box">🔒 Day locked — EOD already exported. Entries are read-only.</div>
+  </div>
+  <div id="clarityAddForm" class="card">
     <div class="section-title">Add Time Entry</div>
     <select id="clarityEntryCategory"></select>
     <div class="btn-row">
@@ -559,7 +567,48 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
   <button class="btn btn-gray btn-full" onclick="showScreen('menuScreen')">← Cancel</button>
 </div>
 
-<!-- MODALS -->
+<!-- ACTIVE SESSION -->
+<div id="activeSessionScreen" class="hidden">
+  <h1 id="activeSessionTitle">🖥️ Session</h1>
+  <div class="card" style="text-align:center">
+    <div style="font-size:12px;color:#888">Session Timer</div>
+    <div id="activeSessionTimer" style="font-size:36px;font-weight:700;font-family:monospace;color:#1a365d">0:00:00</div>
+    <div id="activeSessionStartedAt" style="font-size:11px;color:#888"></div>
+  </div>
+  <div id="activeSessionLockBanner" class="hidden">
+    <div class="warning-box">🔒 Day locked — EOD already exported. Entries are read-only.</div>
+  </div>
+  <div id="activeSessionAddSection">
+    <div class="card">
+      <div class="section-title">Quick Log Time</div>
+      <div class="btn-row">
+        <button class="btn btn-indigo btn-half" onclick="sessionQuickAdd(15)">+15m</button>
+        <button class="btn btn-indigo btn-half" onclick="sessionQuickAdd(30)">+30m</button>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-indigo btn-half" onclick="sessionQuickAdd(60)">+1h</button>
+        <button class="btn btn-indigo btn-half" onclick="sessionQuickAdd(120)">+2h</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-title">Custom Time</div>
+      <div class="btn-row">
+        <input type="number" id="sessionHours" placeholder="Hours" min="0" max="12" step="1" style="flex:1">
+        <input type="number" id="sessionMinutes" placeholder="Minutes" min="0" max="45" step="15" style="flex:1">
+      </div>
+      <input type="text" id="sessionNotes" placeholder="Notes (optional)">
+      <button class="btn btn-green btn-full" onclick="sessionAddCustom()">+ Add Time Entry</button>
+    </div>
+  </div>
+  <div id="activeSessionExtras"></div>
+  <div class="card">
+    <div class="section-title" id="activeSessionLogTitle">Logged today</div>
+    <div id="activeSessionLogList"></div>
+    <div id="activeSessionTotal" style="margin-top:8px;font-weight:700;text-align:center"></div>
+  </div>
+  <button class="btn btn-green btn-full" onclick="endActiveSession()">✅ Done — Back to Menu</button>
+  <button class="btn btn-gray btn-full" onclick="showScreen('menuScreen')">← Back</button>
+</div>
 <div id="quickNoteModal" class="modal hidden" style="display:none">
   <div class="modal-content">
     <div class="modal-header"><h2>📝 Quick Note</h2></div>
@@ -683,6 +732,33 @@ function getTimestamp(){const d=new Date();return getToday()+'_'+String(d.getHou
 function updateClock(){const n=new Date();document.getElementById('clockTime').textContent=n.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});document.getElementById('clockDate').textContent=n.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'})}
 setInterval(updateClock,1000);updateClock();
 
+// DAY LOCK CHECK — after EOD export, entries become read-only
+async function isDayLocked(){
+  const s=await dbGet('settings','lastDailyExportDate');
+  return s && s.value===getToday();
+}
+
+// QUICK ADD CLARITY MINUTES (from Clarity Time screen)
+async function quickAddClarityMinutes(minutes){
+  if(await isDayLocked()){alert('Day is locked after EOD export.');return}
+  const category=document.getElementById('clarityEntryCategory').value;
+  if(!category){alert('Select a category first');return}
+  const cats=await getClarityCategories();
+  const cat=cats.find(c=>c.id===category);
+  if(!cat)return;
+  const rounded=roundTo15Min(minutes);
+  const notes=document.getElementById('clarityEntryNotes').value.trim();
+  const entry={id:'CL'+Date.now(),date:getToday(),category,categoryName:cat.name,minutes:rounded,rawMinutes:minutes,notes,time:getTime()};
+  await dbPut('clarityEntries',entry);
+  document.getElementById('clarityEntryNotes').value='';
+  showToast('+'+rounded+'m '+cat.name);
+  await renderClarityEntries();
+}
+
+async function suggestClarityCategoryFromActiveSession(cats){
+  // stub — could be enhanced to pre-select based on active session type
+}
+
 // 7-minute rounding
 function getKronosRounded(timeStr){
   const[h,m]=timeStr.split(':').map(Number);
@@ -729,8 +805,9 @@ function showScreen(id){
   document.querySelectorAll('.container > div').forEach(el=>el.classList.add('hidden'));
   document.getElementById(id).classList.remove('hidden');
   if(id==='menuScreen')updateMenuScreen();
-  if(id==='kronosScreen'){renderKronosPunches();renderPTOList()}
+  if(id==='kronosScreen'){renderKronosPunches();renderPTOList();isDayLocked().then(locked=>{document.getElementById('kronosLockBanner').classList.toggle('hidden',!locked);document.getElementById('kronosAddSection').classList.toggle('hidden',locked)})}
   if(id==='clarityTimeScreen')initClarityTimeScreen();
+  if(id!=='activeSessionScreen'&&activeSessionTimerInterval){clearInterval(activeSessionTimerInterval);activeSessionTimerInterval=null}
   if(id==='clarityCategoriesScreen')renderClarityCategories();
   if(id==='concurScreen')initConcurScreen();
   if(id==='practicesScreen')renderPracticesList();
@@ -746,6 +823,7 @@ async function updateMenuScreen(){await updateKronosStatus();await renderMenuPro
 async function getKronosToday(){const today=getToday();let r=await dbGet('kronos',today);if(!r)r={date:today,punches:[],pto:[],overtimeReason:null};if(!r.pto)r.pto=[];return r}
 
 async function kronosPunch(type){
+  if(await isDayLocked()){alert('Day is locked after EOD export.');return}
   const r=await getKronosToday(),t=getTime(),kt=getKronosRounded(t.display);
   r.punches.push({type,time:t.display,kronosTime:kt,full:t.full,ms:t.ms});
   await dbPut('kronos',r);
@@ -753,6 +831,7 @@ async function kronosPunch(type){
 }
 
 async function addManualPunch(){
+  if(await isDayLocked()){alert('Day is locked after EOD export.');return}
   const type=document.getElementById('manualPunchType').value,tv=document.getElementById('manualPunchTime').value;
   if(!tv){alert('Select time');return}
   const r=await getKronosToday(),kt=getKronosRounded(tv);
@@ -764,6 +843,7 @@ async function addManualPunch(){
 }
 
 async function addPTO(){
+  if(await isDayLocked()){alert('Day is locked after EOD export.');return}
   const hours=parseFloat(document.getElementById('ptoHours').value)||0;
   const reason=document.getElementById('ptoReason').value.trim();
   if(!hours||!reason){alert('Enter hours and reason');return}
@@ -790,7 +870,20 @@ async function deletePTO(idx){
 async function renderKronosPunches(){
   const r=await getKronosToday(),labels={in:'🟢 Clock In',out:'🔴 Clock Out',lunch_start:'🍴 Lunch Start',lunch_end:'🍴 Lunch End'};
   if(!r.punches.length){document.getElementById('kronosPunchesList').innerHTML='<p style="color:#888;text-align:center">No punches</p>';return}
-  document.getElementById('kronosPunchesList').innerHTML=r.punches.map(p=>'<div class="entry" style="display:flex;justify-content:space-between"><span>'+labels[p.type]+'</span><span><span class="kronos-time">'+p.kronosTime+'</span>'+(p.manual?' (manual)':'')+'</span></div>').join('');
+  const locked=await isDayLocked();
+  document.getElementById('kronosPunchesList').innerHTML=r.punches.map((p,i)=>{
+    const delBtn=locked?'':'<button class="btn btn-sm btn-red" onclick="deleteKronosPunch('+i+')" style="margin-left:8px">X</button>';
+    return '<div class="entry" style="display:flex;justify-content:space-between;align-items:center"><span>'+labels[p.type]+'</span><span><span class="kronos-time">'+p.kronosTime+'</span>'+(p.manual?' (manual)':'')+delBtn+'</span></div>';
+  }).join('');
+}
+
+async function deleteKronosPunch(index){
+  if(await isDayLocked()){alert('Day is locked after EOD export.');return}
+  if(!confirm('Delete this punch?'))return;
+  const r=await getKronosToday();
+  r.punches.splice(index,1);
+  await dbPut('kronos',r);
+  renderKronosPunches();updateKronosStatus();
 }
 
 async function updateKronosStatus(){
@@ -868,6 +961,9 @@ async function resetDefaultClarity(){
 
 // CLARITY TIME ENTRIES
 async function initClarityTimeScreen(){
+  const locked=await isDayLocked();
+  document.getElementById('clarityLockBanner').classList.toggle('hidden',!locked);
+  document.getElementById('clarityAddForm').classList.toggle('hidden',locked);
   const c=await getClarityCategories();
   document.getElementById('clarityEntryCategory').innerHTML='<option value="">-- Category --</option>'+c.map(x=>'<option value="'+x.id+'">'+x.name+'</option>').join('');
   document.getElementById('clarityEntryHours').value='';
@@ -878,6 +974,7 @@ async function initClarityTimeScreen(){
 }
 
 async function addClarityEntry(){
+  if(await isDayLocked()){alert('Day is locked after EOD export.');return}
   const category=document.getElementById('clarityEntryCategory').value;
   const hours=parseInt(document.getElementById('clarityEntryHours').value)||0;
   const minutes=parseInt(document.getElementById('clarityEntryMinutes').value)||0;
@@ -899,6 +996,7 @@ async function addClarityEntry(){
 async function renderClarityEntries(){
   const entries=await dbGetAll('clarityEntries');
   const todayEntries=entries.filter(e=>e.date===getToday());
+  const locked=await isDayLocked();
   if(!todayEntries.length){
     document.getElementById('clarityEntryList').innerHTML='<p style="color:#888;text-align:center">No time entries</p>';
     document.getElementById('clarityTotalDisplay').innerHTML='<div style="text-align:center;font-size:18px;font-weight:700">Total: 0:00</div>';
@@ -907,12 +1005,13 @@ async function renderClarityEntries(){
   let total=0;
   document.getElementById('clarityEntryList').innerHTML=todayEntries.map(e=>{
     total+=e.minutes;
-    return'<div class="time-entry-item"><div><b>'+e.categoryName+'</b>'+(e.notes?' - '+e.notes:'')+'</div><div style="text-align:right"><span style="font-weight:600">'+Math.floor(e.minutes/60)+':'+String(e.minutes%60).padStart(2,'0')+'</span><br><button class="btn btn-sm btn-red" onclick="deleteClarityEntry(\''+e.id+'\')">X</button></div></div>';
+    const delBtn=locked?'':'<button class="btn btn-sm btn-red" onclick="deleteClarityEntry(\''+e.id+'\')">X</button>';
+    return'<div class="time-entry-item"><div><b>'+e.categoryName+'</b>'+(e.notes?' - '+e.notes:'')+'</div><div style="text-align:right"><span style="font-weight:600">'+Math.floor(e.minutes/60)+':'+String(e.minutes%60).padStart(2,'0')+'</span><br>'+delBtn+'</div></div>';
   }).join('');
   document.getElementById('clarityTotalDisplay').innerHTML='<div style="text-align:center;font-size:18px;font-weight:700">Total: '+Math.floor(total/60)+':'+String(total%60).padStart(2,'0')+'</div>';
 }
 
-async function deleteClarityEntry(id){await dbDelete('clarityEntries',id);await renderClarityEntries()}
+async function deleteClarityEntry(id){if(await isDayLocked()){alert('Day is locked after EOD export.');return}await dbDelete('clarityEntries',id);await renderClarityEntries()}
 
 async function getClarityTotalToday(){
   const entries=await dbGetAll('clarityEntries');
@@ -1329,14 +1428,120 @@ async function saveQuickNote(){
   closeQuickNoteModal();alert('Saved!');
 }
 
-// QUICK SESSION - adds clarity entry
+// ACTIVE SESSION SYSTEM
+const SESSION_TYPES={
+  'Remote Technical':{icon:'🖥️',clarityId:'remote_technical',color:'#2b6cb0'},
+  'In-Person Technical':{icon:'🏢',clarityId:'inperson_technical',color:'#2b6cb0',extras:['practice']},
+  'Remote ECW':{icon:'🏥',clarityId:'remote_ecw',color:'#319795'},
+  'In-Person ECW':{icon:'🏥',clarityId:'inperson_ecw',color:'#319795',extras:['practice']},
+  'Network':{icon:'🌐',clarityId:'network',color:'#805ad5'},
+  'Imaging':{icon:'💿',clarityId:'imaging',color:'#805ad5'},
+  'Admin':{icon:'📧',clarityId:'admin',color:'#718096'},
+  'Non-Project Travel':{icon:'🚗',clarityId:'nonproject_travel',color:'#dd6b20',extras:['mileage']}
+};
+let activeSessionType=null,activeSessionStartTime=null,activeSessionTimerInterval=null;
+
 async function quickSession(category){
-  const c=await getClarityCategories();
-  const cat=c.find(x=>x.name.toLowerCase().includes(category.toLowerCase().split(' ')[0]));
-  if(cat){
-    document.getElementById('clarityEntryCategory').value=cat.id;
+  const config=SESSION_TYPES[category];
+  if(!config){showScreen('clarityTimeScreen');return}
+  const locked=await isDayLocked();
+  activeSessionType=category;
+  activeSessionStartTime=Date.now();
+  document.getElementById('activeSessionTitle').textContent=config.icon+' '+category;
+  document.getElementById('activeSessionStartedAt').textContent='Started at '+new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true});
+  document.getElementById('sessionHours').value='';
+  document.getElementById('sessionMinutes').value='';
+  document.getElementById('sessionNotes').value='';
+  document.getElementById('activeSessionLockBanner').classList.toggle('hidden',!locked);
+  document.getElementById('activeSessionAddSection').classList.toggle('hidden',locked);
+  document.getElementById('activeSessionLogTitle').textContent='Logged for '+category+' today';
+  let extrasHtml='';
+  if(!locked){
+    if(config.extras?.includes('practice'))extrasHtml+='<div class="card"><button class="btn btn-teal btn-full" onclick="showScreen(\'concurScreen\')">🏥 Log Practice Visit / Mileage</button></div>';
+    if(config.extras?.includes('mileage'))extrasHtml+='<div class="card"><button class="btn btn-teal btn-full" onclick="showScreen(\'concurScreen\')">💳 Log Mileage</button></div>';
   }
-  showScreen('clarityTimeScreen');
+  document.getElementById('activeSessionExtras').innerHTML=extrasHtml;
+  clearInterval(activeSessionTimerInterval);
+  updateActiveSessionTimer();
+  activeSessionTimerInterval=setInterval(updateActiveSessionTimer,1000);
+  await renderActiveSessionLog();
+  showScreen('activeSessionScreen');
+}
+
+function updateActiveSessionTimer(){
+  if(!activeSessionStartTime)return;
+  const elapsed=Math.floor((Date.now()-activeSessionStartTime)/1000);
+  const hh=Math.floor(elapsed/3600),mm=Math.floor((elapsed%3600)/60),ss=elapsed%60;
+  document.getElementById('activeSessionTimer').textContent=hh+':'+String(mm).padStart(2,'0')+':'+String(ss).padStart(2,'0');
+}
+
+async function sessionQuickAdd(minutes){
+  if(await isDayLocked()){alert('Day is locked after EOD export.');return}
+  const config=SESSION_TYPES[activeSessionType];
+  if(!config)return;
+  const cats=await getClarityCategories();
+  const cat=cats.find(c=>c.id===config.clarityId);
+  if(!cat){alert('Category "'+config.clarityId+'" not found. Check Clarity Categories in Settings.');return}
+  const rounded=roundTo15Min(minutes);
+  const entry={id:'CL'+Date.now(),date:getToday(),category:config.clarityId,categoryName:cat.name,minutes:rounded,rawMinutes:minutes,notes:'',time:getTime()};
+  await dbPut('clarityEntries',entry);
+  showToast('+'+rounded+'m '+cat.name);
+  try{navigator.vibrate&&navigator.vibrate(30)}catch(e){}
+  await renderActiveSessionLog();
+}
+
+async function sessionAddCustom(){
+  if(await isDayLocked()){alert('Day is locked after EOD export.');return}
+  const config=SESSION_TYPES[activeSessionType];
+  if(!config)return;
+  const hours=parseInt(document.getElementById('sessionHours').value)||0;
+  const minutes=parseInt(document.getElementById('sessionMinutes').value)||0;
+  const notes=document.getElementById('sessionNotes').value.trim();
+  const totalMinutes=hours*60+minutes;
+  if(totalMinutes<=0){alert('Enter time');return}
+  const rounded=roundTo15Min(totalMinutes);
+  const cats=await getClarityCategories();
+  const cat=cats.find(c=>c.id===config.clarityId);
+  if(!cat){alert('Category not found');return}
+  const entry={id:'CL'+Date.now(),date:getToday(),category:config.clarityId,categoryName:cat.name,minutes:rounded,rawMinutes:totalMinutes,notes,time:getTime()};
+  await dbPut('clarityEntries',entry);
+  document.getElementById('sessionHours').value='';
+  document.getElementById('sessionMinutes').value='';
+  document.getElementById('sessionNotes').value='';
+  showToast('+'+Math.floor(rounded/60)+':'+String(rounded%60).padStart(2,'0')+' '+cat.name);
+  await renderActiveSessionLog();
+}
+
+async function renderActiveSessionLog(){
+  const config=SESSION_TYPES[activeSessionType];
+  if(!config)return;
+  const entries=await dbGetAll('clarityEntries');
+  const todayEntries=entries.filter(e=>e.date===getToday()&&e.category===config.clarityId);
+  const locked=await isDayLocked();
+  if(!todayEntries.length){
+    document.getElementById('activeSessionLogList').innerHTML='<p style="color:#888;text-align:center;font-size:13px">No entries yet</p>';
+    document.getElementById('activeSessionTotal').textContent='Total: 0:00';
+    return;
+  }
+  let total=0;
+  document.getElementById('activeSessionLogList').innerHTML=todayEntries.map(e=>{
+    total+=e.minutes;
+    const delBtn=locked?'':'<button class="btn btn-sm btn-red" onclick="deleteSessionEntry(\''+e.id+'\')">X</button>';
+    return '<div class="time-entry-item"><div><span style="font-size:12px;color:#888">'+e.time.display12+'</span>'+(e.notes?' — '+e.notes:'')+'</div><div style="text-align:right"><span style="font-weight:600">'+Math.floor(e.minutes/60)+':'+String(e.minutes%60).padStart(2,'0')+'</span><br>'+delBtn+'</div></div>';
+  }).join('');
+  document.getElementById('activeSessionTotal').textContent='Total: '+Math.floor(total/60)+':'+String(total%60).padStart(2,'0');
+}
+
+async function deleteSessionEntry(id){
+  if(await isDayLocked()){alert('Day is locked after EOD export.');return}
+  await dbDelete('clarityEntries',id);
+  await renderActiveSessionLog();
+}
+
+function endActiveSession(){
+  clearInterval(activeSessionTimerInterval);
+  activeSessionTimerInterval=null;activeSessionType=null;activeSessionStartTime=null;
+  showScreen('menuScreen');
 }
 
 // TODAY
@@ -1614,6 +1819,7 @@ async function clearAllData(){
 // ==============================
 // QUICK LOG (15 MIN) — low friction
 async function quickLog15(categoryId){
+  if(await isDayLocked()){alert('Day is locked after EOD export.');return}
   const cats=await getClarityCategories();
   const cat=cats.find(c=>c.id===categoryId);
   if(!cat){alert('Category not found. Add it in Settings → Clarity Categories.');return}
