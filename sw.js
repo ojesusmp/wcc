@@ -1,4 +1,4 @@
-const CACHE_NAME = 'wcc-v13-pwa-cache-3';
+const CACHE_NAME = 'wcc-v13-pwa-cache-4';
 const ASSETS = [
   './',
   './index.html',

@@ -95,6 +95,7 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
   </div>
 
   <button class="btn btn-blue btn-full" onclick="showScreen('newSessionScreen')" style="padding:16px;font-size:16px">▶️ Start New Session</button>
+  <button class="btn btn-red btn-full" onclick="showScreen('evidenceScreen')" style="padding:14px;font-size:15px">🛡️ Evidence Capture <span id="evidenceBadge" style="background:rgba(255,255,255,0.25);padding:2px 8px;border-radius:10px;font-size:12px"></span></button>
 
   <div class="btn-row">
     <button class="btn btn-pink btn-half" onclick="showScreen('ticketsScreen')">🎫 Tickets</button>
@@ -567,6 +568,135 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
   <button class="btn btn-gray btn-full" onclick="showScreen('menuScreen')">← Cancel</button>
 </div>
 
+<!-- EVIDENCE LIST -->
+<div id="evidenceScreen" class="hidden">
+  <h1>🛡️ Evidence Capture</h1>
+  <div id="evidenceLockBanner" class="hidden">
+    <div class="warning-box">🔒 Day locked — EOD exported. Evidence is read-only.</div>
+  </div>
+  <div id="evidenceAddSection">
+    <button class="btn btn-red btn-full" onclick="openEvidenceCapture(null)" style="padding:14px">+ Capture New Event</button>
+  </div>
+  <div class="card" style="margin-top:8px">
+    <div class="section-title">Today's Evidence</div>
+    <div id="evidenceTodayCount" style="font-size:12px;color:#666;margin-bottom:8px"></div>
+    <div id="evidenceList"></div>
+  </div>
+  <div class="card">
+    <div class="section-title">Export</div>
+    <button class="btn btn-purple btn-full" onclick="copyEvidenceJSON()">📋 Copy Evidence JSON (for Claude)</button>
+    <div id="evidenceCopied" class="hidden"><div class="success-box">✅ Copied to clipboard</div></div>
+  </div>
+  <button class="btn btn-gray btn-full" onclick="showScreen('menuScreen')">← Back</button>
+</div>
+
+<!-- EVIDENCE CAPTURE / EDIT -->
+<div id="evidenceCaptureScreen" class="hidden">
+  <h1 id="evidenceCaptureTitle">+ Capture Event</h1>
+  <div class="card">
+    <div class="section-title">What happened? *</div>
+    <textarea id="evDescription" placeholder="Describe the event factually. Who did what, when, where." style="min-height:100px"></textarea>
+
+    <div class="btn-row">
+      <div style="flex:1">
+        <div class="section-title">Date</div>
+        <input type="date" id="evDate">
+      </div>
+      <div style="flex:1">
+        <div class="section-title">Time</div>
+        <input type="time" id="evTime">
+      </div>
+    </div>
+
+    <div class="section-title">Event Type</div>
+    <select id="evEventType">
+      <option value="Verbal">Verbal</option>
+      <option value="Meeting">Meeting</option>
+      <option value="Call">Call</option>
+      <option value="Chat">Chat / Teams</option>
+      <option value="Email">Email</option>
+      <option value="iMessage">iMessage / Text</option>
+      <option value="Observation">Observation</option>
+      <option value="Site_Visit">Site Visit</option>
+      <option value="Photo_Evidence">Photo Evidence</option>
+    </select>
+
+    <div class="section-title">Category</div>
+    <select id="evCategory">
+      <option value="Retaliation">Retaliation</option>
+      <option value="Surveillance">Surveillance</option>
+      <option value="DisparateTreatment">Disparate Treatment</option>
+      <option value="HostileEnvironment">Hostile Environment</option>
+      <option value="Gaslighting">Gaslighting</option>
+      <option value="PublicShaming">Public Shaming</option>
+      <option value="MedicalLeave">Medical Leave / FMLA</option>
+      <option value="Workplace_Injury">Workplace Injury</option>
+      <option value="Equipment_Access">Equipment / Access</option>
+      <option value="Manufactured_Blame">Manufactured Blame</option>
+      <option value="Forced_Collaboration">Forced Collaboration</option>
+      <option value="PerformanceReview">Performance Review</option>
+      <option value="Technical_Work">Technical Work</option>
+      <option value="Other">Other</option>
+    </select>
+
+    <div class="section-title">Location (optional)</div>
+    <input type="text" id="evLocation" placeholder="WebEx, office, practice name...">
+
+    <div class="section-title">People Involved</div>
+    <div id="evActorChips" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px"></div>
+    <div class="btn-row" style="flex-wrap:wrap">
+      <button class="btn btn-sm btn-gray" onclick="toggleEvActor('Walter Lopez')">Walter</button>
+      <button class="btn btn-sm btn-gray" onclick="toggleEvActor('Linda Mimms')">Linda</button>
+      <button class="btn btn-sm btn-gray" onclick="toggleEvActor('Candi Barfield')">Candi</button>
+      <button class="btn btn-sm btn-gray" onclick="toggleEvActor('George Williams')">George</button>
+      <button class="btn btn-sm btn-gray" onclick="toggleEvActor('Kelly Trout')">Kelly</button>
+      <button class="btn btn-sm btn-gray" onclick="toggleEvActor('Byron Calahan')">Byron</button>
+      <button class="btn btn-sm btn-gray" onclick="toggleEvActor('Orlando Molina')">Orlando</button>
+    </div>
+    <div class="btn-row">
+      <input type="text" id="evActorCustom" placeholder="Other person..." style="flex:2;margin:0">
+      <button class="btn btn-sm btn-indigo" onclick="addCustomEvActor()" style="flex:0 0 auto">+ Add</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">Direct Quotes (optional)</div>
+    <div id="evQuotesList" style="margin-bottom:8px"></div>
+    <input type="text" id="evQuoteSpeaker" placeholder="Speaker name">
+    <textarea id="evQuoteText" placeholder="Exact words — verbatim" style="min-height:60px"></textarea>
+    <input type="text" id="evQuoteContext" placeholder="Context (when/where said)">
+    <button class="btn btn-indigo btn-full" onclick="addEvQuote()">+ Add Quote</button>
+  </div>
+
+  <div class="card">
+    <div class="btn-row">
+      <div style="flex:1">
+        <div class="section-title">Impact</div>
+        <select id="evImpact">
+          <option value="CRITICAL">🔴 Critical</option>
+          <option value="HIGH">🟠 High</option>
+          <option value="MEDIUM" selected>🟡 Medium</option>
+          <option value="LOW">🟢 Low</option>
+        </select>
+      </div>
+      <div style="flex:1">
+        <div class="section-title">Strength</div>
+        <select id="evStrength">
+          <option value="HIGH">High</option>
+          <option value="MEDIUM" selected>Medium</option>
+          <option value="LOW">Low</option>
+          <option value="CORROBORATING">Corroborating</option>
+        </select>
+      </div>
+    </div>
+    <div class="section-title">Notes (optional)</div>
+    <input type="text" id="evNotes" placeholder="Additional factual context">
+  </div>
+
+  <button class="btn btn-green btn-full" onclick="saveEvidence()" style="padding:14px">💾 Save Evidence</button>
+  <button class="btn btn-gray btn-full" onclick="showScreen('evidenceScreen')">← Cancel</button>
+</div>
+
 <!-- ACTIVE SESSION -->
 <div id="activeSessionScreen" class="hidden">
   <h1 id="activeSessionTitle">🖥️ Session</h1>
@@ -687,9 +817,9 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
 </div>
 
 <script>
-const DB_NAME='WorkCommandCenter',DB_VERSION=10;let db=null;
+const DB_NAME='WorkCommandCenter',DB_VERSION=11;let db=null;
 
-async function initDB(){return new Promise((res,rej)=>{const r=indexedDB.open(DB_NAME,DB_VERSION);r.onerror=()=>rej(r.error);r.onsuccess=()=>{db=r.result;res(db)};r.onupgradeneeded=e=>{const d=e.target.result;['sessions','kronos','notes','settings','clarityEntries','concurEntries','practices','projects'].forEach(s=>{if(!d.objectStoreNames.contains(s))d.createObjectStore(s,{keyPath:s==='kronos'?'date':'id'})})}})}
+async function initDB(){return new Promise((res,rej)=>{const r=indexedDB.open(DB_NAME,DB_VERSION);r.onerror=()=>rej(r.error);r.onsuccess=()=>{db=r.result;res(db)};r.onupgradeneeded=e=>{const d=e.target.result;['sessions','kronos','notes','settings','clarityEntries','concurEntries','practices','projects','evidence'].forEach(s=>{if(!d.objectStoreNames.contains(s))d.createObjectStore(s,{keyPath:s==='kronos'?'date':'id'})})}})}
 
 let __lastSavedAt=null;
 window.__wccDirty=false;
@@ -815,9 +945,13 @@ function showScreen(id){
   if(id==='weeklyReportsScreen')initWeeklyReports();
   if(id==='ticketsScreen')renderTicketsToday();
   if(id==='projectsScreen')renderProjectsList();
+  if(id==='evidenceScreen')renderEvidenceList();
 }
 
-async function updateMenuScreen(){await updateKronosStatus();await renderMenuProjectAlerts();await renderActivePanelSummary()}
+async function updateMenuScreen(){
+  await updateKronosStatus();await renderMenuProjectAlerts();await renderActivePanelSummary();
+  try{const all=await dbGetAll('evidence');const today=all.filter(e=>e.date===getToday());document.getElementById('evidenceBadge').textContent=today.length?today.length+' today':'';}catch(e){}
+}
 
 // KRONOS
 async function getKronosToday(){const today=getToday();let r=await dbGet('kronos',today);if(!r)r={date:today,punches:[],pto:[],overtimeReason:null};if(!r.pto)r.pto=[];return r}
@@ -1428,6 +1562,183 @@ async function saveQuickNote(){
   closeQuickNoteModal();alert('Saved!');
 }
 
+// ==============================
+// EVIDENCE CAPTURE MODULE
+// ==============================
+let editingEvidenceId=null;
+let evActors=[];
+let evQuotes=[];
+
+function generateEvidenceId(){
+  const now=new Date();
+  const yy=String(now.getFullYear()).slice(2);
+  const mm=String(now.getMonth()+1).padStart(2,'0');
+  const dd=String(now.getDate()).padStart(2,'0');
+  const hh=String(now.getHours()).padStart(2,'0');
+  const mi=String(now.getMinutes()).padStart(2,'0');
+  const ss=String(now.getSeconds()).padStart(2,'0');
+  const seq=String(Math.floor(Math.random()*99)+1).padStart(2,'0');
+  return 'WCC-'+yy+mm+dd+'-'+hh+mi+ss+'-'+seq;
+}
+
+async function openEvidenceCapture(id){
+  editingEvidenceId=id;
+  evActors=[];evQuotes=[];
+  if(id){
+    const rec=await dbGet('evidence',id);
+    if(!rec){alert('Record not found');return}
+    document.getElementById('evidenceCaptureTitle').textContent='✏️ Edit Evidence';
+    document.getElementById('evDescription').value=rec.description||'';
+    document.getElementById('evDate').value=rec.date||getToday();
+    document.getElementById('evTime').value=rec.time_of_event||'';
+    document.getElementById('evEventType').value=rec.event_type||'Verbal';
+    document.getElementById('evCategory').value=rec.category||'Other';
+    document.getElementById('evLocation').value=rec.location||'';
+    document.getElementById('evImpact').value=rec.impact_level||'MEDIUM';
+    document.getElementById('evStrength').value=rec.evidence_strength||'MEDIUM';
+    document.getElementById('evNotes').value=rec.notes||'';
+    evActors=(rec.actors_involved||[]).slice();
+    evQuotes=(rec.direct_quotes||[]).slice();
+  }else{
+    document.getElementById('evidenceCaptureTitle').textContent='+ Capture Event';
+    document.getElementById('evDescription').value='';
+    document.getElementById('evDate').value=getToday();
+    const now=new Date();
+    document.getElementById('evTime').value=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+    document.getElementById('evEventType').value='Verbal';
+    document.getElementById('evCategory').value='Other';
+    document.getElementById('evLocation').value='';
+    document.getElementById('evImpact').value='MEDIUM';
+    document.getElementById('evStrength').value='MEDIUM';
+    document.getElementById('evNotes').value='';
+  }
+  renderEvActorChips();renderEvQuotes();
+  document.getElementById('evQuoteSpeaker').value='';
+  document.getElementById('evQuoteText').value='';
+  document.getElementById('evQuoteContext').value='';
+  document.getElementById('evActorCustom').value='';
+  showScreen('evidenceCaptureScreen');
+}
+
+function toggleEvActor(name){
+  const idx=evActors.indexOf(name);
+  if(idx>=0)evActors.splice(idx,1);
+  else evActors.push(name);
+  renderEvActorChips();
+}
+
+function addCustomEvActor(){
+  const name=document.getElementById('evActorCustom').value.trim();
+  if(!name)return;
+  if(!evActors.includes(name))evActors.push(name);
+  document.getElementById('evActorCustom').value='';
+  renderEvActorChips();
+}
+
+function renderEvActorChips(){
+  document.getElementById('evActorChips').innerHTML=evActors.length?evActors.map(a=>'<span style="background:#e2e8f0;padding:4px 10px;border-radius:12px;font-size:12px;font-weight:600;display:inline-flex;align-items:center;gap:4px">'+escapeHtml(a)+' <span onclick="toggleEvActor(\''+escapeHtml(a).replace(/'/g,"\\'")+'\');" style="cursor:pointer;color:#e53e3e;font-weight:700">×</span></span>').join(''):'<span style="font-size:12px;color:#888">None selected</span>';
+}
+
+function addEvQuote(){
+  const speaker=document.getElementById('evQuoteSpeaker').value.trim();
+  const quote=document.getElementById('evQuoteText').value.trim();
+  const context=document.getElementById('evQuoteContext').value.trim();
+  if(!speaker||!quote){alert('Speaker and quote are required');return}
+  evQuotes.push({speaker,quote,context});
+  document.getElementById('evQuoteSpeaker').value='';
+  document.getElementById('evQuoteText').value='';
+  document.getElementById('evQuoteContext').value='';
+  renderEvQuotes();
+}
+
+function deleteEvQuote(idx){evQuotes.splice(idx,1);renderEvQuotes()}
+
+function renderEvQuotes(){
+  if(!evQuotes.length){document.getElementById('evQuotesList').innerHTML='';return}
+  document.getElementById('evQuotesList').innerHTML=evQuotes.map((q,i)=>'<div class="entry" style="background:#f7fafc;border-radius:8px;margin-bottom:6px;padding:8px"><div style="display:flex;justify-content:space-between"><b>'+escapeHtml(q.speaker)+'</b><button class="btn btn-sm btn-red" onclick="deleteEvQuote('+i+')" style="padding:2px 8px">X</button></div><div style="font-style:italic;font-size:13px;margin:4px 0">"'+escapeHtml(q.quote)+'"</div>'+(q.context?'<div style="font-size:11px;color:#888">'+escapeHtml(q.context)+'</div>':'')+'</div>').join('');
+}
+
+async function saveEvidence(){
+  const desc=document.getElementById('evDescription').value.trim();
+  if(!desc){alert('Description is required');return}
+  const record={
+    id:editingEvidenceId||generateEvidenceId(),
+    date:document.getElementById('evDate').value||getToday(),
+    time_of_event:document.getElementById('evTime').value||'',
+    event_type:document.getElementById('evEventType').value,
+    category:document.getElementById('evCategory').value,
+    location:document.getElementById('evLocation').value.trim(),
+    actors_involved:evActors.slice(),
+    description:desc,
+    direct_quotes:evQuotes.slice(),
+    evidence_strength:document.getElementById('evStrength').value,
+    impact_level:document.getElementById('evImpact').value,
+    notes:document.getElementById('evNotes').value.trim(),
+    captured_at:editingEvidenceId?undefined:getTime(),
+    modified_at:getTime(),
+    verified:true
+  };
+  if(record.captured_at===undefined){
+    const existing=await dbGet('evidence',record.id);
+    if(existing)record.captured_at=existing.captured_at;
+  }
+  await dbPut('evidence',record);
+  showToast('Evidence '+(editingEvidenceId?'updated':'captured')+': '+record.id);
+  editingEvidenceId=null;
+  showScreen('evidenceScreen');
+}
+
+async function renderEvidenceList(){
+  const locked=await isDayLocked();
+  document.getElementById('evidenceLockBanner').classList.toggle('hidden',!locked);
+  document.getElementById('evidenceAddSection').classList.toggle('hidden',locked);
+  const all=await dbGetAll('evidence');
+  const today=all.filter(e=>e.date===getToday());
+  const impactOrder={CRITICAL:0,HIGH:1,MEDIUM:2,LOW:3};
+  today.sort((a,b)=>(impactOrder[a.impact_level]||9)-(impactOrder[b.impact_level]||9));
+  const crit=today.filter(e=>e.impact_level==='CRITICAL').length;
+  const high=today.filter(e=>e.impact_level==='HIGH').length;
+  document.getElementById('evidenceTodayCount').textContent=today.length+' record'+(today.length!==1?'s':'')+' today'+(crit?' | 🔴 '+crit+' critical':'')+(high?' | 🟠 '+high+' high':'');
+  if(!today.length){
+    document.getElementById('evidenceList').innerHTML='<p style="color:#888;text-align:center;padding:20px">No evidence captured today</p>';
+    return;
+  }
+  const impactColors={CRITICAL:'#e53e3e',HIGH:'#dd6b20',MEDIUM:'#d69e2e',LOW:'#38a169'};
+  document.getElementById('evidenceList').innerHTML=today.map(e=>{
+    const ic=impactColors[e.impact_level]||'#888';
+    const timeStr=e.time_of_event||'';
+    const editBtn=locked?'':'<button class="btn btn-sm btn-indigo" onclick="openEvidenceCapture(\''+e.id+'\')">✏️</button>';
+    const delBtn=locked?'':'<button class="btn btn-sm btn-red" onclick="deleteEvidence(\''+e.id+'\')">X</button>';
+    return '<div class="card" style="border-left:4px solid '+ic+';padding:10px 12px"><div style="display:flex;justify-content:space-between;align-items:start"><div style="flex:1"><div style="font-size:11px;color:#888;font-family:monospace">'+escapeHtml(e.id)+'</div><div style="font-weight:600;margin:2px 0">'+escapeHtml(e.category.replace(/_/g,' '))+(timeStr?' — '+timeStr:'')+'</div><div style="font-size:13px;color:#333">'+escapeHtml(e.description).slice(0,120)+(e.description.length>120?'...':'')+'</div>'+(e.actors_involved?.length?'<div style="font-size:11px;color:#666;margin-top:2px">👥 '+e.actors_involved.map(escapeHtml).join(', ')+'</div>':'')+(e.direct_quotes?.length?'<div style="font-size:11px;color:#805ad5;margin-top:2px">💬 '+e.direct_quotes.length+' quote(s)</div>':'')+'</div><div style="display:flex;gap:4px;margin-left:8px">'+editBtn+delBtn+'</div></div></div>';
+  }).join('');
+}
+
+async function deleteEvidence(id){
+  if(await isDayLocked()){alert('Day is locked after EOD export.');return}
+  if(!confirm('Delete this evidence record?'))return;
+  await dbDelete('evidence',id);
+  await renderEvidenceList();
+}
+
+async function copyEvidenceJSON(){
+  const all=await dbGetAll('evidence');
+  const today=all.filter(e=>e.date===getToday());
+  if(!today.length){alert('No evidence records today');return}
+  const json=JSON.stringify(today,null,2);
+  try{
+    await navigator.clipboard.writeText(json);
+    document.getElementById('evidenceCopied').classList.remove('hidden');
+    setTimeout(()=>document.getElementById('evidenceCopied').classList.add('hidden'),3000);
+  }catch(e){
+    // Fallback: select text area
+    const ta=document.createElement('textarea');
+    ta.value=json;ta.style.position='fixed';ta.style.left='-9999px';
+    document.body.appendChild(ta);ta.select();
+    try{document.execCommand('copy');document.getElementById('evidenceCopied').classList.remove('hidden');setTimeout(()=>document.getElementById('evidenceCopied').classList.add('hidden'),3000)}catch(e2){alert('Copy failed — use Share instead')}
+    document.body.removeChild(ta);
+  }
+}
+
 // ACTIVE SESSION SYSTEM
 const SESSION_TYPES={
   'Remote Technical':{icon:'🖥️',clarityId:'remote_technical',color:'#2b6cb0'},
@@ -1639,6 +1950,23 @@ async function buildEODText(dateStr){
 
   // Notes
   if(dayNotes.length){txt+='\nQUICK NOTES\n';dayNotes.forEach(n=>{txt+='  ['+n.time.display+'] '+n.text+'\n'})}
+
+  // Evidence
+  const evidenceAll=await dbGetAll('evidence');
+  const dayEvidence=evidenceAll.filter(e=>e.date===dateStr);
+  if(dayEvidence.length){
+    const crit=dayEvidence.filter(e=>e.impact_level==='CRITICAL').length;
+    const high=dayEvidence.filter(e=>e.impact_level==='HIGH').length;
+    txt+='\nEVIDENCE CAPTURED\n';
+    txt+='  Total: '+dayEvidence.length;
+    if(crit)txt+=' | Critical: '+crit;
+    if(high)txt+=' | High: '+high;
+    txt+='\n';
+    dayEvidence.forEach(e=>{
+      txt+='  ['+e.id+'] '+(e.time_of_event||'--:--')+' | '+e.category.replace(/_/g,' ')+' | '+e.impact_level+'\n';
+      txt+='    '+e.description.slice(0,100)+(e.description.length>100?'...':'')+'\n';
+    });
+  }
 
   // Projects due soon
   const soon = getProjectsDueSoon(activeProjects, 14);
@@ -2239,7 +2567,9 @@ async function exportSnapshotNow(){
     const practices=await dbGetAll('practices');
     const projects=await dbGetAll('projects');
     const settings=await dbGetAll('settings');
-    const snapshot={schema:'wcc.snapshot.v13',date:dateStr,generatedAt:getTime(),kronos,clarityEntries:clarity,concurEntries:concur,quickNotes:notes,sessions,practices,projects,settings};
+    const evidenceAll=await dbGetAll('evidence');
+    const evidence=evidenceAll.filter(e=>e.date===dateStr);
+    const snapshot={schema:'wcc.snapshot.v14',date:dateStr,generatedAt:getTime(),kronos,clarityEntries:clarity,concurEntries:concur,quickNotes:notes,sessions,practices,projects,settings,evidence};
     const base='WCC_SNAPSHOT_'+dateStr+'_'+hhmm;
     const files={ [base+'/snapshot_'+dateStr+'_'+hhmm+'.json']: JSON.stringify(snapshot,null,2) };
     const zip=makeZip(files);
@@ -2267,9 +2597,11 @@ async function exportDailyBundle(){
   const sessionsAll=await dbGetAll('sessions');
   const tickets=sessionsAll.filter(s=>s.date===dateStr && (s.type==='ticket' || s.type==='work_item'));
   const projects=await dbGetAll('projects');
+  const evidenceAll=await dbGetAll('evidence');
+  const evidence=evidenceAll.filter(e=>e.date===dateStr);
 
   const dailyJson={
-    schema:'wcc.daily.v13',
+    schema:'wcc.daily.v14',
     date:dateStr,
     generatedAt:getTime(),
     kronos,
@@ -2277,7 +2609,8 @@ async function exportDailyBundle(){
     concurEntries:concur,
     quickNotes:notes,
     tickets,
-    projects
+    projects,
+    evidence
   };
 
   const base='WCC_'+dateStr;
@@ -2288,7 +2621,8 @@ async function exportDailyBundle(){
     [base+'/concur_'+dateStr+'.json']: JSON.stringify(concur,null,2),
     [base+'/tickets_'+dateStr+'.json']: JSON.stringify(tickets,null,2),
     [base+'/kronos_'+dateStr+'.json']: JSON.stringify(kronos,null,2),
-    [base+'/notes_'+dateStr+'.json']: JSON.stringify(notes,null,2)
+    [base+'/notes_'+dateStr+'.json']: JSON.stringify(notes,null,2),
+    [base+'/evidence_'+dateStr+'.json']: JSON.stringify(evidence,null,2)
   };
 
   const zip=makeZip(files);
