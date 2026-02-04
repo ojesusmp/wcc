@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Work Command Center v13</title>
+<title>Work Command Center v14.1</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui,-apple-system,sans-serif;background:#f5f5f5;max-width:500px;margin:0 auto}
@@ -80,7 +80,7 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
 <!-- MAIN MENU -->
 
 <div id="menuScreen">
-  <h1>🔧 Work Command Center v14</h1>
+  <h1>🔧 Work Command Center v14.1</h1>
   <div id="kronosStatus"></div>
   <div id="activePanel"></div>
 
@@ -123,6 +123,7 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
     <button class="btn btn-purple btn-half" onclick="showScreen('weeklyReportsScreen')">📊 Weekly</button>
   </div>
   <button class="btn btn-gray btn-full" onclick="showScreen('settingsScreen')">⚙️ Settings</button>
+  <button class="btn btn-purple btn-full" onclick="showScreen('dashboardDataScreen')">📊 Dashboard & Data</button>
 </div>
 
 <!-- KRONOS SCREEN -->
@@ -437,32 +438,30 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
       <input type="text" id="ticketIp" placeholder="IP (optional)" style="flex:1">
     </div>
 
-```
-<div class="section-title">Project (optional)</div>
-<select id="ticketProject"></select>
+    <div class="section-title">Project (optional)</div>
+    <select id="ticketProject"></select>
 
-<div class="section-title">Status</div>
-<select id="ticketStatus">
-  <option value="in_progress">In Progress</option>
-  <option value="resolved">Resolved</option>
-  <option value="pending_customer">Pending Customer</option>
-  <option value="pending_internal">Pending Internal</option>
-  <option value="escalated_onsite">Escalated Onsite</option>
-</select>
+    <div class="section-title">Status</div>
+    <select id="ticketStatus">
+      <option value="in_progress">In Progress</option>
+      <option value="resolved">Resolved</option>
+      <option value="pending_customer">Pending Customer</option>
+      <option value="pending_internal">Pending Internal</option>
+      <option value="escalated_onsite">Escalated Onsite</option>
+    </select>
 
-<div class="section-title">Quick Action Log</div>
-<input type="text" id="ticketActionInput" placeholder="Type action and tap Add (timestamped)">
-<button class="btn btn-indigo btn-full" onclick="addTicketAction()">+ Add Action</button>
-<div id="ticketActionList" style="margin-top:8px"></div>
+    <div class="section-title">Quick Action Log</div>
+    <input type="text" id="ticketActionInput" placeholder="Type action and tap Add (timestamped)">
+    <button class="btn btn-indigo btn-full" onclick="addTicketAction()">+ Add Action</button>
+    <div id="ticketActionList" style="margin-top:8px"></div>
 
-<div class="section-title">Follow-up needed?</div>
-<select id="ticketFollowUp">
-  <option value="no">No</option>
-  <option value="yes">Yes</option>
-</select>
-<div class="section-title">Follow-up note (optional)</div>
-<input type="text" id="ticketFollowUpNote" placeholder="What needs to happen next">
-```
+    <div class="section-title">Follow-up needed?</div>
+    <select id="ticketFollowUp">
+      <option value="no">No</option>
+      <option value="yes">Yes</option>
+    </select>
+    <div class="section-title">Follow-up note (optional)</div>
+    <input type="text" id="ticketFollowUpNote" placeholder="What needs to happen next">
 
   </div>
 
@@ -619,68 +618,66 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
     <div class="section-title">What happened? *</div>
     <textarea id="evDescription" placeholder="Describe the event factually. Who did what, when, where." style="min-height:100px"></textarea>
 
-```
-<div class="btn-row">
-  <div style="flex:1">
-    <div class="section-title">Date</div>
-    <input type="date" id="evDate">
-  </div>
-  <div style="flex:1">
-    <div class="section-title">Time</div>
-    <input type="time" id="evTime">
-  </div>
-</div>
+    <div class="btn-row">
+      <div style="flex:1">
+        <div class="section-title">Date</div>
+        <input type="date" id="evDate">
+      </div>
+      <div style="flex:1">
+        <div class="section-title">Time</div>
+        <input type="time" id="evTime">
+      </div>
+    </div>
 
-<div class="section-title">Event Type</div>
-<select id="evEventType">
-  <option value="Verbal">Verbal</option>
-  <option value="Meeting">Meeting</option>
-  <option value="Call">Call</option>
-  <option value="Chat">Chat / Teams</option>
-  <option value="Email">Email</option>
-  <option value="iMessage">iMessage / Text</option>
-  <option value="Observation">Observation</option>
-  <option value="Site_Visit">Site Visit</option>
-  <option value="Photo_Evidence">Photo Evidence</option>
-</select>
+    <div class="section-title">Event Type</div>
+    <select id="evEventType">
+      <option value="Verbal">Verbal</option>
+      <option value="Meeting">Meeting</option>
+      <option value="Call">Call</option>
+      <option value="Chat">Chat / Teams</option>
+      <option value="Email">Email</option>
+      <option value="iMessage">iMessage / Text</option>
+      <option value="Observation">Observation</option>
+      <option value="Site_Visit">Site Visit</option>
+      <option value="Photo_Evidence">Photo Evidence</option>
+    </select>
 
-<div class="section-title">Category</div>
-<select id="evCategory">
-  <option value="Retaliation">Retaliation</option>
-  <option value="Surveillance">Surveillance</option>
-  <option value="DisparateTreatment">Disparate Treatment</option>
-  <option value="HostileEnvironment">Hostile Environment</option>
-  <option value="Gaslighting">Gaslighting</option>
-  <option value="PublicShaming">Public Shaming</option>
-  <option value="MedicalLeave">Medical Leave / FMLA</option>
-  <option value="Workplace_Injury">Workplace Injury</option>
-  <option value="Equipment_Access">Equipment / Access</option>
-  <option value="Manufactured_Blame">Manufactured Blame</option>
-  <option value="Forced_Collaboration">Forced Collaboration</option>
-  <option value="PerformanceReview">Performance Review</option>
-  <option value="Technical_Work">Technical Work</option>
-  <option value="Other">Other</option>
-</select>
+    <div class="section-title">Category</div>
+    <select id="evCategory">
+      <option value="Retaliation">Retaliation</option>
+      <option value="Surveillance">Surveillance</option>
+      <option value="DisparateTreatment">Disparate Treatment</option>
+      <option value="HostileEnvironment">Hostile Environment</option>
+      <option value="Gaslighting">Gaslighting</option>
+      <option value="PublicShaming">Public Shaming</option>
+      <option value="MedicalLeave">Medical Leave / FMLA</option>
+      <option value="Workplace_Injury">Workplace Injury</option>
+      <option value="Equipment_Access">Equipment / Access</option>
+      <option value="Manufactured_Blame">Manufactured Blame</option>
+      <option value="Forced_Collaboration">Forced Collaboration</option>
+      <option value="PerformanceReview">Performance Review</option>
+      <option value="Technical_Work">Technical Work</option>
+      <option value="Other">Other</option>
+    </select>
 
-<div class="section-title">Location (optional)</div>
-<input type="text" id="evLocation" placeholder="WebEx, office, practice name...">
+    <div class="section-title">Location (optional)</div>
+    <input type="text" id="evLocation" placeholder="WebEx, office, practice name...">
 
-<div class="section-title">People Involved</div>
-<div id="evActorChips" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px"></div>
-<div class="btn-row" style="flex-wrap:wrap">
-  <button class="btn btn-sm btn-gray" onclick="toggleEvActor('Walter Lopez')">Walter</button>
-  <button class="btn btn-sm btn-gray" onclick="toggleEvActor('Linda Mimms')">Linda</button>
-  <button class="btn btn-sm btn-gray" onclick="toggleEvActor('Candi Barfield')">Candi</button>
-  <button class="btn btn-sm btn-gray" onclick="toggleEvActor('George Williams')">George</button>
-  <button class="btn btn-sm btn-gray" onclick="toggleEvActor('Kelly Trout')">Kelly</button>
-  <button class="btn btn-sm btn-gray" onclick="toggleEvActor('Byron Calahan')">Byron</button>
-  <button class="btn btn-sm btn-gray" onclick="toggleEvActor('Orlando Molina')">Orlando</button>
-</div>
-<div class="btn-row">
-  <input type="text" id="evActorCustom" placeholder="Other person..." style="flex:2;margin:0">
-  <button class="btn btn-sm btn-indigo" onclick="addCustomEvActor()" style="flex:0 0 auto">+ Add</button>
-</div>
-```
+    <div class="section-title">People Involved</div>
+    <div id="evActorChips" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px"></div>
+    <div class="btn-row" style="flex-wrap:wrap">
+      <button class="btn btn-sm btn-gray" onclick="toggleEvActor('Walter Lopez')">Walter</button>
+      <button class="btn btn-sm btn-gray" onclick="toggleEvActor('Linda Mimms')">Linda</button>
+      <button class="btn btn-sm btn-gray" onclick="toggleEvActor('Candi Barfield')">Candi</button>
+      <button class="btn btn-sm btn-gray" onclick="toggleEvActor('George Williams')">George</button>
+      <button class="btn btn-sm btn-gray" onclick="toggleEvActor('Kelly Trout')">Kelly</button>
+      <button class="btn btn-sm btn-gray" onclick="toggleEvActor('Byron Calahan')">Byron</button>
+      <button class="btn btn-sm btn-gray" onclick="toggleEvActor('Orlando Molina')">Orlando</button>
+    </div>
+    <div class="btn-row">
+      <input type="text" id="evActorCustom" placeholder="Other person..." style="flex:2;margin:0">
+      <button class="btn btn-sm btn-indigo" onclick="addCustomEvActor()" style="flex:0 0 auto">+ Add</button>
+    </div>
 
   </div>
 
@@ -766,6 +763,169 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
   <button class="btn btn-green btn-full" onclick="endActiveSession()">✅ Done — Back to Menu</button>
   <button class="btn btn-gray btn-full" onclick="showScreen('menuScreen')">← Back</button>
 </div>
+
+<!-- DASHBOARD & DATA HUB -->
+
+<div id="dashboardDataScreen" class="hidden">
+  <h1>📊 Dashboard & Data</h1>
+  <div class="card">
+    <div class="section-title">🔧 Data Management</div>
+    <button class="btn btn-green btn-full" onclick="showScreen('restoreScreen')">📥 Restore Backup</button>
+    <button class="btn btn-blue btn-full" onclick="showScreen('storageHealthScreen')">💾 Storage Health</button>
+    <button class="btn btn-orange btn-full" onclick="showScreen('dataIntegrityScreen')">🔍 Data Integrity</button>
+  </div>
+  <div class="card">
+    <div class="section-title">📈 Dashboard</div>
+    <button class="btn btn-purple btn-full" onclick="showScreen('dashboardViewScreen')">📊 Dashboard View</button>
+  </div>
+  <div class="card">
+    <div class="section-title">📤 Export</div>
+    <button class="btn btn-teal btn-full" onclick="showScreen('csvExportScreen')">📄 CSV Exports</button>
+    <button class="btn btn-red btn-full" onclick="showScreen('archiveScreen')">🗄️ Archive Old Data</button>
+  </div>
+  <button class="btn btn-gray btn-full" onclick="showScreen('menuScreen')">← Back</button>
+</div>
+
+<!-- RESTORE SCREEN -->
+
+<div id="restoreScreen" class="hidden">
+  <h1>📥 Restore Backup</h1>
+  <div class="card">
+    <div class="info-box">Upload a WCC JSON backup file. The file will be validated before any data is written.</div>
+    <input type="file" id="restoreFileInput" accept=".json,application/json" onchange="handleRestoreFile()" style="margin:12px 0">
+    <div id="restorePreview" class="hidden">
+      <div class="section-title">Backup Preview</div>
+      <div id="restorePreviewContent"></div>
+      <div class="section-title" style="margin-top:12px">Restore Mode</div>
+      <select id="restoreMode">
+        <option value="merge">Merge (add missing records, keep existing)</option>
+        <option value="replace">Full Replace (wipe + import all)</option>
+      </select>
+      <div id="restoreReplaceWarn" class="hidden">
+        <div class="warning-box">⚠️ Full Replace will DELETE all current data and replace with the backup. This cannot be undone.</div>
+      </div>
+      <button class="btn btn-green btn-full" onclick="confirmRestore()" style="margin-top:12px;padding:16px;font-size:16px">✅ Restore Now</button>
+    </div>
+    <div id="restoreResult" class="hidden"></div>
+  </div>
+  <button class="btn btn-gray btn-full" onclick="showScreen('dashboardDataScreen')">← Back</button>
+</div>
+
+<!-- STORAGE HEALTH SCREEN -->
+
+<div id="storageHealthScreen" class="hidden">
+  <h1>💾 Storage Health</h1>
+  <div class="card">
+    <div class="section-title">Browser Storage</div>
+    <div id="storageEstimate" style="padding:8px 0">Checking...</div>
+    <div style="background:#e2e8f0;border-radius:8px;height:24px;overflow:hidden;margin:8px 0">
+      <div id="storageMeter" style="background:#38a169;height:100%;border-radius:8px;transition:width 0.5s;width:0%"></div>
+    </div>
+    <div id="storageDetail" style="font-size:12px;color:#666"></div>
+  </div>
+  <div class="card">
+    <div class="section-title">Record Counts</div>
+    <div id="storageRecordCounts">Loading...</div>
+  </div>
+  <div class="card">
+    <div class="section-title">Backup Status</div>
+    <div id="storageBackupStatus">Loading...</div>
+  </div>
+  <div class="card">
+    <div class="section-title">Backup Integrity Check</div>
+    <button class="btn btn-blue btn-full" onclick="runBackupIntegrityCheck()">🔬 Run Check</button>
+    <div id="backupIntegrityResult" class="hidden" style="margin-top:8px"></div>
+  </div>
+  <button class="btn btn-gray btn-full" onclick="showScreen('dashboardDataScreen')">← Back</button>
+</div>
+
+<!-- DATA INTEGRITY SCREEN -->
+
+<div id="dataIntegrityScreen" class="hidden">
+  <h1>🔍 Data Integrity</h1>
+  <div class="card">
+    <div class="info-box">Scan for orphaned records, missing references, and data consistency issues.</div>
+    <button class="btn btn-orange btn-full" onclick="runIntegrityScan()" style="padding:16px;font-size:15px">🔍 Run Full Scan</button>
+  </div>
+  <div id="integrityScanResults" class="hidden">
+    <div class="card">
+      <div class="section-title">Scan Results</div>
+      <div id="integritySummary"></div>
+    </div>
+    <div id="integrityIssuesList"></div>
+  </div>
+  <button class="btn btn-gray btn-full" onclick="showScreen('dashboardDataScreen')">← Back</button>
+</div>
+
+<!-- DASHBOARD VIEW SCREEN -->
+
+<div id="dashboardViewScreen" class="hidden">
+  <h1>📊 Dashboard</h1>
+  <div class="card">
+    <div class="btn-row">
+      <button class="btn btn-sm btn-blue btn-half" id="dashTabToday" onclick="switchDashTab('today')">Today</button>
+      <button class="btn btn-sm btn-gray btn-half" id="dashTabWeek" onclick="switchDashTab('week')">This Week</button>
+      <button class="btn btn-sm btn-gray btn-half" id="dashTabMonth" onclick="switchDashTab('month')">Month</button>
+    </div>
+  </div>
+  <div id="dashTodayPanel"></div>
+  <div id="dashWeekPanel" class="hidden"></div>
+  <div id="dashMonthPanel" class="hidden"></div>
+  <button class="btn btn-gray btn-full" onclick="showScreen('dashboardDataScreen')">← Back</button>
+</div>
+
+<!-- CSV EXPORT SCREEN -->
+
+<div id="csvExportScreen" class="hidden">
+  <h1>📄 CSV Exports</h1>
+  <div class="card">
+    <div class="section-title">Date Range</div>
+    <div class="btn-row">
+      <div style="flex:1">
+        <div style="font-size:11px;color:#666">From</div>
+        <input type="date" id="csvDateFrom">
+      </div>
+      <div style="flex:1">
+        <div style="font-size:11px;color:#666">To</div>
+        <input type="date" id="csvDateTo">
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-title">Export Options</div>
+    <button class="btn btn-indigo btn-full" onclick="exportClarityCSV()">⏱️ Clarity Time → CSV</button>
+    <button class="btn btn-teal btn-full" onclick="exportConcurCSV()">💳 Concur Expenses → CSV</button>
+    <button class="btn btn-pink btn-full" onclick="exportTicketsCSV()">🎫 Tickets → CSV</button>
+    <button class="btn btn-red btn-full" onclick="exportEvidenceCSV()">🛡️ Evidence → CSV</button>
+  </div>
+  <div id="csvExportResult" class="hidden"></div>
+  <button class="btn btn-gray btn-full" onclick="showScreen('dashboardDataScreen')">← Back</button>
+</div>
+
+<!-- ARCHIVE SCREEN -->
+
+<div id="archiveScreen" class="hidden">
+  <h1>🗄️ Archive Old Data</h1>
+  <div class="card">
+    <div class="info-box">Export and purge data older than a cutoff date. A backup ZIP is created before any deletion.</div>
+    <div class="section-title">Keep data from</div>
+    <input type="date" id="archiveCutoffDate">
+    <div style="font-size:12px;color:#666;margin-top:4px">Records <b>before</b> this date will be exported then purged.</div>
+    <button class="btn btn-orange btn-full" onclick="previewArchive()" style="margin-top:12px">🔍 Preview Archive</button>
+  </div>
+  <div id="archivePreview" class="hidden">
+    <div class="card">
+      <div class="section-title">Archive Preview</div>
+      <div id="archivePreviewContent"></div>
+      <div class="warning-box" style="margin-top:10px">⚠️ This will export then DELETE the records shown above. A backup ZIP downloads first.</div>
+      <button class="btn btn-red btn-full" onclick="executeArchive()" style="margin-top:12px;padding:16px">🗑️ Export + Purge</button>
+    </div>
+  </div>
+  <div id="archiveResult" class="hidden"></div>
+  <button class="btn btn-gray btn-full" onclick="showScreen('dashboardDataScreen')">← Back</button>
+</div>
+
+
 <div id="quickNoteModal" class="modal hidden" style="display:none">
   <div class="modal-content">
     <div class="modal-header"><h2>📝 Quick Note</h2></div>
@@ -853,9 +1013,9 @@ window.__wccDirty=false;
 function updateSaveStatus(){
   const el=document.getElementById('saveStatus');
   if(!el) return;
-  if(window.__wccDirty){ el.textContent='Unsaved ✍️'; return; }
-  if(__lastSavedAt){ el.textContent='Saved ✅ ' + __lastSavedAt; }
-  else { el.textContent='Saved ✅'; }
+  if(window.__wccDirty){ el.textContent='Unsaved \u270d\ufe0f'; return; }
+  if(__lastSavedAt){ el.textContent='Saved \u2705 ' + __lastSavedAt; }
+  else { el.textContent='Saved \u2705'; }
 }
 function markDirty(){ window.__wccDirty=true; updateSaveStatus(); }
 function markSaved(){ window.__wccDirty=false; __lastSavedAt=getTime(); updateSaveStatus(); }
@@ -878,18 +1038,14 @@ document.addEventListener('input', (e)=>{
 });
 
 async function wccCopyText(text){
-  // iOS PWA-safe clipboard copy
-  // Method 1: Clipboard API (works on Android/Desktop)
   if(navigator.clipboard && navigator.clipboard.writeText){
     try{await navigator.clipboard.writeText(text);return true}catch(e){}
   }
-  // Method 2: iOS-safe textarea + execCommand fallback
   const ta=document.createElement('textarea');
   ta.value=text;
   ta.setAttribute('readonly','');
   ta.style.cssText='position:fixed;left:-9999px;top:0;opacity:0;';
   document.body.appendChild(ta);
-  // iOS-specific: needs contentEditable + readOnly dance
   const range=document.createRange();
   const sel=window.getSelection();
   ta.contentEditable=true;
@@ -900,7 +1056,6 @@ async function wccCopyText(text){
   try{ok=document.execCommand('copy')}catch(e){}
   document.body.removeChild(ta);
   if(ok)return true;
-  // Method 3: native share as last resort
   if(navigator.share){
     try{await navigator.share({text});return true}catch(e){}
   }
@@ -919,13 +1074,11 @@ function getTimestamp(){const d=new Date();return getToday()+'_'+String(d.getHou
 function updateClock(){const n=new Date();document.getElementById('clockTime').textContent=n.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});document.getElementById('clockDate').textContent=n.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'})}
 setInterval(updateClock,1000);updateClock();
 
-// DAY LOCK CHECK — after EOD export, entries become read-only
 async function isDayLocked(){
   const s=await dbGet('settings','lastDailyExportDate');
   return s && s.value===getToday();
 }
 
-// QUICK ADD CLARITY MINUTES (from Clarity Time screen)
 async function quickAddClarityMinutes(minutes){
   if(await isDayLocked()){alert('Day is locked after EOD export.');return}
   const category=document.getElementById('clarityEntryCategory').value;
@@ -942,11 +1095,8 @@ async function quickAddClarityMinutes(minutes){
   await renderClarityEntries();
 }
 
-async function suggestClarityCategoryFromActiveSession(cats){
-  // stub — could be enhanced to pre-select based on active session type
-}
+async function suggestClarityCategoryFromActiveSession(cats){}
 
-// 7-minute rounding
 function getKronosRounded(timeStr){
   const[h,m]=timeStr.split(':').map(Number);
   let rm;
@@ -975,7 +1125,6 @@ async function updateExportReminder(){
 }
 setInterval(()=>{updateExportReminder().catch(()=>{})},60000);
 
-
 function roundTo15Min(minutes){
   const r=minutes%15;
   if(r<=7)return minutes-r;
@@ -1003,6 +1152,13 @@ function showScreen(id){
   if(id==='ticketsScreen')renderTicketsToday();
   if(id==='projectsScreen')renderProjectsList();
   if(id==='evidenceScreen')renderEvidenceList();
+  if(id==='dashboardDataScreen'){}
+  if(id==='restoreScreen'){document.getElementById('restoreFileInput').value='';document.getElementById('restorePreview').classList.add('hidden');document.getElementById('restoreResult').classList.add('hidden')}
+  if(id==='storageHealthScreen')initStorageHealth();
+  if(id==='dataIntegrityScreen'){document.getElementById('integrityResults').innerHTML='';document.getElementById('integrityStatus').textContent='Tap Run to scan.'}
+  if(id==='dashboardViewScreen')initDashboardView();
+  if(id==='csvExportScreen')initCSVExportScreen();
+  if(id==='archiveScreen')initArchiveScreen();
 }
 
 async function updateMenuScreen(){
@@ -1060,7 +1216,7 @@ async function deletePTO(idx){
 }
 
 async function renderKronosPunches(){
-  const r=await getKronosToday(),labels={in:'🟢 Clock In',out:'🔴 Clock Out',lunch_start:'🍴 Lunch Start',lunch_end:'🍴 Lunch End'};
+  const r=await getKronosToday(),labels={in:'\ud83d\udfe2 Clock In',out:'\ud83d\udd34 Clock Out',lunch_start:'\ud83c\udf74 Lunch Start',lunch_end:'\ud83c\udf74 Lunch End'};
   if(!r.punches.length){document.getElementById('kronosPunchesList').innerHTML='<p style="color:#888;text-align:center">No punches</p>';return}
   const locked=await isDayLocked();
   document.getElementById('kronosPunchesList').innerHTML=r.punches.map((p,i)=>{
@@ -1081,7 +1237,7 @@ async function deleteKronosPunch(index){
 async function updateKronosStatus(){
   const r=await getKronosToday();
   if(!r.punches.length){document.getElementById('kronosStatus').innerHTML='';return}
-  const last=r.punches[r.punches.length-1],labels={in:'🟢 Clocked In',out:'🔴 Clocked Out',lunch_start:'🍴 On Lunch',lunch_end:'🟢 Back'};
+  const last=r.punches[r.punches.length-1],labels={in:'\ud83d\udfe2 Clocked In',out:'\ud83d\udd34 Clocked Out',lunch_start:'\ud83c\udf74 On Lunch',lunch_end:'\ud83d\udfe2 Back'};
   document.getElementById('kronosStatus').innerHTML='<div class="card" style="background:#e6fffa;border:1px solid #319795;padding:10px"><div style="display:flex;justify-content:space-between"><span style="font-weight:600">'+labels[last.type]+'</span><span class="kronos-time">'+last.kronosTime+'</span></div></div>';
 }
 
@@ -1151,7 +1307,6 @@ async function resetDefaultClarity(){
   renderClarityCategories();
 }
 
-// CLARITY TIME ENTRIES
 async function initClarityTimeScreen(){
   const locked=await isDayLocked();
   document.getElementById('clarityLockBanner').classList.toggle('hidden',!locked);
@@ -1225,7 +1380,6 @@ function updateMealCompanion(){
 async function initConcurScreen(){
   document.getElementById('concurType').value='';
   updateConcurForm();
-  // Reset mileage state
   mileageFromPractice=null;mileageToPractice=null;
   document.getElementById('concurFromType').value='practice';
   document.getElementById('concurToType').value='practice';
@@ -1334,8 +1488,6 @@ async function saveQuickPractice(){
   const coid=document.getElementById('quickPracticeCoid').value.trim();
   const name=document.getElementById('quickPracticeName').value.trim();
   if(!name){alert('Practice Name is required');return}
-
-  // If COID provided, merge/update if it already exists
   if(coid){
     const all=await dbGetAll('practices');
     const dup=all.find(x=>x.coid===coid);
@@ -1347,7 +1499,6 @@ async function saveQuickPractice(){
       return;
     }
   }
-
   const p={id:'P'+Date.now(),coid:coid||'',name,address:''};
   await dbPut('practices',p);
   closeQuickAddPractice();
@@ -1387,9 +1538,6 @@ async function savePractice(){
   const address=document.getElementById('practiceEditAddress').value.trim();
   if(!name){alert('Practice Name is required');return}
   const editId=document.getElementById('practiceEditCoid').dataset.editId;
-
-  // COID can repeat for satellite/related locations.
-  // Warn (don’t block) if the same COID already exists.
   if(coid){
     const all=await dbGetAll('practices');
     const dup=all.find(x=>x.coid===coid && x.id!==editId);
@@ -1398,7 +1546,6 @@ async function savePractice(){
       if(!ok)return;
     }
   }
-
   const p={id:editId||'P'+Date.now(),coid:coid||'',name,address:address||''};
   await dbPut('practices',p);
   document.getElementById('practiceEditCoid').dataset.editId='';
@@ -1418,58 +1565,26 @@ async function addConcurEntry(){
   if(type==='mileage'){
     const fromType=document.getElementById('concurFromType').value;
     const toType=document.getElementById('concurToType').value;
-    // FROM
     if(fromType==='practice'){
       if(!mileageFromPractice){alert('Select FROM practice');return}
-      entry.fromType='practice';
-      entry.fromPracticeId=mileageFromPractice.id;
-      entry.fromPracticeName=mileageFromPractice.name;
-      if(!mileageFromPractice.coid){
-        if(confirm('This FROM practice is missing a COID. Concur requires a COID for practice travel. Edit this practice now?')){editPractice(mileageFromPractice.id)}
-        return;
-      }
-      entry.fromCoid=mileageFromPractice.coid;
-      entry.fromDisplay=mileageFromPractice.name+(mileageFromPractice.coid?(' (COID: '+mileageFromPractice.coid+')'):'');
-    }else{
-      entry.fromType='address';
-      entry.fromAddr=document.getElementById('concurFromAddr').value.trim();
-      if(!entry.fromAddr){alert('Enter FROM address');return}
-      entry.fromDisplay=entry.fromAddr;
-    }
-    // TO
+      entry.fromType='practice';entry.fromPracticeId=mileageFromPractice.id;entry.fromPracticeName=mileageFromPractice.name;
+      if(!mileageFromPractice.coid){if(confirm('This FROM practice is missing a COID. Edit now?')){editPractice(mileageFromPractice.id)}return;}
+      entry.fromCoid=mileageFromPractice.coid;entry.fromDisplay=mileageFromPractice.name+(mileageFromPractice.coid?(' (COID: '+mileageFromPractice.coid+')'):'');
+    }else{entry.fromType='address';entry.fromAddr=document.getElementById('concurFromAddr').value.trim();if(!entry.fromAddr){alert('Enter FROM address');return}entry.fromDisplay=entry.fromAddr;}
     if(toType==='practice'){
       if(!mileageToPractice){alert('Select TO practice');return}
-      entry.toType='practice';
-      entry.toPracticeId=mileageToPractice.id;
-      entry.toPracticeName=mileageToPractice.name;
-      if(!mileageToPractice.coid){
-        if(confirm('This TO practice is missing a COID. Concur requires a COID for practice travel. Edit this practice now?')){editPractice(mileageToPractice.id)}
-        return;
-      }
-      entry.toCoid=mileageToPractice.coid;
-      entry.toDisplay=mileageToPractice.name+(mileageToPractice.coid?(' (COID: '+mileageToPractice.coid+')'):'');
-    }else{
-      entry.toType='address';
-      entry.toAddr=document.getElementById('concurToAddr').value.trim();
-      if(!entry.toAddr){alert('Enter TO address');return}
-      entry.toDisplay=entry.toAddr;
-    }
+      entry.toType='practice';entry.toPracticeId=mileageToPractice.id;entry.toPracticeName=mileageToPractice.name;
+      if(!mileageToPractice.coid){if(confirm('This TO practice is missing a COID. Edit now?')){editPractice(mileageToPractice.id)}return;}
+      entry.toCoid=mileageToPractice.coid;entry.toDisplay=mileageToPractice.name+(mileageToPractice.coid?(' (COID: '+mileageToPractice.coid+')'):'');
+    }else{entry.toType='address';entry.toAddr=document.getElementById('concurToAddr').value.trim();if(!entry.toAddr){alert('Enter TO address');return}entry.toDisplay=entry.toAddr;}
   }else if(type==='lodging'){
-    entry.location=document.getElementById('concurLodgingLoc').value.trim();
-    entry.amount=parseFloat(document.getElementById('concurLodgingAmt').value)||0;
-    if(!entry.location){alert('Enter location');return}
+    entry.location=document.getElementById('concurLodgingLoc').value.trim();entry.amount=parseFloat(document.getElementById('concurLodgingAmt').value)||0;if(!entry.location){alert('Enter location');return}
   }else if(type==='rental'){
-    entry.description=document.getElementById('concurRentalDesc').value.trim();
-    entry.amount=parseFloat(document.getElementById('concurRentalAmt').value)||0;
+    entry.description=document.getElementById('concurRentalDesc').value.trim();entry.amount=parseFloat(document.getElementById('concurRentalAmt').value)||0;
   }else if(type==='meal'){
-    entry.mealType=document.getElementById('concurMealType').value;
-    entry.dining=document.getElementById('concurMealWith').value;
-    entry.companionId=entry.dining==='others'?document.getElementById('concurCompanionId').value.trim():null;
-    entry.amount=parseFloat(document.getElementById('concurMealAmt').value)||0;
-    if(entry.dining==='others'&&!entry.companionId){alert('Enter companion ID');return}
+    entry.mealType=document.getElementById('concurMealType').value;entry.dining=document.getElementById('concurMealWith').value;entry.companionId=entry.dining==='others'?document.getElementById('concurCompanionId').value.trim():null;entry.amount=parseFloat(document.getElementById('concurMealAmt').value)||0;if(entry.dining==='others'&&!entry.companionId){alert('Enter companion ID');return}
   }
   await dbPut('concurEntries',entry);
-  // Reset form
   document.getElementById('concurType').value='';updateConcurForm();
   mileageFromPractice=null;mileageToPractice=null;
   document.getElementById('concurFromPracticeDisplay').style.display='none';
@@ -1485,11 +1600,7 @@ async function renderConcurEntries(){
   const icons={mileage:'🚗',lodging:'🏨',rental:'🚙',meal:'🍽️'};
   document.getElementById('concurEntryList').innerHTML=todayEntries.map(e=>{
     let desc='';
-    if(e.type==='mileage'){
-      const from=e.fromDisplay||e.fromAddr||'?';
-      const to=e.toDisplay||e.toAddr||'?';
-      desc=from+' → '+to;
-    }
+    if(e.type==='mileage'){desc=(e.fromDisplay||e.fromAddr||'?')+' → '+(e.toDisplay||e.toAddr||'?');}
     else if(e.type==='lodging')desc=e.location+' - $'+(e.amount?.toFixed(2)||'0.00');
     else if(e.type==='rental')desc=e.description+' - $'+(e.amount?.toFixed(2)||'0.00');
     else if(e.type==='meal')desc=e.mealType+' ('+e.dining+') - $'+(e.amount?.toFixed(2)||'0.00');
@@ -1502,8 +1613,6 @@ async function deleteConcurEntry(id){await dbDelete('concurEntries',id);await re
 // CLOSE MY DAY
 async function showCloseDayScreen(){showScreen('closeDayScreen');await updateCloseDayStatus()}
 
-
-// Close My Day validation helpers
 function fmtHM(mins){
   const h=Math.floor(mins/60),m=Math.round(mins%60);
   return h+':'+String(m).padStart(2,'0');
@@ -1516,100 +1625,10 @@ async function getCloseDayBalance(){
 }
 function validateDayForEOD(balance){
   const {kronos,kronosMinutes,clarityMinutes}=balance;
-  if(kronosMinutes!==clarityMinutes){
-    const diff=Math.abs(kronosMinutes-clarityMinutes);
-    return {ok:false,code:'mismatch',message:'Mismatch: '+fmtHM(diff)+' difference. Fix Kronos or Clarity first.'};
-  }
-  if(kronosMinutes<480){
-    const rem=480-kronosMinutes;
-    return {ok:false,code:'under8',remainingMinutes:rem,message:'Under 8 hours by '+fmtHM(rem)+'. Review what is missing (service/travel) and add time or PTO if applicable.'};
-  }
-  if(kronosMinutes>480 && !kronos.overtimeReason){
-    const over=kronosMinutes-480;
-    return {ok:false,code:'ot_reason',overMinutes:over,message:'Over 8 hours by '+fmtHM(over)+'. Add an OT reason before generating EOD.'};
-  }
+  if(kronosMinutes!==clarityMinutes){const diff=Math.abs(kronosMinutes-clarityMinutes);return {ok:false,code:'mismatch',message:'Mismatch: '+fmtHM(diff)+' difference. Fix Kronos or Clarity first.'};}
+  if(kronosMinutes<480){const rem=480-kronosMinutes;return {ok:false,code:'under8',remainingMinutes:rem,message:'Under 8 hours by '+fmtHM(rem)+'. Review what is missing and add time or PTO.'};}
+  if(kronosMinutes>480 && !kronos.overtimeReason){const over=kronosMinutes-480;return {ok:false,code:'ot_reason',overMinutes:over,message:'Over 8 hours by '+fmtHM(over)+'. Add an OT reason before generating EOD.'};}
   return {ok:true,code:'ok',message:'OK'};
-}
-
-async function updateCloseDayStatus(){
-  const balance=await getCloseDayBalance();
-  const {kronos,kronosMinutes,clarityMinutes}=balance;
-  const kh=Math.floor(kronosMinutes/60),km=kronosMinutes%60;
-  const ch=Math.floor(clarityMinutes/60),cm=clarityMinutes%60;
-  document.getElementById('closeDayKronos').textContent=kh+':'+String(km).padStart(2,'0');
-  document.getElementById('closeDayClarity').textContent=ch+':'+String(cm).padStart(2,'0');
-
-  const v=validateDayForEOD(balance);
-  const isMatch=kronosMinutes===clarityMinutes;
-
-  // Background cue: green = ready, red = mismatch, yellow = needs PTO/OT reason
-  const bg = v.ok ? '#c6f6d5' : (!isMatch ? '#fed7d7' : '#fef3c7');
-  document.getElementById('closeDayKronos').parentElement.style.background=bg;
-  document.getElementById('closeDayClarity').parentElement.style.background=bg;
-
-  let status='',issues='',actions='';
-
-  if(v.ok){
-    const totalLabel = kronosMinutes===480 ? '8 hours' : (fmtHM(kronosMinutes)+' total');
-    status='<div class="success-box">✅ Ready. Kronos and Clarity match ('+totalLabel+').</div>';
-    actions='<button class="btn btn-green btn-full" onclick="showEOD()">📝 Generate EOD</button>'+
-    '<button class="btn btn-purple btn-full" onclick="exportDailyBundle()">📦 Export Daily Bundle (ZIP)</button>';
-  }else{
-    if(v.code==='mismatch'){
-      const diff=Math.abs(kronosMinutes-clarityMinutes);
-      status='<div class="warning-box">⚠️ Mismatch: '+fmtHM(diff)+' difference</div>';
-    }else if(v.code==='under8'){
-      status='<div class="warning-box">⚠️ Under 8 hours: '+fmtHM(kronosMinutes)+' logged</div>';
-      const remH=(v.remainingMinutes/60);
-      // Build a quick diagnostic view to help spot missing time (service/travel)
-      const allClarity=await dbGetAll('clarityEntries');
-      const todaysClarity=allClarity.filter(e=>e.date===getToday());
-      const allConcur=await dbGetAll('concurEntries');
-      const todaysMileage=allConcur.filter(e=>e.date===getToday() && e.type==='mileage');
-      const allSessions=await dbGetAll('sessions');
-      const todaysSessions=allSessions.filter(s=>s.date===getToday());
-      const clarityLines = todaysClarity.length ? todaysClarity.map(e=>{
-        const hh=Math.floor(e.minutes/60),mm=String(e.minutes%60).padStart(2,'0');
-        return `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #fde68a"><span><b>${e.categoryName}</b>${e.notes?(' - '+e.notes):''}</span><span style="font-weight:600">${hh}:${mm}</span></div>`;
-      }).join('') : '<div style="color:#92400e;font-size:12px">No Clarity entries yet.</div>';
-      const mileageLines = todaysMileage.length ? todaysMileage.map(e=>{
-        return `<div style="padding:6px 0;border-bottom:1px solid #fde68a"><b>Mileage</b>: ${e.fromDisplay} → ${e.toDisplay}</div>`;
-      }).join('') : '<div style="color:#92400e;font-size:12px">No mileage entries logged.</div>';
-      const sessionLines = todaysSessions.length ? todaysSessions.map(s=>{
-        const dur = (s.durationMinutes!=null) ? (s.durationMinutes+'m') : 'active';
-        return `<div style="padding:6px 0;border-bottom:1px solid #fde68a"><b>${s.subject||'Session'}</b> <span style="color:#92400e;font-size:12px">(${dur})</span></div>`;
-      }).join('') : '<div style="color:#92400e;font-size:12px">No sessions saved today.</div>';
-      issues+=`<div class="card" style="background:#fef3c7;border:1px solid #f59e0b">
-        <p style="font-weight:700;color:#92400e">🔍 Under 8 hours — find what’s missing</p>
-        <p style="font-size:12px;color:#92400e;margin-top:6px">Remaining to reach 8:00: <b>${fmtHM(v.remainingMinutes)}</b></p>
-        <div style="margin-top:10px">
-          <div style="font-weight:600;color:#92400e;margin-bottom:6px">Clarity entries today</div>
-          <div style="max-height:160px;overflow:auto;padding-right:6px">${clarityLines}</div>
-        </div>
-        <div style="margin-top:12px">
-          <div style="font-weight:600;color:#92400e;margin-bottom:6px">Mileage today (travel)</div>
-          <div style="max-height:120px;overflow:auto;padding-right:6px">${mileageLines}</div>
-        </div>
-        <div style="margin-top:12px">
-          <div style="font-weight:600;color:#92400e;margin-bottom:6px">Sessions today (service)</div>
-          <div style="max-height:120px;overflow:auto;padding-right:6px">${sessionLines}</div>
-        </div>
-        <div class="btn-row" style="margin-top:12px">
-          <button class="btn btn-indigo btn-half" onclick="showScreen('clarityTimeScreen')">⏱️ Add time</button>
-          <button class="btn btn-teal btn-half" onclick="showScreen('concurScreen')">💳 Add travel</button>
-        </div>
-        <button class="btn btn-purple btn-full" onclick="showPTOModal(${remH.toFixed(2)})" style="margin-top:10px">+ Add PTO (if you took PTO)</button>
-      </div>`;
-    }else if(v.code==='ot_reason'){
-      status='<div class="warning-box">⚠️ Over 8 hours: '+fmtHM(kronosMinutes)+' logged</div>';
-      issues+='<div class="card" style="background:#fed7e2;border:1px solid #d53f8c"><p style="font-weight:600;color:#702459">⏰ OT reason required</p><p style="font-size:12px;color:#702459;margin-top:6px">Over: <b>'+fmtHM(v.overMinutes)+'</b></p><button class="btn btn-orange btn-full" onclick="showOTModal()" style="margin-top:10px">+ Add OT Reason</button></div>';
-    }
-  }
-
-  actions+='<div class="btn-row" style="margin-top:8px"><button class="btn btn-indigo btn-half" onclick="showScreen(\'clarityTimeScreen\')">⏱️ Clarity</button><button class="btn btn-orange btn-half" onclick="showScreen(\'kronosScreen\')">⏰ Kronos</button></div>';
-  document.getElementById('closeDayStatus').innerHTML=status;
-  document.getElementById('closeDayIssues').innerHTML=issues;
-  document.getElementById('closeDayActions').innerHTML=actions;
 }
 
 function showPTOModal(suggestHours){document.getElementById('ptoModalHours').value=(suggestHours?Number(suggestHours).toFixed(2):'');document.getElementById('ptoModalReason').value='';document.getElementById('ptoModal').classList.remove('hidden');document.getElementById('ptoModal').style.display='flex'}
@@ -1641,415 +1660,49 @@ async function saveQuickNote(){
   closeQuickNoteModal();alert('Saved!');
 }
 
-// ==============================
 // EVIDENCE CAPTURE MODULE
-// ==============================
-let editingEvidenceId=null;
-let evActors=[];
-let evQuotes=[];
+let editingEvidenceId=null;let evActors=[];let evQuotes=[];
 
-function generateEvidenceId(){
-  const now=new Date();
-  const yy=String(now.getFullYear()).slice(2);
-  const mm=String(now.getMonth()+1).padStart(2,'0');
-  const dd=String(now.getDate()).padStart(2,'0');
-  const hh=String(now.getHours()).padStart(2,'0');
-  const mi=String(now.getMinutes()).padStart(2,'0');
-  const ss=String(now.getSeconds()).padStart(2,'0');
-  const seq=String(Math.floor(Math.random()*99)+1).padStart(2,'0');
-  return 'WCC-'+yy+mm+dd+'-'+hh+mi+ss+'-'+seq;
-}
+function generateEvidenceId(){const now=new Date();const yy=String(now.getFullYear()).slice(2);const mm=String(now.getMonth()+1).padStart(2,'0');const dd=String(now.getDate()).padStart(2,'0');const hh=String(now.getHours()).padStart(2,'0');const mi=String(now.getMinutes()).padStart(2,'0');const ss=String(now.getSeconds()).padStart(2,'0');const seq=String(Math.floor(Math.random()*99)+1).padStart(2,'0');return 'WCC-'+yy+mm+dd+'-'+hh+mi+ss+'-'+seq;}
 
-async function openEvidenceCapture(id){
-  editingEvidenceId=id;
-  evActors=[];evQuotes=[];
-  if(id){
-    const rec=await dbGet('evidence',id);
-    if(!rec){alert('Record not found');return}
-    document.getElementById('evidenceCaptureTitle').textContent='✏️ Edit Evidence';
-    document.getElementById('evDescription').value=rec.description||'';
-    document.getElementById('evDate').value=rec.date||getToday();
-    document.getElementById('evTime').value=rec.time_of_event||'';
-    document.getElementById('evEventType').value=rec.event_type||'Verbal';
-    document.getElementById('evCategory').value=rec.category||'Other';
-    document.getElementById('evLocation').value=rec.location||'';
-    document.getElementById('evImpact').value=rec.impact_level||'MEDIUM';
-    document.getElementById('evStrength').value=rec.evidence_strength||'MEDIUM';
-    document.getElementById('evNotes').value=rec.notes||'';
-    evActors=(rec.actors_involved||[]).slice();
-    evQuotes=(rec.direct_quotes||[]).slice();
-  }else{
-    document.getElementById('evidenceCaptureTitle').textContent='+ Capture Event';
-    document.getElementById('evDescription').value='';
-    document.getElementById('evDate').value=getToday();
-    const now=new Date();
-    document.getElementById('evTime').value=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
-    document.getElementById('evEventType').value='Verbal';
-    document.getElementById('evCategory').value='Other';
-    document.getElementById('evLocation').value='';
-    document.getElementById('evImpact').value='MEDIUM';
-    document.getElementById('evStrength').value='MEDIUM';
-    document.getElementById('evNotes').value='';
-  }
-  renderEvActorChips();renderEvQuotes();
-  document.getElementById('evQuoteSpeaker').value='';
-  document.getElementById('evQuoteText').value='';
-  document.getElementById('evQuoteContext').value='';
-  document.getElementById('evActorCustom').value='';
-  showScreen('evidenceCaptureScreen');
-}
+async function openEvidenceCapture(id){editingEvidenceId=id;evActors=[];evQuotes=[];if(id){const rec=await dbGet('evidence',id);if(!rec){alert('Record not found');return}document.getElementById('evidenceCaptureTitle').textContent='✏️ Edit Evidence';document.getElementById('evDescription').value=rec.description||'';document.getElementById('evDate').value=rec.date||getToday();document.getElementById('evTime').value=rec.time_of_event||'';document.getElementById('evEventType').value=rec.event_type||'Verbal';document.getElementById('evCategory').value=rec.category||'Other';document.getElementById('evLocation').value=rec.location||'';document.getElementById('evImpact').value=rec.impact_level||'MEDIUM';document.getElementById('evStrength').value=rec.evidence_strength||'MEDIUM';document.getElementById('evNotes').value=rec.notes||'';evActors=(rec.actors_involved||[]).slice();evQuotes=(rec.direct_quotes||[]).slice();}else{document.getElementById('evidenceCaptureTitle').textContent='+ Capture Event';document.getElementById('evDescription').value='';document.getElementById('evDate').value=getToday();const now=new Date();document.getElementById('evTime').value=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');document.getElementById('evEventType').value='Verbal';document.getElementById('evCategory').value='Other';document.getElementById('evLocation').value='';document.getElementById('evImpact').value='MEDIUM';document.getElementById('evStrength').value='MEDIUM';document.getElementById('evNotes').value='';}renderEvActorChips();renderEvQuotes();document.getElementById('evQuoteSpeaker').value='';document.getElementById('evQuoteText').value='';document.getElementById('evQuoteContext').value='';document.getElementById('evActorCustom').value='';showScreen('evidenceCaptureScreen');}
 
-function toggleEvActor(name){
-  const idx=evActors.indexOf(name);
-  if(idx>=0)evActors.splice(idx,1);
-  else evActors.push(name);
-  renderEvActorChips();
-}
-
-function addCustomEvActor(){
-  const name=document.getElementById('evActorCustom').value.trim();
-  if(!name)return;
-  if(!evActors.includes(name))evActors.push(name);
-  document.getElementById('evActorCustom').value='';
-  renderEvActorChips();
-}
-
-function renderEvActorChips(){
-  document.getElementById('evActorChips').innerHTML=evActors.length?evActors.map(a=>'<span style="background:#e2e8f0;padding:4px 10px;border-radius:12px;font-size:12px;font-weight:600;display:inline-flex;align-items:center;gap:4px">'+escapeHtml(a)+' <span onclick="toggleEvActor(\''+escapeHtml(a).replace(/'/g,"\\'")+'\');" style="cursor:pointer;color:#e53e3e;font-weight:700">×</span></span>').join(''):'<span style="font-size:12px;color:#888">None selected</span>';
-}
-
-function addEvQuote(){
-  const speaker=document.getElementById('evQuoteSpeaker').value.trim();
-  const quote=document.getElementById('evQuoteText').value.trim();
-  const context=document.getElementById('evQuoteContext').value.trim();
-  if(!speaker||!quote){alert('Speaker and quote are required');return}
-  evQuotes.push({speaker,quote,context});
-  document.getElementById('evQuoteSpeaker').value='';
-  document.getElementById('evQuoteText').value='';
-  document.getElementById('evQuoteContext').value='';
-  renderEvQuotes();
-}
-
+function toggleEvActor(name){const idx=evActors.indexOf(name);if(idx>=0)evActors.splice(idx,1);else evActors.push(name);renderEvActorChips();}
+function addCustomEvActor(){const name=document.getElementById('evActorCustom').value.trim();if(!name)return;if(!evActors.includes(name))evActors.push(name);document.getElementById('evActorCustom').value='';renderEvActorChips();}
+function renderEvActorChips(){document.getElementById('evActorChips').innerHTML=evActors.length?evActors.map(a=>'<span style="background:#e2e8f0;padding:4px 10px;border-radius:12px;font-size:12px;font-weight:600;display:inline-flex;align-items:center;gap:4px">'+escapeHtml(a)+' <span onclick="toggleEvActor(\''+escapeHtml(a).replace(/'/g,"\\'")+'\');" style="cursor:pointer;color:#e53e3e;font-weight:700">×</span></span>').join(''):'<span style="font-size:12px;color:#888">None selected</span>';}
+function addEvQuote(){const speaker=document.getElementById('evQuoteSpeaker').value.trim();const quote=document.getElementById('evQuoteText').value.trim();const context=document.getElementById('evQuoteContext').value.trim();if(!speaker||!quote){alert('Speaker and quote are required');return}evQuotes.push({speaker,quote,context});document.getElementById('evQuoteSpeaker').value='';document.getElementById('evQuoteText').value='';document.getElementById('evQuoteContext').value='';renderEvQuotes();}
 function deleteEvQuote(idx){evQuotes.splice(idx,1);renderEvQuotes()}
+function renderEvQuotes(){if(!evQuotes.length){document.getElementById('evQuotesList').innerHTML='';return}document.getElementById('evQuotesList').innerHTML=evQuotes.map((q,i)=>'<div class="entry" style="background:#f7fafc;border-radius:8px;margin-bottom:6px;padding:8px"><div style="display:flex;justify-content:space-between"><b>'+escapeHtml(q.speaker)+'</b><button class="btn btn-sm btn-red" onclick="deleteEvQuote('+i+')" style="padding:2px 8px">X</button></div><div style="font-style:italic;font-size:13px;margin:4px 0">"'+escapeHtml(q.quote)+'"</div>'+(q.context?'<div style="font-size:11px;color:#888">'+escapeHtml(q.context)+'</div>':'')+'</div>').join('');}
 
-function renderEvQuotes(){
-  if(!evQuotes.length){document.getElementById('evQuotesList').innerHTML='';return}
-  document.getElementById('evQuotesList').innerHTML=evQuotes.map((q,i)=>'<div class="entry" style="background:#f7fafc;border-radius:8px;margin-bottom:6px;padding:8px"><div style="display:flex;justify-content:space-between"><b>'+escapeHtml(q.speaker)+'</b><button class="btn btn-sm btn-red" onclick="deleteEvQuote('+i+')" style="padding:2px 8px">X</button></div><div style="font-style:italic;font-size:13px;margin:4px 0">"'+escapeHtml(q.quote)+'"</div>'+(q.context?'<div style="font-size:11px;color:#888">'+escapeHtml(q.context)+'</div>':'')+'</div>').join('');
-}
+async function saveEvidence(){const desc=document.getElementById('evDescription').value.trim();if(!desc){alert('Description is required');return}const record={id:editingEvidenceId||generateEvidenceId(),date:document.getElementById('evDate').value||getToday(),time_of_event:document.getElementById('evTime').value||'',event_type:document.getElementById('evEventType').value,category:document.getElementById('evCategory').value,location:document.getElementById('evLocation').value.trim(),actors_involved:evActors.slice(),description:desc,direct_quotes:evQuotes.slice(),evidence_strength:document.getElementById('evStrength').value,impact_level:document.getElementById('evImpact').value,notes:document.getElementById('evNotes').value.trim(),captured_at:editingEvidenceId?undefined:getTime(),modified_at:getTime(),verified:true};if(record.captured_at===undefined){const existing=await dbGet('evidence',record.id);if(existing)record.captured_at=existing.captured_at;}await dbPut('evidence',record);showToast('Evidence '+(editingEvidenceId?'updated':'captured')+': '+record.id);editingEvidenceId=null;showScreen('evidenceScreen');}
 
-async function saveEvidence(){
-  const desc=document.getElementById('evDescription').value.trim();
-  if(!desc){alert('Description is required');return}
-  const record={
-    id:editingEvidenceId||generateEvidenceId(),
-    date:document.getElementById('evDate').value||getToday(),
-    time_of_event:document.getElementById('evTime').value||'',
-    event_type:document.getElementById('evEventType').value,
-    category:document.getElementById('evCategory').value,
-    location:document.getElementById('evLocation').value.trim(),
-    actors_involved:evActors.slice(),
-    description:desc,
-    direct_quotes:evQuotes.slice(),
-    evidence_strength:document.getElementById('evStrength').value,
-    impact_level:document.getElementById('evImpact').value,
-    notes:document.getElementById('evNotes').value.trim(),
-    captured_at:editingEvidenceId?undefined:getTime(),
-    modified_at:getTime(),
-    verified:true
-  };
-  if(record.captured_at===undefined){
-    const existing=await dbGet('evidence',record.id);
-    if(existing)record.captured_at=existing.captured_at;
-  }
-  await dbPut('evidence',record);
-  showToast('Evidence '+(editingEvidenceId?'updated':'captured')+': '+record.id);
-  editingEvidenceId=null;
-  showScreen('evidenceScreen');
-}
+async function renderEvidenceList(){const locked=await isDayLocked();document.getElementById('evidenceLockBanner').classList.toggle('hidden',!locked);document.getElementById('evidenceAddSection').classList.toggle('hidden',locked);const all=await dbGetAll('evidence');const today=all.filter(e=>e.date===getToday());const impactOrder={CRITICAL:0,HIGH:1,MEDIUM:2,LOW:3};today.sort((a,b)=>(impactOrder[a.impact_level]||9)-(impactOrder[b.impact_level]||9));const crit=today.filter(e=>e.impact_level==='CRITICAL').length;const high=today.filter(e=>e.impact_level==='HIGH').length;document.getElementById('evidenceTodayCount').textContent=today.length+' record'+(today.length!==1?'s':'')+' today'+(crit?' | 🔴 '+crit+' critical':'')+(high?' | 🟠 '+high+' high':'');if(!today.length){document.getElementById('evidenceList').innerHTML='<p style="color:#888;text-align:center;padding:20px">No evidence captured today</p>';return;}const impactColors={CRITICAL:'#e53e3e',HIGH:'#dd6b20',MEDIUM:'#d69e2e',LOW:'#38a169'};document.getElementById('evidenceList').innerHTML=today.map(e=>{const ic=impactColors[e.impact_level]||'#888';const timeStr=e.time_of_event||'';const editBtn=locked?'':'<button class="btn btn-sm btn-indigo" onclick="openEvidenceCapture(\''+e.id+'\')">✏️</button>';const delBtn=locked?'':'<button class="btn btn-sm btn-red" onclick="deleteEvidence(\''+e.id+'\')">X</button>';return '<div class="card" style="border-left:4px solid '+ic+';padding:10px 12px"><div style="display:flex;justify-content:space-between;align-items:start"><div style="flex:1"><div style="font-size:11px;color:#888;font-family:monospace">'+escapeHtml(e.id)+'</div><div style="font-weight:600;margin:2px 0">'+escapeHtml(e.category.replace(/_/g,' '))+(timeStr?' — '+timeStr:'')+'</div><div style="font-size:13px;color:#333">'+escapeHtml(e.description).slice(0,120)+(e.description.length>120?'...':'')+'</div>'+(e.actors_involved?.length?'<div style="font-size:11px;color:#666;margin-top:2px">👥 '+e.actors_involved.map(escapeHtml).join(', ')+'</div>':'')+(e.direct_quotes?.length?'<div style="font-size:11px;color:#805ad5;margin-top:2px">💬 '+e.direct_quotes.length+' quote(s)</div>':'')+'</div><div style="display:flex;gap:4px;margin-left:8px">'+editBtn+delBtn+'</div></div></div>';}).join('');}
 
-async function renderEvidenceList(){
-  const locked=await isDayLocked();
-  document.getElementById('evidenceLockBanner').classList.toggle('hidden',!locked);
-  document.getElementById('evidenceAddSection').classList.toggle('hidden',locked);
-  const all=await dbGetAll('evidence');
-  const today=all.filter(e=>e.date===getToday());
-  const impactOrder={CRITICAL:0,HIGH:1,MEDIUM:2,LOW:3};
-  today.sort((a,b)=>(impactOrder[a.impact_level]||9)-(impactOrder[b.impact_level]||9));
-  const crit=today.filter(e=>e.impact_level==='CRITICAL').length;
-  const high=today.filter(e=>e.impact_level==='HIGH').length;
-  document.getElementById('evidenceTodayCount').textContent=today.length+' record'+(today.length!==1?'s':'')+' today'+(crit?' | 🔴 '+crit+' critical':'')+(high?' | 🟠 '+high+' high':'');
-  if(!today.length){
-    document.getElementById('evidenceList').innerHTML='<p style="color:#888;text-align:center;padding:20px">No evidence captured today</p>';
-    return;
-  }
-  const impactColors={CRITICAL:'#e53e3e',HIGH:'#dd6b20',MEDIUM:'#d69e2e',LOW:'#38a169'};
-  document.getElementById('evidenceList').innerHTML=today.map(e=>{
-    const ic=impactColors[e.impact_level]||'#888';
-    const timeStr=e.time_of_event||'';
-    const editBtn=locked?'':'<button class="btn btn-sm btn-indigo" onclick="openEvidenceCapture(\''+e.id+'\')">✏️</button>';
-    const delBtn=locked?'':'<button class="btn btn-sm btn-red" onclick="deleteEvidence(\''+e.id+'\')">X</button>';
-    return '<div class="card" style="border-left:4px solid '+ic+';padding:10px 12px"><div style="display:flex;justify-content:space-between;align-items:start"><div style="flex:1"><div style="font-size:11px;color:#888;font-family:monospace">'+escapeHtml(e.id)+'</div><div style="font-weight:600;margin:2px 0">'+escapeHtml(e.category.replace(/_/g,' '))+(timeStr?' — '+timeStr:'')+'</div><div style="font-size:13px;color:#333">'+escapeHtml(e.description).slice(0,120)+(e.description.length>120?'...':'')+'</div>'+(e.actors_involved?.length?'<div style="font-size:11px;color:#666;margin-top:2px">👥 '+e.actors_involved.map(escapeHtml).join(', ')+'</div>':'')+(e.direct_quotes?.length?'<div style="font-size:11px;color:#805ad5;margin-top:2px">💬 '+e.direct_quotes.length+' quote(s)</div>':'')+'</div><div style="display:flex;gap:4px;margin-left:8px">'+editBtn+delBtn+'</div></div></div>';
-  }).join('');
-}
-
-async function deleteEvidence(id){
-  if(await isDayLocked()){alert('Day is locked after EOD export.');return}
-  if(!confirm('Delete this evidence record?'))return;
-  await dbDelete('evidence',id);
-  await renderEvidenceList();
-}
-
-async function copyEvidenceJSON(){
-  const all=await dbGetAll('evidence');
-  const today=all.filter(e=>e.date===getToday());
-  if(!today.length){alert('No evidence records today');return}
-  const json=JSON.stringify(today,null,2);
-  const ok=await wccCopyText(json);
-  if(ok){
-    document.getElementById('evidenceCopied').classList.remove('hidden');
-    setTimeout(()=>document.getElementById('evidenceCopied').classList.add('hidden'),3000);
-  }else{
-    alert('Copy failed — try sharing from the Daily Bundle export instead');
-  }
-}
+async function deleteEvidence(id){if(await isDayLocked()){alert('Day is locked after EOD export.');return}if(!confirm('Delete this evidence record?'))return;await dbDelete('evidence',id);await renderEvidenceList();}
+async function copyEvidenceJSON(){const all=await dbGetAll('evidence');const today=all.filter(e=>e.date===getToday());if(!today.length){alert('No evidence records today');return}const json=JSON.stringify(today,null,2);const ok=await wccCopyText(json);if(ok){document.getElementById('evidenceCopied').classList.remove('hidden');setTimeout(()=>document.getElementById('evidenceCopied').classList.add('hidden'),3000);}else{alert('Copy failed — try sharing from the Daily Bundle export instead');}}
 
 // ACTIVE SESSION SYSTEM
-const SESSION_TYPES={
-  'Remote Technical':{icon:'🖥️',clarityId:'remote_technical',color:'#2b6cb0'},
-  'In-Person Technical':{icon:'🏢',clarityId:'inperson_technical',color:'#2b6cb0',extras:['practice']},
-  'Remote ECW':{icon:'🏥',clarityId:'remote_ecw',color:'#319795'},
-  'In-Person ECW':{icon:'🏥',clarityId:'inperson_ecw',color:'#319795',extras:['practice']},
-  'Network':{icon:'🌐',clarityId:'network',color:'#805ad5'},
-  'Imaging':{icon:'💿',clarityId:'imaging',color:'#805ad5'},
-  'Admin':{icon:'📧',clarityId:'admin',color:'#718096'},
-  'Non-Project Travel':{icon:'🚗',clarityId:'nonproject_travel',color:'#dd6b20',extras:['mileage']}
-};
+const SESSION_TYPES={'Remote Technical':{icon:'🖥️',clarityId:'remote_technical',color:'#2b6cb0'},'In-Person Technical':{icon:'🏢',clarityId:'inperson_technical',color:'#2b6cb0',extras:['practice']},'Remote ECW':{icon:'🏥',clarityId:'remote_ecw',color:'#319795'},'In-Person ECW':{icon:'🏥',clarityId:'inperson_ecw',color:'#319795',extras:['practice']},'Network':{icon:'🌐',clarityId:'network',color:'#805ad5'},'Imaging':{icon:'💿',clarityId:'imaging',color:'#805ad5'},'Admin':{icon:'📧',clarityId:'admin',color:'#718096'},'Non-Project Travel':{icon:'🚗',clarityId:'nonproject_travel',color:'#dd6b20',extras:['mileage']}};
 let activeSessionType=null,activeSessionStartTime=null,activeSessionTimerInterval=null;
 
-async function quickSession(category){
-  const config=SESSION_TYPES[category];
-  if(!config){showScreen('clarityTimeScreen');return}
-  const locked=await isDayLocked();
-  activeSessionType=category;
-  activeSessionStartTime=Date.now();
-  document.getElementById('activeSessionTitle').textContent=config.icon+' '+category;
-  document.getElementById('activeSessionStartedAt').textContent='Started at '+new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true});
-  document.getElementById('sessionHours').value='';
-  document.getElementById('sessionMinutes').value='';
-  document.getElementById('sessionNotes').value='';
-  document.getElementById('activeSessionLockBanner').classList.toggle('hidden',!locked);
-  document.getElementById('activeSessionAddSection').classList.toggle('hidden',locked);
-  document.getElementById('activeSessionLogTitle').textContent='Logged for '+category+' today';
-  let extrasHtml='';
-  if(!locked){
-    if(config.extras?.includes('practice'))extrasHtml+='<div class="card"><button class="btn btn-teal btn-full" onclick="openConcurMileage()">🏥 Log Practice Visit / Mileage</button></div>';
-    if(config.extras?.includes('mileage'))extrasHtml+='<div class="card"><button class="btn btn-teal btn-full" onclick="openConcurMileage()">💳 Log Mileage</button></div>';
-  }
-  document.getElementById('activeSessionExtras').innerHTML=extrasHtml;
-  clearInterval(activeSessionTimerInterval);
-  updateActiveSessionTimer();
-  activeSessionTimerInterval=setInterval(updateActiveSessionTimer,1000);
-  await renderActiveSessionLog();
-  showScreen('activeSessionScreen');
-}
+async function quickSession(category){const config=SESSION_TYPES[category];if(!config){showScreen('clarityTimeScreen');return}const locked=await isDayLocked();activeSessionType=category;activeSessionStartTime=Date.now();document.getElementById('activeSessionTitle').textContent=config.icon+' '+category;document.getElementById('activeSessionStartedAt').textContent='Started at '+new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true});document.getElementById('sessionHours').value='';document.getElementById('sessionMinutes').value='';document.getElementById('sessionNotes').value='';document.getElementById('activeSessionLockBanner').classList.toggle('hidden',!locked);document.getElementById('activeSessionAddSection').classList.toggle('hidden',locked);document.getElementById('activeSessionLogTitle').textContent='Logged for '+category+' today';let extrasHtml='';if(!locked){if(config.extras?.includes('practice'))extrasHtml+='<div class="card"><button class="btn btn-teal btn-full" onclick="openConcurMileage()">🏥 Log Practice Visit / Mileage</button></div>';if(config.extras?.includes('mileage'))extrasHtml+='<div class="card"><button class="btn btn-teal btn-full" onclick="openConcurMileage()">💳 Log Mileage</button></div>';}document.getElementById('activeSessionExtras').innerHTML=extrasHtml;clearInterval(activeSessionTimerInterval);updateActiveSessionTimer();activeSessionTimerInterval=setInterval(updateActiveSessionTimer,1000);await renderActiveSessionLog();showScreen('activeSessionScreen');}
 
-function updateActiveSessionTimer(){
-  if(!activeSessionStartTime)return;
-  const elapsed=Math.floor((Date.now()-activeSessionStartTime)/1000);
-  const hh=Math.floor(elapsed/3600),mm=Math.floor((elapsed%3600)/60),ss=elapsed%60;
-  document.getElementById('activeSessionTimer').textContent=hh+':'+String(mm).padStart(2,'0')+':'+String(ss).padStart(2,'0');
-}
+function updateActiveSessionTimer(){if(!activeSessionStartTime)return;const elapsed=Math.floor((Date.now()-activeSessionStartTime)/1000);const hh=Math.floor(elapsed/3600),mm=Math.floor((elapsed%3600)/60),ss=elapsed%60;document.getElementById('activeSessionTimer').textContent=hh+':'+String(mm).padStart(2,'0')+':'+String(ss).padStart(2,'0');}
 
-async function sessionQuickAdd(minutes){
-  if(await isDayLocked()){alert('Day is locked after EOD export.');return}
-  const config=SESSION_TYPES[activeSessionType];
-  if(!config)return;
-  const cats=await getClarityCategories();
-  const cat=cats.find(c=>c.id===config.clarityId);
-  if(!cat){alert('Category "'+config.clarityId+'" not found. Check Clarity Categories in Settings.');return}
-  const rounded=roundTo15Min(minutes);
-  const entry={id:'CL'+Date.now(),date:getToday(),category:config.clarityId,categoryName:cat.name,minutes:rounded,rawMinutes:minutes,notes:'',time:getTime()};
-  await dbPut('clarityEntries',entry);
-  showToast('+'+rounded+'m '+cat.name);
-  try{navigator.vibrate&&navigator.vibrate(30)}catch(e){}
-  await renderActiveSessionLog();
-}
+async function sessionQuickAdd(minutes){if(await isDayLocked()){alert('Day is locked after EOD export.');return}const config=SESSION_TYPES[activeSessionType];if(!config)return;const cats=await getClarityCategories();const cat=cats.find(c=>c.id===config.clarityId);if(!cat){alert('Category "'+config.clarityId+'" not found.');return}const rounded=roundTo15Min(minutes);const entry={id:'CL'+Date.now(),date:getToday(),category:config.clarityId,categoryName:cat.name,minutes:rounded,rawMinutes:minutes,notes:'',time:getTime()};await dbPut('clarityEntries',entry);showToast('+'+rounded+'m '+cat.name);try{navigator.vibrate&&navigator.vibrate(30)}catch(e){}await renderActiveSessionLog();}
 
-async function sessionAddCustom(){
-  if(await isDayLocked()){alert('Day is locked after EOD export.');return}
-  const config=SESSION_TYPES[activeSessionType];
-  if(!config)return;
-  const hours=parseInt(document.getElementById('sessionHours').value)||0;
-  const minutes=parseInt(document.getElementById('sessionMinutes').value)||0;
-  const notes=document.getElementById('sessionNotes').value.trim();
-  const totalMinutes=hours*60+minutes;
-  if(totalMinutes<=0){alert('Enter time');return}
-  const rounded=roundTo15Min(totalMinutes);
-  const cats=await getClarityCategories();
-  const cat=cats.find(c=>c.id===config.clarityId);
-  if(!cat){alert('Category not found');return}
-  const entry={id:'CL'+Date.now(),date:getToday(),category:config.clarityId,categoryName:cat.name,minutes:rounded,rawMinutes:totalMinutes,notes,time:getTime()};
-  await dbPut('clarityEntries',entry);
-  document.getElementById('sessionHours').value='';
-  document.getElementById('sessionMinutes').value='';
-  document.getElementById('sessionNotes').value='';
-  showToast('+'+Math.floor(rounded/60)+':'+String(rounded%60).padStart(2,'0')+' '+cat.name);
-  await renderActiveSessionLog();
-}
+async function sessionAddCustom(){if(await isDayLocked()){alert('Day is locked after EOD export.');return}const config=SESSION_TYPES[activeSessionType];if(!config)return;const hours=parseInt(document.getElementById('sessionHours').value)||0;const minutes=parseInt(document.getElementById('sessionMinutes').value)||0;const notes=document.getElementById('sessionNotes').value.trim();const totalMinutes=hours*60+minutes;if(totalMinutes<=0){alert('Enter time');return}const rounded=roundTo15Min(totalMinutes);const cats=await getClarityCategories();const cat=cats.find(c=>c.id===config.clarityId);if(!cat){alert('Category not found');return}const entry={id:'CL'+Date.now(),date:getToday(),category:config.clarityId,categoryName:cat.name,minutes:rounded,rawMinutes:totalMinutes,notes,time:getTime()};await dbPut('clarityEntries',entry);document.getElementById('sessionHours').value='';document.getElementById('sessionMinutes').value='';document.getElementById('sessionNotes').value='';showToast('+'+Math.floor(rounded/60)+':'+String(rounded%60).padStart(2,'0')+' '+cat.name);await renderActiveSessionLog();}
 
-async function renderActiveSessionLog(){
-  const config=SESSION_TYPES[activeSessionType];
-  if(!config)return;
-  const entries=await dbGetAll('clarityEntries');
-  const todayEntries=entries.filter(e=>e.date===getToday()&&e.category===config.clarityId);
-  const locked=await isDayLocked();
-  if(!todayEntries.length){
-    document.getElementById('activeSessionLogList').innerHTML='<p style="color:#888;text-align:center;font-size:13px">No entries yet</p>';
-    document.getElementById('activeSessionTotal').textContent='Total: 0:00';
-    return;
-  }
-  let total=0;
-  document.getElementById('activeSessionLogList').innerHTML=todayEntries.map(e=>{
-    total+=e.minutes;
-    const delBtn=locked?'':'<button class="btn btn-sm btn-red" onclick="deleteSessionEntry(\''+e.id+'\')">X</button>';
-    return '<div class="time-entry-item"><div><span style="font-size:12px;color:#888">'+e.time.display12+'</span>'+(e.notes?' — '+e.notes:'')+'</div><div style="text-align:right"><span style="font-weight:600">'+Math.floor(e.minutes/60)+':'+String(e.minutes%60).padStart(2,'0')+'</span><br>'+delBtn+'</div></div>';
-  }).join('');
-  document.getElementById('activeSessionTotal').textContent='Total: '+Math.floor(total/60)+':'+String(total%60).padStart(2,'0');
-}
+async function renderActiveSessionLog(){const config=SESSION_TYPES[activeSessionType];if(!config)return;const entries=await dbGetAll('clarityEntries');const todayEntries=entries.filter(e=>e.date===getToday()&&e.category===config.clarityId);const locked=await isDayLocked();if(!todayEntries.length){document.getElementById('activeSessionLogList').innerHTML='<p style="color:#888;text-align:center;font-size:13px">No entries yet</p>';document.getElementById('activeSessionTotal').textContent='Total: 0:00';return;}let total=0;document.getElementById('activeSessionLogList').innerHTML=todayEntries.map(e=>{total+=e.minutes;const delBtn=locked?'':'<button class="btn btn-sm btn-red" onclick="deleteSessionEntry(\''+e.id+'\')">X</button>';return '<div class="time-entry-item"><div><span style="font-size:12px;color:#888">'+e.time.display12+'</span>'+(e.notes?' — '+e.notes:'')+'</div><div style="text-align:right"><span style="font-weight:600">'+Math.floor(e.minutes/60)+':'+String(e.minutes%60).padStart(2,'0')+'</span><br>'+delBtn+'</div></div>';}).join('');document.getElementById('activeSessionTotal').textContent='Total: '+Math.floor(total/60)+':'+String(total%60).padStart(2,'0');}
 
-async function deleteSessionEntry(id){
-  if(await isDayLocked()){alert('Day is locked after EOD export.');return}
-  await dbDelete('clarityEntries',id);
-  await renderActiveSessionLog();
-}
-
-function endActiveSession(){
-  clearInterval(activeSessionTimerInterval);
-  activeSessionTimerInterval=null;activeSessionType=null;activeSessionStartTime=null;
-  showScreen('menuScreen');
-}
+async function deleteSessionEntry(id){if(await isDayLocked()){alert('Day is locked after EOD export.');return}await dbDelete('clarityEntries',id);await renderActiveSessionLog();}
+function endActiveSession(){clearInterval(activeSessionTimerInterval);activeSessionTimerInterval=null;activeSessionType=null;activeSessionStartTime=null;showScreen('menuScreen');}
 
 // TODAY
-async function updateTodayScreen(){
-  const entries=await dbGetAll('clarityEntries');
-  const todayEntries=entries.filter(e=>e.date===getToday());
-  const kronos=await getKronosToday();
-  const kronosMin=calculateKronosHours(kronos);
-  const clarityMin=todayEntries.reduce((s,e)=>s+e.minutes,0);
-  document.getElementById('todayStats').innerHTML='<div style="display:flex;justify-content:space-around;text-align:center"><div><div style="font-size:24px;font-weight:700">'+Math.floor(kronosMin/60)+':'+String(kronosMin%60).padStart(2,'0')+'</div><div style="font-size:11px;color:#888">Kronos</div></div><div><div style="font-size:24px;font-weight:700">'+Math.floor(clarityMin/60)+':'+String(clarityMin%60).padStart(2,'0')+'</div><div style="font-size:11px;color:#888">Clarity</div></div><div><div style="font-size:24px;font-weight:700">'+todayEntries.length+'</div><div style="font-size:11px;color:#888">Entries</div></div></div>';
-  document.getElementById('todayList').innerHTML=todayEntries.length?todayEntries.map(e=>'<div class="card"><b>'+e.categoryName+'</b> - '+Math.floor(e.minutes/60)+':'+String(e.minutes%60).padStart(2,'0')+'<br><span style="font-size:11px;color:#666">'+e.time.display12+(e.notes?' | '+e.notes:'')+'</span></div>').join(''):'<p style="color:#888;text-align:center;padding:20px">No entries today</p>';
-}
+async function updateTodayScreen(){const entries=await dbGetAll('clarityEntries');const todayEntries=entries.filter(e=>e.date===getToday());const kronos=await getKronosToday();const kronosMin=calculateKronosHours(kronos);const clarityMin=todayEntries.reduce((s,e)=>s+e.minutes,0);document.getElementById('todayStats').innerHTML='<div style="display:flex;justify-content:space-around;text-align:center"><div><div style="font-size:24px;font-weight:700">'+Math.floor(kronosMin/60)+':'+String(kronosMin%60).padStart(2,'0')+'</div><div style="font-size:11px;color:#888">Kronos</div></div><div><div style="font-size:24px;font-weight:700">'+Math.floor(clarityMin/60)+':'+String(clarityMin%60).padStart(2,'0')+'</div><div style="font-size:11px;color:#888">Clarity</div></div><div><div style="font-size:24px;font-weight:700">'+todayEntries.length+'</div><div style="font-size:11px;color:#888">Entries</div></div></div>';document.getElementById('todayList').innerHTML=todayEntries.length?todayEntries.map(e=>'<div class="card"><b>'+e.categoryName+'</b> - '+Math.floor(e.minutes/60)+':'+String(e.minutes%60).padStart(2,'0')+'<br><span style="font-size:11px;color:#666">'+e.time.display12+(e.notes?' | '+e.notes:'')+'</span></div>').join(''):'<p style="color:#888;text-align:center;padding:20px">No entries today</p>';}
 
 // EOD
-async function showEOD(){
-  const balance=await getCloseDayBalance();
-  const v=validateDayForEOD(balance);
-  if(!v.ok){
-    await showCloseDayScreen();
-    alert(v.message);
-    return;
-  }
-  const txt = await buildEODText(getToday());
-  document.getElementById('eodText').value=txt;
-  document.getElementById('eodTitle').textContent='📝 EOD - '+getToday();
-  showScreen('eodScreen');
-}
-
-async function buildEODText(dateStr){
-  const entries=await dbGetAll('clarityEntries');
-  const dayEntries=entries.filter(e=>e.date===dateStr);
-  const kronos=await dbGet('kronos',dateStr) || {date:dateStr,punches:[],pto:[],overtimeReason:null};
-  const notes=await dbGetAll('notes');
-  const dayNotes=notes.filter(n=>n.date===dateStr);
-  const allSessions=await dbGetAll('sessions');
-  const dayTickets=allSessions.filter(s=>s.date===dateStr && (s.type==='ticket' || s.type==='work_item'));
-  const projects=await dbGetAll('projects');
-  const activeProjects=projects.filter(p=>p.status!=='completed');
-
-  const kLabels={in:'Clock In',out:'Clock Out',lunch_start:'Lunch Start',lunch_end:'Lunch End'};
-  let txt='WORK / HCA — END-OF-DAY REPORT\n'+dateStr+'\n'+'='.repeat(44)+'\n\n';
-
-  // Tickets summary
-  if(dayTickets.length){
-    const byStatus={}; dayTickets.forEach(t=>{byStatus[t.status]=(byStatus[t.status]||0)+1});
-    txt+='TICKETS & WORK ITEMS\n';
-    txt+='Total: '+dayTickets.length+' | ';
-    const order=['resolved','in_progress','pending_internal','pending_customer','escalated_onsite'];
-    txt+=order.filter(k=>byStatus[k]).map(k=>k.replace('_',' ') + ': ' + byStatus[k]).join(' | ');
-    txt+='\n\n';
-    dayTickets.forEach((t,i)=>{
-      const title = (t.ticketNumber? (t.ticketNumber+' – ') : '') + (t.subject||'Work Item');
-      txt+=(i+1)+'️⃣ '+title+'\n';
-      if(t.location) txt+='Location: '+t.location+'\n';
-      if(t.device||t.ip) txt+='Device/IP: '+[t.device||null, t.ip||null].filter(Boolean).join(' | ')+'\n';
-      txt+='Status: '+(t.status||'in_progress').replaceAll('_',' ') + (t.assignee?(' – '+t.assignee):'')+'\n';
-      if(t.projectName) txt+='Project: '+t.projectName+'\n';
-      if(t.actions?.length){
-        txt+='Actions:\n';
-        t.actions.forEach(a=>{txt+='- ['+a.time.display+'] '+a.text+'\n'});
-      }
-      if(t.followUp==='yes' || t.followUpNote) txt+='Follow-up: '+(t.followUpNote||'Yes')+'\n';
-      txt+='\n';
-    });
-  }else{
-    txt+='TICKETS & WORK ITEMS\n(no ticket cards logged today)\n\n';
-  }
-
-  // Kronos
-  txt+='KRONOS PUNCHES\n';
-  if(kronos.punches?.length)kronos.punches.forEach(p=>{txt+='  '+p.kronosTime+' - '+kLabels[p.type]+(p.manual?' [manual]':'')+'\n'});
-  else txt+='  (no punches)\n';
-  if(kronos.pto?.length){txt+='\nPTO:\n';kronos.pto.forEach(p=>{txt+='  '+p.hours+'h - '+p.reason+'\n'})}
-  if(kronos.overtimeReason)txt+='\nOVERTIME: '+kronos.overtimeReason+'\n';
-
-  // Clarity
-  txt+='\nCLARITY TIME\n';
-  const catTotals={};let total=0;
-  dayEntries.forEach(e=>{catTotals[e.categoryName]=(catTotals[e.categoryName]||0)+e.minutes;total+=e.minutes});
-  for(const[cat,min]of Object.entries(catTotals))txt+='  '+cat+': '+Math.floor(min/60)+':'+String(min%60).padStart(2,'0')+'\n';
-  txt+='  TOTAL: '+Math.floor(total/60)+':'+String(total%60).padStart(2,'0')+'\n';
-
-  // Concur
-  const conc=await dbGetAll('concurEntries');
-  const dayConc=conc.filter(e=>e.date===dateStr);
-  if(dayConc.length){
-    txt+='\nCONCUR (EXPENSES)\n';
-    dayConc.forEach(e=>{
-      if(e.type==='mileage') txt+='  Mileage: '+(e.fromDisplay||e.fromAddr||'?')+' → '+(e.toDisplay||e.toAddr||'?')+'\n';
-      else if(e.type==='lodging') txt+='  Lodging: '+e.location+' - $'+(e.amount?.toFixed(2)||'0.00')+'\n';
-      else if(e.type==='rental') txt+='  Rental: '+(e.description||'')+' - $'+(e.amount?.toFixed(2)||'0.00')+'\n';
-      else if(e.type==='meal') txt+='  Meal: '+e.mealType+' ('+e.dining+') - $'+(e.amount?.toFixed(2)||'0.00')+(e.companionId?(' | Companion: '+e.companionId):'')+'\n';
-    });
-  }
-
-  // Notes
-  if(dayNotes.length){txt+='\nQUICK NOTES\n';dayNotes.forEach(n=>{txt+='  ['+n.time.display+'] '+n.text+'\n'})}
-
-  // Evidence
-  const evidenceAll=await dbGetAll('evidence');
-  const dayEvidence=evidenceAll.filter(e=>e.date===dateStr);
-  if(dayEvidence.length){
-    const crit=dayEvidence.filter(e=>e.impact_level==='CRITICAL').length;
-    const high=dayEvidence.filter(e=>e.impact_level==='HIGH').length;
-    txt+='\nEVIDENCE CAPTURED\n';
-    txt+='  Total: '+dayEvidence.length;
-    if(crit)txt+=' | Critical: '+crit;
-    if(high)txt+=' | High: '+high;
-    txt+='\n';
-    dayEvidence.forEach(e=>{
-      txt+='  ['+e.id+'] '+(e.time_of_event||'--:--')+' | '+e.category.replace(/_/g,' ')+' | '+e.impact_level+'\n';
-      txt+='    '+e.description.slice(0,100)+(e.description.length>100?'...':'')+'\n';
-    });
-  }
-
-  // Projects due soon
-  const soon = getProjectsDueSoon(activeProjects, 14);
-  if(soon.length){
-    txt+='\nPROJECTS (DUE SOON)\n';
-    soon.forEach(p=>{txt+='  - '+p.name+' (Due '+p.dueDate+')\n'; if(p.notes) txt+='    Notes: '+p.notes.replace(/\n/g,' ')+'\n';});
-  }
-  return txt;
-}
+async function showEOD(){const balance=await getCloseDayBalance();const v=validateDayForEOD(balance);if(!v.ok){await showCloseDayScreen();alert(v.message);return;}const txt=await buildEODText(getToday());document.getElementById('eodText').value=txt;document.getElementById('eodTitle').textContent='📝 EOD - '+getToday();showScreen('eodScreen');}
 
 async function copyEOD(){const ok=await wccCopyText(document.getElementById('eodText').value);if(ok){document.getElementById('eodCopied').classList.remove('hidden');setTimeout(()=>document.getElementById('eodCopied').classList.add('hidden'),2000)}else{alert('Copy failed — try Share button instead')}}
 async function shareEOD(){if(navigator.share){try{await navigator.share({title:'EOD Report',text:document.getElementById('eodText').value});return}catch(e){}}saveEOD()}
@@ -2063,748 +1716,488 @@ function historyPrevDay(){const d=new Date(selectedHistoryDate);d.setDate(d.getD
 function historyNextDay(){const d=new Date(selectedHistoryDate);d.setDate(d.getDate()+1);if(d>new Date())return;selectedHistoryDate=d.toISOString().split('T')[0];document.getElementById('historyDate').value=selectedHistoryDate;loadHistoryDate()}
 function historyToday(){selectedHistoryDate=getToday();document.getElementById('historyDate').value=selectedHistoryDate;loadHistoryDate()}
 
-async function loadHistoryDate(){
-  selectedHistoryDate=document.getElementById('historyDate').value;
-  const entries=await dbGetAll('clarityEntries');
-  const dayEntries=entries.filter(e=>e.date===selectedHistoryDate);
-  const k=await dbGet('kronos',selectedHistoryDate);
-  const catTotals={};let total=0;
-  dayEntries.forEach(e=>{catTotals[e.categoryName]=(catTotals[e.categoryName]||0)+e.minutes;total+=e.minutes});
-  let html='<div class="section-title">Clarity Summary</div>';
-  if(Object.keys(catTotals).length){
-    for(const[c,m]of Object.entries(catTotals))html+='<div style="display:flex;justify-content:space-between;font-size:13px"><span>'+c+'</span><span>'+Math.floor(m/60)+':'+String(m%60).padStart(2,'0')+'</span></div>';
-    html+='<div style="border-top:1px solid #ddd;margin-top:8px;padding-top:8px;font-weight:600">TOTAL: '+Math.floor(total/60)+':'+String(total%60).padStart(2,'0')+'</div>';
-  }else html+='<p style="color:#888;font-size:13px">No entries</p>';
-  document.getElementById('historyStats').innerHTML=html;
-  const kLabels={in:'🟢 In',out:'🔴 Out',lunch_start:'🍴 Lunch',lunch_end:'🍴 Back'};
-  document.getElementById('historyKronosList').innerHTML=k?.punches?.length?'<div class="section-title">Kronos</div>'+k.punches.map(p=>'<div style="display:flex;justify-content:space-between;padding:4px 0"><span>'+kLabels[p.type]+'</span><span class="kronos-time">'+p.kronosTime+'</span></div>').join(''):'<p style="color:#888;text-align:center">No Kronos punches</p>';
-}
+async function loadHistoryDate(){selectedHistoryDate=document.getElementById('historyDate').value;const entries=await dbGetAll('clarityEntries');const dayEntries=entries.filter(e=>e.date===selectedHistoryDate);const k=await dbGet('kronos',selectedHistoryDate);const catTotals={};let total=0;dayEntries.forEach(e=>{catTotals[e.categoryName]=(catTotals[e.categoryName]||0)+e.minutes;total+=e.minutes});let html='<div class="section-title">Clarity Summary</div>';if(Object.keys(catTotals).length){for(const[c,m]of Object.entries(catTotals))html+='<div style="display:flex;justify-content:space-between;font-size:13px"><span>'+c+'</span><span>'+Math.floor(m/60)+':'+String(m%60).padStart(2,'0')+'</span></div>';html+='<div style="border-top:1px solid #ddd;margin-top:8px;padding-top:8px;font-weight:600">TOTAL: '+Math.floor(total/60)+':'+String(total%60).padStart(2,'0')+'</div>';}else html+='<p style="color:#888;font-size:13px">No entries</p>';document.getElementById('historyStats').innerHTML=html;const kLabels={in:'🟢 In',out:'🔴 Out',lunch_start:'🍴 Lunch',lunch_end:'🍴 Back'};document.getElementById('historyKronosList').innerHTML=k?.punches?.length?'<div class="section-title">Kronos</div>'+k.punches.map(p=>'<div style="display:flex;justify-content:space-between;padding:4px 0"><span>'+kLabels[p.type]+'</span><span class="kronos-time">'+p.kronosTime+'</span></div>').join(''):'<p style="color:#888;text-align:center">No Kronos punches</p>';}
+
+// updateCloseDayStatus — large function
+async function updateCloseDayStatus(){const balance=await getCloseDayBalance();const{kronos,kronosMinutes,clarityMinutes}=balance;const kh=Math.floor(kronosMinutes/60),km=kronosMinutes%60;const ch=Math.floor(clarityMinutes/60),cm=clarityMinutes%60;document.getElementById('closeDayKronos').textContent=kh+':'+String(km).padStart(2,'0');document.getElementById('closeDayClarity').textContent=ch+':'+String(cm).padStart(2,'0');const v=validateDayForEOD(balance);const isMatch=kronosMinutes===clarityMinutes;const bg=v.ok?'#c6f6d5':(!isMatch?'#fed7d7':'#fef3c7');document.getElementById('closeDayKronos').parentElement.style.background=bg;document.getElementById('closeDayClarity').parentElement.style.background=bg;let status='',issues='',actions='';if(v.ok){const totalLabel=kronosMinutes===480?'8 hours':(fmtHM(kronosMinutes)+' total');status='<div class="success-box">✅ Ready. Kronos and Clarity match ('+totalLabel+').</div>';actions='<button class="btn btn-green btn-full" onclick="showEOD()">📝 Generate EOD</button><button class="btn btn-purple btn-full" onclick="exportDailyBundle()">📦 Export Daily Bundle (ZIP)</button>';}else{if(v.code==='mismatch'){const diff=Math.abs(kronosMinutes-clarityMinutes);status='<div class="warning-box">⚠️ Mismatch: '+fmtHM(diff)+' difference</div>';}else if(v.code==='under8'){status='<div class="warning-box">⚠️ Under 8 hours: '+fmtHM(kronosMinutes)+' logged</div>';const remH=(v.remainingMinutes/60);const allClarity=await dbGetAll('clarityEntries');const todaysClarity=allClarity.filter(e=>e.date===getToday());const allConcur=await dbGetAll('concurEntries');const todaysMileage=allConcur.filter(e=>e.date===getToday()&&e.type==='mileage');const allSessions=await dbGetAll('sessions');const todaysSessions=allSessions.filter(s=>s.date===getToday());const clarityLines=todaysClarity.length?todaysClarity.map(e=>{const hh=Math.floor(e.minutes/60),mm=String(e.minutes%60).padStart(2,'0');return '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #fde68a"><span><b>'+e.categoryName+'</b>'+(e.notes?(' - '+e.notes):'')+'</span><span style="font-weight:600">'+hh+':'+mm+'</span></div>';}).join(''):'<div style="color:#92400e;font-size:12px">No Clarity entries yet.</div>';const mileageLines=todaysMileage.length?todaysMileage.map(e=>'<div style="padding:6px 0;border-bottom:1px solid #fde68a"><b>Mileage</b>: '+e.fromDisplay+' → '+e.toDisplay+'</div>').join(''):'<div style="color:#92400e;font-size:12px">No mileage entries logged.</div>';const sessionLines=todaysSessions.length?todaysSessions.map(s=>{const dur=(s.durationMinutes!=null)?(s.durationMinutes+'m'):'active';return '<div style="padding:6px 0;border-bottom:1px solid #fde68a"><b>'+(s.subject||'Session')+'</b> <span style="color:#92400e;font-size:12px">('+dur+')</span></div>';}).join(''):'<div style="color:#92400e;font-size:12px">No sessions saved today.</div>';issues+='<div class="card" style="background:#fef3c7;border:1px solid #f59e0b"><p style="font-weight:700;color:#92400e">🔍 Under 8 hours — find what\'s missing</p><p style="font-size:12px;color:#92400e;margin-top:6px">Remaining to reach 8:00: <b>'+fmtHM(v.remainingMinutes)+'</b></p><div style="margin-top:10px"><div style="font-weight:600;color:#92400e;margin-bottom:6px">Clarity entries today</div><div style="max-height:160px;overflow:auto;padding-right:6px">'+clarityLines+'</div></div><div style="margin-top:12px"><div style="font-weight:600;color:#92400e;margin-bottom:6px">Mileage today (travel)</div><div style="max-height:120px;overflow:auto;padding-right:6px">'+mileageLines+'</div></div><div style="margin-top:12px"><div style="font-weight:600;color:#92400e;margin-bottom:6px">Sessions today (service)</div><div style="max-height:120px;overflow:auto;padding-right:6px">'+sessionLines+'</div></div><div class="btn-row" style="margin-top:12px"><button class="btn btn-indigo btn-half" onclick="showScreen(\'clarityTimeScreen\')">⏱️ Add time</button><button class="btn btn-teal btn-half" onclick="showScreen(\'concurScreen\')">💳 Add travel</button></div><button class="btn btn-purple btn-full" onclick="showPTOModal('+remH.toFixed(2)+')" style="margin-top:10px">+ Add PTO (if you took PTO)</button></div>';}else if(v.code==='ot_reason'){status='<div class="warning-box">⚠️ Over 8 hours: '+fmtHM(kronosMinutes)+' logged</div>';issues+='<div class="card" style="background:#fed7e2;border:1px solid #d53f8c"><p style="font-weight:600;color:#702459">⏰ OT reason required</p><p style="font-size:12px;color:#702459;margin-top:6px">Over: <b>'+fmtHM(v.overMinutes)+'</b></p><button class="btn btn-orange btn-full" onclick="showOTModal()" style="margin-top:10px">+ Add OT Reason</button></div>';}}actions+='<div class="btn-row" style="margin-top:8px"><button class="btn btn-indigo btn-half" onclick="showScreen(\'clarityTimeScreen\')">⏱️ Clarity</button><button class="btn btn-orange btn-half" onclick="showScreen(\'kronosScreen\')">⏰ Kronos</button></div>';document.getElementById('closeDayStatus').innerHTML=status;document.getElementById('closeDayIssues').innerHTML=issues;document.getElementById('closeDayActions').innerHTML=actions;}
+
+// buildEODText
+async function buildEODText(dateStr){const entries=await dbGetAll('clarityEntries');const dayEntries=entries.filter(e=>e.date===dateStr);const kronos=await dbGet('kronos',dateStr)||{date:dateStr,punches:[],pto:[],overtimeReason:null};const notes=await dbGetAll('notes');const dayNotes=notes.filter(n=>n.date===dateStr);const allSessions=await dbGetAll('sessions');const dayTickets=allSessions.filter(s=>s.date===dateStr&&(s.type==='ticket'||s.type==='work_item'));const projects=await dbGetAll('projects');const activeProjects=projects.filter(p=>p.status!=='completed');const kLabels={in:'Clock In',out:'Clock Out',lunch_start:'Lunch Start',lunch_end:'Lunch End'};let txt='WORK / HCA — END-OF-DAY REPORT\n'+dateStr+'\n'+'='.repeat(44)+'\n\n';if(dayTickets.length){const byStatus={};dayTickets.forEach(t=>{byStatus[t.status]=(byStatus[t.status]||0)+1});txt+='TICKETS & WORK ITEMS\nTotal: '+dayTickets.length+' | ';const order=['resolved','in_progress','pending_internal','pending_customer','escalated_onsite'];txt+=order.filter(k=>byStatus[k]).map(k=>k.replace('_',' ')+': '+byStatus[k]).join(' | ');txt+='\n\n';dayTickets.forEach((t,i)=>{const title=(t.ticketNumber?(t.ticketNumber+' – '):'')+(t.subject||'Work Item');txt+=(i+1)+'️⃣ '+title+'\n';if(t.location)txt+='Location: '+t.location+'\n';if(t.device||t.ip)txt+='Device/IP: '+[t.device||null,t.ip||null].filter(Boolean).join(' | ')+'\n';txt+='Status: '+(t.status||'in_progress').replaceAll('_',' ')+(t.assignee?(' – '+t.assignee):'')+'\n';if(t.projectName)txt+='Project: '+t.projectName+'\n';if(t.actions?.length){txt+='Actions:\n';t.actions.forEach(a=>{txt+='- ['+a.time.display+'] '+a.text+'\n'});}if(t.followUp==='yes'||t.followUpNote)txt+='Follow-up: '+(t.followUpNote||'Yes')+'\n';txt+='\n';});}else{txt+='TICKETS & WORK ITEMS\n(no ticket cards logged today)\n\n';}txt+='KRONOS PUNCHES\n';if(kronos.punches?.length)kronos.punches.forEach(p=>{txt+='  '+p.kronosTime+' - '+kLabels[p.type]+(p.manual?' [manual]':'')+'\n'});else txt+='  (no punches)\n';if(kronos.pto?.length){txt+='\nPTO:\n';kronos.pto.forEach(p=>{txt+='  '+p.hours+'h - '+p.reason+'\n'})}if(kronos.overtimeReason)txt+='\nOVERTIME: '+kronos.overtimeReason+'\n';txt+='\nCLARITY TIME\n';const catTotals={};let total=0;dayEntries.forEach(e=>{catTotals[e.categoryName]=(catTotals[e.categoryName]||0)+e.minutes;total+=e.minutes});for(const[cat,min]of Object.entries(catTotals))txt+='  '+cat+': '+Math.floor(min/60)+':'+String(min%60).padStart(2,'0')+'\n';txt+='  TOTAL: '+Math.floor(total/60)+':'+String(total%60).padStart(2,'0')+'\n';const conc=await dbGetAll('concurEntries');const dayConc=conc.filter(e=>e.date===dateStr);if(dayConc.length){txt+='\nCONCUR (EXPENSES)\n';dayConc.forEach(e=>{if(e.type==='mileage')txt+='  Mileage: '+(e.fromDisplay||e.fromAddr||'?')+' → '+(e.toDisplay||e.toAddr||'?')+'\n';else if(e.type==='lodging')txt+='  Lodging: '+e.location+' - $'+(e.amount?.toFixed(2)||'0.00')+'\n';else if(e.type==='rental')txt+='  Rental: '+(e.description||'')+' - $'+(e.amount?.toFixed(2)||'0.00')+'\n';else if(e.type==='meal')txt+='  Meal: '+e.mealType+' ('+e.dining+') - $'+(e.amount?.toFixed(2)||'0.00')+(e.companionId?(' | Companion: '+e.companionId):'')+'\n';});}if(dayNotes.length){txt+='\nQUICK NOTES\n';dayNotes.forEach(n=>{txt+='  ['+n.time.display+'] '+n.text+'\n'})}const evidenceAll=await dbGetAll('evidence');const dayEvidence=evidenceAll.filter(e=>e.date===dateStr);if(dayEvidence.length){const crit=dayEvidence.filter(e=>e.impact_level==='CRITICAL').length;const high=dayEvidence.filter(e=>e.impact_level==='HIGH').length;txt+='\nEVIDENCE CAPTURED\n  Total: '+dayEvidence.length;if(crit)txt+=' | Critical: '+crit;if(high)txt+=' | High: '+high;txt+='\n';dayEvidence.forEach(e=>{txt+='  ['+e.id+'] '+(e.time_of_event||'--:--')+' | '+e.category.replace(/_/g,' ')+' | '+e.impact_level+'\n    '+e.description.slice(0,100)+(e.description.length>100?'...':'')+'\n';});}const soon=getProjectsDueSoon(activeProjects,14);if(soon.length){txt+='\nPROJECTS (DUE SOON)\n';soon.forEach(p=>{txt+='  - '+p.name+' (Due '+p.dueDate+')\n';if(p.notes)txt+='    Notes: '+p.notes.replace(/\n/g,' ')+'\n';});}return txt;}
 
 // WEEKLY REPORTS
-function initWeeklyReports(){
-  const today=new Date(),dow=today.getDay(),sunday=new Date(today);
-  sunday.setDate(today.getDate()-dow);
-  document.getElementById('weekStartDate').value=sunday.toISOString().split('T')[0];
-  updateWeekDisplay();
-}
+function initWeeklyReports(){const today=new Date(),dow=today.getDay(),sunday=new Date(today);sunday.setDate(today.getDate()-dow);document.getElementById('weekStartDate').value=sunday.toISOString().split('T')[0];updateWeekDisplay();}
+function updateWeekDisplay(){const startDate=document.getElementById('weekStartDate').value;if(!startDate)return;const start=new Date(startDate+'T12:00:00'),end=new Date(start);end.setDate(start.getDate()+6);document.getElementById('weekRangeDisplay').textContent=start.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' - '+end.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}
+function getWeekDates(startDateStr){const dates=[],start=new Date(startDateStr+'T12:00:00');for(let i=0;i<7;i++){const d=new Date(start);d.setDate(start.getDate()+i);dates.push(d.toISOString().split('T')[0])}return dates;}
 
-function updateWeekDisplay(){
-  const startDate=document.getElementById('weekStartDate').value;
-  if(!startDate)return;
-  const start=new Date(startDate+'T12:00:00'),end=new Date(start);
-  end.setDate(start.getDate()+6);
-  document.getElementById('weekRangeDisplay').textContent=start.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' - '+end.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-}
+async function generateWeeklyKronos(){const startDate=document.getElementById('weekStartDate').value;if(!startDate){alert('Select week');return}const dates=getWeekDates(startDate);const kLabels={in:'Clock In',out:'Clock Out',lunch_start:'Lunch Start',lunch_end:'Lunch End'};let txt='KRONOS WEEKLY REPORT\n'+document.getElementById('weekRangeDisplay').textContent+'\n'+'='.repeat(40)+'\n\n';let weekTotal=0;for(const date of dates){const k=await dbGet('kronos',date);const dayName=new Date(date+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});txt+=dayName+'\n'+'-'.repeat(26)+'\n';if(k?.punches?.length){k.punches.forEach(p=>{txt+='  '+p.kronosTime+' - '+kLabels[p.type]+(p.manual?' [manual]':'')+'\n'});const dayMin=calculateKronosHours(k);weekTotal+=dayMin;txt+='  TOTAL: '+Math.floor(dayMin/60)+':'+String(dayMin%60).padStart(2,'0')+'\n';if(k.pto?.length)k.pto.forEach(p=>{txt+='  PTO: '+p.hours+'h - '+p.reason+'\n'});if(k.overtimeReason)txt+='  OT: '+k.overtimeReason+'\n';}else txt+='  (no punches)\n';txt+='\n';}txt+='='.repeat(40)+'\nWEEK TOTAL: '+Math.floor(weekTotal/60)+':'+String(weekTotal%60).padStart(2,'0')+' ('+(weekTotal/60).toFixed(2)+' hours)\n';document.getElementById('weeklyOutputTitle').textContent='⏰ Kronos Weekly';document.getElementById('weeklyOutputText').value=txt;showScreen('weeklyOutputScreen');}
 
-function getWeekDates(startDateStr){
-  const dates=[],start=new Date(startDateStr+'T12:00:00');
-  for(let i=0;i<7;i++){const d=new Date(start);d.setDate(start.getDate()+i);dates.push(d.toISOString().split('T')[0])}
-  return dates;
-}
+async function generateWeeklyClarity(){const startDate=document.getElementById('weekStartDate').value;if(!startDate){alert('Select week');return}const dates=getWeekDates(startDate);const allEntries=await dbGetAll('clarityEntries');const categories=await getClarityCategories();const catTotals={};let weekTotal=0;let txt='CLARITY WEEKLY REPORT\n'+document.getElementById('weekRangeDisplay').textContent+'\n'+'='.repeat(40)+'\n\n';for(const date of dates){const dayEntries=allEntries.filter(e=>e.date===date);const dayName=new Date(date+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});txt+=dayName+'\n'+'-'.repeat(26)+'\n';if(dayEntries.length){let dayTotal=0;dayEntries.forEach(e=>{txt+='  '+e.categoryName+': '+Math.floor(e.minutes/60)+':'+String(e.minutes%60).padStart(2,'0')+(e.notes?' ('+e.notes+')':'')+'\n';catTotals[e.category]=(catTotals[e.category]||0)+e.minutes;dayTotal+=e.minutes;});weekTotal+=dayTotal;txt+='  DAY TOTAL: '+Math.floor(dayTotal/60)+':'+String(dayTotal%60).padStart(2,'0')+'\n';}else txt+='  (no entries)\n';txt+='\n';}txt+='='.repeat(40)+'\nCATEGORY SUMMARY\n';for(const[catId,mins]of Object.entries(catTotals)){const cat=categories.find(c=>c.id===catId);txt+='  '+(cat?.name||catId)+': '+Math.floor(mins/60)+':'+String(mins%60).padStart(2,'0')+'\n';}txt+='\nWEEK TOTAL: '+Math.floor(weekTotal/60)+':'+String(weekTotal%60).padStart(2,'0')+' ('+(weekTotal/60).toFixed(2)+' hours)\n';document.getElementById('weeklyOutputTitle').textContent='⏱️ Clarity Weekly';document.getElementById('weeklyOutputText').value=txt;showScreen('weeklyOutputScreen');}
 
-async function generateWeeklyKronos(){
-  const startDate=document.getElementById('weekStartDate').value;
-  if(!startDate){alert('Select week');return}
-  const dates=getWeekDates(startDate);
-  const kLabels={in:'Clock In',out:'Clock Out',lunch_start:'Lunch Start',lunch_end:'Lunch End'};
-  let txt='KRONOS WEEKLY REPORT\n'+document.getElementById('weekRangeDisplay').textContent+'\n'+'='.repeat(40)+'\n\n';
-  let weekTotal=0;
-  for(const date of dates){
-    const k=await dbGet('kronos',date);
-    const dayName=new Date(date+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
-    txt+=dayName+'\n'+'-'.repeat(26)+'\n';
-    if(k?.punches?.length){
-      k.punches.forEach(p=>{txt+='  '+p.kronosTime+' - '+kLabels[p.type]+(p.manual?' [manual]':'')+'\n'});
-      const dayMin=calculateKronosHours(k);weekTotal+=dayMin;
-      txt+='  TOTAL: '+Math.floor(dayMin/60)+':'+String(dayMin%60).padStart(2,'0')+'\n';
-      if(k.pto?.length)k.pto.forEach(p=>{txt+='  PTO: '+p.hours+'h - '+p.reason+'\n'});
-      if(k.overtimeReason)txt+='  OT: '+k.overtimeReason+'\n';
-    }else txt+='  (no punches)\n';
-    txt+='\n';
-  }
-  txt+='='.repeat(40)+'\nWEEK TOTAL: '+Math.floor(weekTotal/60)+':'+String(weekTotal%60).padStart(2,'0')+' ('+(weekTotal/60).toFixed(2)+' hours)\n';
-  document.getElementById('weeklyOutputTitle').textContent='⏰ Kronos Weekly';
-  document.getElementById('weeklyOutputText').value=txt;
-  showScreen('weeklyOutputScreen');
-}
-
-async function generateWeeklyClarity(){
-  const startDate=document.getElementById('weekStartDate').value;
-  if(!startDate){alert('Select week');return}
-  const dates=getWeekDates(startDate);
-  const allEntries=await dbGetAll('clarityEntries');
-  const categories=await getClarityCategories();
-  const catTotals={};let weekTotal=0;
-  let txt='CLARITY WEEKLY REPORT\n'+document.getElementById('weekRangeDisplay').textContent+'\n'+'='.repeat(40)+'\n\n';
-  for(const date of dates){
-    const dayEntries=allEntries.filter(e=>e.date===date);
-    const dayName=new Date(date+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
-    txt+=dayName+'\n'+'-'.repeat(26)+'\n';
-    if(dayEntries.length){
-      let dayTotal=0;
-      dayEntries.forEach(e=>{
-        txt+='  '+e.categoryName+': '+Math.floor(e.minutes/60)+':'+String(e.minutes%60).padStart(2,'0')+(e.notes?' ('+e.notes+')':'')+'\n';
-        catTotals[e.category]=(catTotals[e.category]||0)+e.minutes;
-        dayTotal+=e.minutes;
-      });
-      weekTotal+=dayTotal;
-      txt+='  DAY TOTAL: '+Math.floor(dayTotal/60)+':'+String(dayTotal%60).padStart(2,'0')+'\n';
-    }else txt+='  (no entries)\n';
-    txt+='\n';
-  }
-  txt+='='.repeat(40)+'\nCATEGORY SUMMARY\n';
-  for(const[catId,mins]of Object.entries(catTotals)){
-    const cat=categories.find(c=>c.id===catId);
-    txt+='  '+(cat?.name||catId)+': '+Math.floor(mins/60)+':'+String(mins%60).padStart(2,'0')+'\n';
-  }
-  txt+='\nWEEK TOTAL: '+Math.floor(weekTotal/60)+':'+String(weekTotal%60).padStart(2,'0')+' ('+(weekTotal/60).toFixed(2)+' hours)\n';
-  document.getElementById('weeklyOutputTitle').textContent='⏱️ Clarity Weekly';
-  document.getElementById('weeklyOutputText').value=txt;
-  showScreen('weeklyOutputScreen');
-}
-
-async function generateWeeklyConcur(){
-  const startDate=document.getElementById('weekStartDate').value;
-  if(!startDate){alert('Select week');return}
-  const dates=getWeekDates(startDate);
-  const allEntries=await dbGetAll('concurEntries');
-  const icons={mileage:'🚗',lodging:'🏨',rental:'🚙',meal:'🍽️'};
-  let txt='CONCUR WEEKLY REPORT\n'+document.getElementById('weekRangeDisplay').textContent+'\n'+'='.repeat(40)+'\n\n';
-  let mileageCount=0,lodgingTotal=0,rentalTotal=0,mealTotal=0;
-  for(const date of dates){
-    const dayEntries=allEntries.filter(e=>e.date===date);
-    if(!dayEntries.length)continue;
-    const dayName=new Date(date+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
-    txt+=dayName+'\n'+'-'.repeat(26)+'\n';
-    dayEntries.forEach(e=>{
-      if(e.type==='mileage'){
-        const from=e.fromDisplay||e.fromAddr||'?';
-        const to=e.toDisplay||e.toAddr||'?';
-        txt+='  '+icons.mileage+' '+from+' → '+to+'\n';
-        mileageCount++;
-      }
-      else if(e.type==='lodging'){txt+='  '+icons.lodging+' '+e.location+' - $'+(e.amount?.toFixed(2)||'0.00')+'\n';lodgingTotal+=e.amount||0}
-      else if(e.type==='rental'){txt+='  '+icons.rental+' '+e.description+' - $'+(e.amount?.toFixed(2)||'0.00')+'\n';rentalTotal+=e.amount||0}
-      else if(e.type==='meal'){txt+='  '+icons.meal+' '+e.mealType+' ('+e.dining+(e.companionId?' - '+e.companionId:'')+') - $'+(e.amount?.toFixed(2)||'0.00')+'\n';mealTotal+=e.amount||0}
-    });
-    txt+='\n';
-  }
-  txt+='='.repeat(40)+'\nSUMMARY\n  Mileage trips: '+mileageCount+'\n  Lodging: $'+lodgingTotal.toFixed(2)+'\n  Rental: $'+rentalTotal.toFixed(2)+'\n  Meals: $'+mealTotal.toFixed(2)+'\n\nTOTAL EXPENSES: $'+(lodgingTotal+rentalTotal+mealTotal).toFixed(2)+'\n';
-  document.getElementById('weeklyOutputTitle').textContent='💳 Concur Weekly';
-  document.getElementById('weeklyOutputText').value=txt;
-  showScreen('weeklyOutputScreen');
-}
+async function generateWeeklyConcur(){const startDate=document.getElementById('weekStartDate').value;if(!startDate){alert('Select week');return}const dates=getWeekDates(startDate);const allEntries=await dbGetAll('concurEntries');const icons={mileage:'🚗',lodging:'🏨',rental:'🚙',meal:'🍽️'};let txt='CONCUR WEEKLY REPORT\n'+document.getElementById('weekRangeDisplay').textContent+'\n'+'='.repeat(40)+'\n\n';let mileageCount=0,lodgingTotal=0,rentalTotal=0,mealTotal=0;for(const date of dates){const dayEntries=allEntries.filter(e=>e.date===date);if(!dayEntries.length)continue;const dayName=new Date(date+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});txt+=dayName+'\n'+'-'.repeat(26)+'\n';dayEntries.forEach(e=>{if(e.type==='mileage'){txt+='  '+icons.mileage+' '+(e.fromDisplay||e.fromAddr||'?')+' → '+(e.toDisplay||e.toAddr||'?')+'\n';mileageCount++;}else if(e.type==='lodging'){txt+='  '+icons.lodging+' '+e.location+' - $'+(e.amount?.toFixed(2)||'0.00')+'\n';lodgingTotal+=e.amount||0}else if(e.type==='rental'){txt+='  '+icons.rental+' '+e.description+' - $'+(e.amount?.toFixed(2)||'0.00')+'\n';rentalTotal+=e.amount||0}else if(e.type==='meal'){txt+='  '+icons.meal+' '+e.mealType+' ('+e.dining+(e.companionId?' - '+e.companionId:'')+') - $'+(e.amount?.toFixed(2)||'0.00')+'\n';mealTotal+=e.amount||0}});txt+='\n';}txt+='='.repeat(40)+'\nSUMMARY\n  Mileage trips: '+mileageCount+'\n  Lodging: $'+lodgingTotal.toFixed(2)+'\n  Rental: $'+rentalTotal.toFixed(2)+'\n  Meals: $'+mealTotal.toFixed(2)+'\n\nTOTAL EXPENSES: $'+(lodgingTotal+rentalTotal+mealTotal).toFixed(2)+'\n';document.getElementById('weeklyOutputTitle').textContent='💳 Concur Weekly';document.getElementById('weeklyOutputText').value=txt;showScreen('weeklyOutputScreen');}
 
 async function copyWeekly(){const ok=await wccCopyText(document.getElementById('weeklyOutputText').value);if(ok){document.getElementById('weeklyCopied').classList.remove('hidden');setTimeout(()=>document.getElementById('weeklyCopied').classList.add('hidden'),2000)}else{alert('Copy failed — try Share button instead')}}
 
-async function generateWeeklyBundle(){
-  const startDate=document.getElementById('weekStartDate').value;
-  if(!startDate){alert('Select week');return}
-  const dates=getWeekDates(startDate);
-  const allClarity=await dbGetAll('clarityEntries');
-  const allConcur=await dbGetAll('concurEntries');
-  const allSessions=await dbGetAll('sessions');
-  const categories=await getClarityCategories();
+async function generateWeeklyBundle(){const startDate=document.getElementById('weekStartDate').value;if(!startDate){alert('Select week');return}const dates=getWeekDates(startDate);const allClarity=await dbGetAll('clarityEntries');const allConcur=await dbGetAll('concurEntries');const allSessions=await dbGetAll('sessions');const categories=await getClarityCategories();let txt='WEEKLY BUNDLE REPORT\n'+document.getElementById('weekRangeDisplay').textContent+'\n'+'='.repeat(44)+'\n\n';txt+='━━━ KRONOS ━━━\n\n';const kLabels={in:'Clock In',out:'Clock Out',lunch_start:'Lunch Start',lunch_end:'Lunch End'};let weekKronosTotal=0;for(const date of dates){const k=await dbGet('kronos',date);const dayName=new Date(date+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});txt+=dayName+'\n';if(k?.punches?.length){k.punches.forEach(p=>{txt+='  '+p.kronosTime+' - '+kLabels[p.type]+(p.manual?' [manual]':'')+'\n'});const dayMin=calculateKronosHours(k);weekKronosTotal+=dayMin;txt+='  Total: '+Math.floor(dayMin/60)+':'+String(dayMin%60).padStart(2,'0')+'\n';if(k.pto?.length)k.pto.forEach(p=>{txt+='  PTO: '+p.hours+'h - '+p.reason+'\n'});if(k.overtimeReason)txt+='  OT: '+k.overtimeReason+'\n';}else txt+='  (no punches)\n';txt+='\n';}txt+='Kronos Week Total: '+Math.floor(weekKronosTotal/60)+':'+String(weekKronosTotal%60).padStart(2,'0')+'\n\n';txt+='━━━ CLARITY ━━━\n\n';const catTotals={};let weekClarityTotal=0;for(const date of dates){const dayEntries=allClarity.filter(e=>e.date===date);const dayName=new Date(date+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});txt+=dayName+'\n';if(dayEntries.length){let dayTotal=0;dayEntries.forEach(e=>{txt+='  '+e.categoryName+': '+Math.floor(e.minutes/60)+':'+String(e.minutes%60).padStart(2,'0')+(e.notes?' ('+e.notes+')':'')+'\n';catTotals[e.category]=(catTotals[e.category]||0)+e.minutes;dayTotal+=e.minutes;});weekClarityTotal+=dayTotal;txt+='  Day Total: '+Math.floor(dayTotal/60)+':'+String(dayTotal%60).padStart(2,'0')+'\n';}else txt+='  (no entries)\n';txt+='\n';}txt+='Category Summary:\n';for(const[catId,mins]of Object.entries(catTotals)){const cat=categories.find(c=>c.id===catId);txt+='  '+(cat?.name||catId)+': '+Math.floor(mins/60)+':'+String(mins%60).padStart(2,'0')+'\n';}txt+='Clarity Week Total: '+Math.floor(weekClarityTotal/60)+':'+String(weekClarityTotal%60).padStart(2,'0')+'\n\n';txt+='━━━ CONCUR ━━━\n\n';let mileageCount=0,lodgingTotal=0,rentalTotal=0,mealTotal=0;for(const date of dates){const dayEntries=allConcur.filter(e=>e.date===date);if(!dayEntries.length)continue;const dayName=new Date(date+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});txt+=dayName+'\n';dayEntries.forEach(e=>{if(e.type==='mileage'){txt+='  🚗 '+(e.fromDisplay||e.fromAddr||'?')+' → '+(e.toDisplay||e.toAddr||'?')+'\n';mileageCount++}else if(e.type==='lodging'){txt+='  🏨 '+e.location+' - $'+(e.amount?.toFixed(2)||'0.00')+'\n';lodgingTotal+=e.amount||0}else if(e.type==='rental'){txt+='  🚙 '+e.description+' - $'+(e.amount?.toFixed(2)||'0.00')+'\n';rentalTotal+=e.amount||0}else if(e.type==='meal'){txt+='  🍽️ '+e.mealType+' ('+e.dining+(e.companionId?' - '+e.companionId:'')+') - $'+(e.amount?.toFixed(2)||'0.00')+'\n';mealTotal+=e.amount||0}});txt+='\n';}txt+='Expenses Summary:\n  Mileage trips: '+mileageCount+'\n  Lodging: $'+lodgingTotal.toFixed(2)+'\n  Rental: $'+rentalTotal.toFixed(2)+'\n  Meals: $'+mealTotal.toFixed(2)+'\n  Total Expenses: $'+(lodgingTotal+rentalTotal+mealTotal).toFixed(2)+'\n\n';const weekTickets=allSessions.filter(s=>dates.includes(s.date)&&(s.type==='ticket'||s.type==='work_item'));if(weekTickets.length){txt+='━━━ TICKETS & WORK ITEMS ━━━\n\nTotal: '+weekTickets.length+'\n';weekTickets.forEach((t,i)=>{const title=(t.ticketNumber?(t.ticketNumber+' – '):'')+(t.subject||'Work Item');txt+=(i+1)+'. ['+t.date+'] '+title+' — '+(t.status||'in_progress').replace(/_/g,' ')+'\n';if(t.followUp==='yes'||t.followUpNote)txt+='   📌 '+(t.followUpNote||'Follow-up needed')+'\n';});txt+='\n';}document.getElementById('weeklyOutputTitle').textContent='📦 Weekly Bundle';document.getElementById('weeklyOutputText').value=txt;showScreen('weeklyOutputScreen');}
 
-  let txt='WEEKLY BUNDLE REPORT\n'+document.getElementById('weekRangeDisplay').textContent+'\n'+'='.repeat(44)+'\n\n';
-
-  // KRONOS SECTION
-  txt+='━━━ KRONOS ━━━\n\n';
-  const kLabels={in:'Clock In',out:'Clock Out',lunch_start:'Lunch Start',lunch_end:'Lunch End'};
-  let weekKronosTotal=0;
-  for(const date of dates){
-    const k=await dbGet('kronos',date);
-    const dayName=new Date(date+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
-    txt+=dayName+'\n';
-    if(k?.punches?.length){
-      k.punches.forEach(p=>{txt+='  '+p.kronosTime+' - '+kLabels[p.type]+(p.manual?' [manual]':'')+'\n'});
-      const dayMin=calculateKronosHours(k);weekKronosTotal+=dayMin;
-      txt+='  Total: '+Math.floor(dayMin/60)+':'+String(dayMin%60).padStart(2,'0')+'\n';
-      if(k.pto?.length)k.pto.forEach(p=>{txt+='  PTO: '+p.hours+'h - '+p.reason+'\n'});
-      if(k.overtimeReason)txt+='  OT: '+k.overtimeReason+'\n';
-    }else txt+='  (no punches)\n';
-    txt+='\n';
-  }
-  txt+='Kronos Week Total: '+Math.floor(weekKronosTotal/60)+':'+String(weekKronosTotal%60).padStart(2,'0')+'\n\n';
-
-  // CLARITY SECTION
-  txt+='━━━ CLARITY ━━━\n\n';
-  const catTotals={};let weekClarityTotal=0;
-  for(const date of dates){
-    const dayEntries=allClarity.filter(e=>e.date===date);
-    const dayName=new Date(date+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
-    txt+=dayName+'\n';
-    if(dayEntries.length){
-      let dayTotal=0;
-      dayEntries.forEach(e=>{
-        txt+='  '+e.categoryName+': '+Math.floor(e.minutes/60)+':'+String(e.minutes%60).padStart(2,'0')+(e.notes?' ('+e.notes+')':'')+'\n';
-        catTotals[e.category]=(catTotals[e.category]||0)+e.minutes;
-        dayTotal+=e.minutes;
-      });
-      weekClarityTotal+=dayTotal;
-      txt+='  Day Total: '+Math.floor(dayTotal/60)+':'+String(dayTotal%60).padStart(2,'0')+'\n';
-    }else txt+='  (no entries)\n';
-    txt+='\n';
-  }
-  txt+='Category Summary:\n';
-  for(const[catId,mins]of Object.entries(catTotals)){
-    const cat=categories.find(c=>c.id===catId);
-    txt+='  '+(cat?.name||catId)+': '+Math.floor(mins/60)+':'+String(mins%60).padStart(2,'0')+'\n';
-  }
-  txt+='Clarity Week Total: '+Math.floor(weekClarityTotal/60)+':'+String(weekClarityTotal%60).padStart(2,'0')+'\n\n';
-
-  // CONCUR SECTION
-  txt+='━━━ CONCUR ━━━\n\n';
-  let mileageCount=0,lodgingTotal=0,rentalTotal=0,mealTotal=0;
-  for(const date of dates){
-    const dayEntries=allConcur.filter(e=>e.date===date);
-    if(!dayEntries.length)continue;
-    const dayName=new Date(date+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
-    txt+=dayName+'\n';
-    dayEntries.forEach(e=>{
-      if(e.type==='mileage'){txt+='  🚗 '+(e.fromDisplay||e.fromAddr||'?')+' → '+(e.toDisplay||e.toAddr||'?')+'\n';mileageCount++}
-      else if(e.type==='lodging'){txt+='  🏨 '+e.location+' - $'+(e.amount?.toFixed(2)||'0.00')+'\n';lodgingTotal+=e.amount||0}
-      else if(e.type==='rental'){txt+='  🚙 '+e.description+' - $'+(e.amount?.toFixed(2)||'0.00')+'\n';rentalTotal+=e.amount||0}
-      else if(e.type==='meal'){txt+='  🍽️ '+e.mealType+' ('+e.dining+(e.companionId?' - '+e.companionId:'')+') - $'+(e.amount?.toFixed(2)||'0.00')+'\n';mealTotal+=e.amount||0}
-    });
-    txt+='\n';
-  }
-  txt+='Expenses Summary:\n  Mileage trips: '+mileageCount+'\n  Lodging: $'+lodgingTotal.toFixed(2)+'\n  Rental: $'+rentalTotal.toFixed(2)+'\n  Meals: $'+mealTotal.toFixed(2)+'\n  Total Expenses: $'+(lodgingTotal+rentalTotal+mealTotal).toFixed(2)+'\n\n';
-
-  // TICKETS SECTION
-  const weekTickets=allSessions.filter(s=>dates.includes(s.date) && (s.type==='ticket' || s.type==='work_item'));
-  if(weekTickets.length){
-    txt+='━━━ TICKETS & WORK ITEMS ━━━\n\n';
-    txt+='Total: '+weekTickets.length+'\n';
-    weekTickets.forEach((t,i)=>{
-      const title=(t.ticketNumber?(t.ticketNumber+' – '):'')+(t.subject||'Work Item');
-      txt+=(i+1)+'. ['+t.date+'] '+title+' — '+(t.status||'in_progress').replace(/_/g,' ')+'\n';
-      if(t.followUp==='yes'||t.followUpNote)txt+='   📌 '+( t.followUpNote||'Follow-up needed')+'\n';
-    });
-    txt+='\n';
-  }
-
-  document.getElementById('weeklyOutputTitle').textContent='📦 Weekly Bundle';
-  document.getElementById('weeklyOutputText').value=txt;
-  showScreen('weeklyOutputScreen');
-}
 async function shareWeekly(){if(navigator.share){try{await navigator.share({title:'Weekly Report',text:document.getElementById('weeklyOutputText').value});return}catch(e){}}saveWeekly()}
 function saveWeekly(){const title=document.getElementById('weeklyOutputTitle').textContent.replace(/[^\w]/g,'_');downloadTextFile(document.getElementById('weeklyOutputText').value,title+'_'+getToday()+'.txt')}
 
 // EXPORT
-async function exportAllData(){
-  const k=await dbGetAll('kronos'),n=await dbGetAll('notes'),c=await getClarityCategories(),cl=await dbGetAll('clarityEntries'),co=await dbGetAll('concurEntries'),p=await dbGetAll('practices');
-  const data={type:'full_backup',exported:getTime().iso,kronos:k,notes:n,clarityCategories:c,clarityEntries:cl,concurEntries:co,practices:p};
-  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),link=document.createElement('a');
-  link.href=URL.createObjectURL(blob);link.download='wcc_backup_'+getTimestamp()+'.json';link.click();
-}
+async function exportAllData(){const k=await dbGetAll('kronos'),n=await dbGetAll('notes'),c=await getClarityCategories(),cl=await dbGetAll('clarityEntries'),co=await dbGetAll('concurEntries'),p=await dbGetAll('practices');const data={type:'full_backup',exported:getTime().iso,kronos:k,notes:n,clarityCategories:c,clarityEntries:cl,concurEntries:co,practices:p};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download='wcc_backup_'+getTimestamp()+'.json';link.click();}
 
-async function clearAllData(){
-  if(!confirm('DELETE ALL DATA?'))return;
-  if(!confirm('ARE YOU SURE?'))return;
-  try{ if(db) db.close(); }catch(e){}
-  const req=indexedDB.deleteDatabase(DB_NAME);
-  req.onsuccess=()=>location.reload();
-  req.onerror=()=>alert('Could not delete database: '+(req.error?req.error.message:'unknown error'));
-  req.onblocked=()=>alert('Delete is blocked. Close other tabs with this app open and try again.');
-}
+async function clearAllData(){if(!confirm('DELETE ALL DATA?'))return;if(!confirm('ARE YOU SURE?'))return;try{if(db)db.close();}catch(e){}const req=indexedDB.deleteDatabase(DB_NAME);req.onsuccess=()=>location.reload();req.onerror=()=>alert('Could not delete database: '+(req.error?req.error.message:'unknown error'));req.onblocked=()=>alert('Delete is blocked. Close other tabs with this app open and try again.');}
 
+async function quickLog15(categoryId){if(await isDayLocked()){alert('Day is locked after EOD export.');return}const cats=await getClarityCategories();const cat=cats.find(c=>c.id===categoryId);if(!cat){alert('Category not found.');return}const entry={id:'CL'+Date.now(),date:getToday(),category:categoryId,categoryName:cat.name,minutes:15,rawMinutes:15,notes:'',time:getTime()};await dbPut('clarityEntries',entry);showToast('+15m '+cat.name);if(document.getElementById('clarityTimeScreen')&&!document.getElementById('clarityTimeScreen').classList.contains('hidden')){await renderClarityEntries();}try{navigator.vibrate&&navigator.vibrate(30)}catch(e){}}
 
-// ==============================
-// QUICK LOG (15 MIN) — low friction
-async function quickLog15(categoryId){
-  if(await isDayLocked()){alert('Day is locked after EOD export.');return}
-  const cats=await getClarityCategories();
-  const cat=cats.find(c=>c.id===categoryId);
-  if(!cat){alert('Category not found. Add it in Settings → Clarity Categories.');return}
-  const entry={id:'CL'+Date.now(),date:getToday(),category:categoryId,categoryName:cat.name,minutes:15,rawMinutes:15,notes:'',time:getTime()};
-  await dbPut('clarityEntries',entry);
-  showToast('+15m '+cat.name);
-  if(document.getElementById('clarityTimeScreen') && !document.getElementById('clarityTimeScreen').classList.contains('hidden')){
-    await renderClarityEntries();
-  }
-  // small confirmation without disrupting flow
-  try{navigator.vibrate&&navigator.vibrate(30)}catch(e){}
-}
-
-// ==============================
-// PROJECTS — light tracking (name + due date + notes)
+// PROJECTS
 let editingProjectId=null;
 
-async function renderMenuProjectAlerts(){
-  const projects=await dbGetAll('projects');
-  const active=projects.filter(p=>p.status!=='completed');
-  const soon=getProjectsDueSoon(active,14);
-  if(!soon.length){return}
-  const html='<div class="card" style="background:#e0f2fe;border:1px solid #0891b2">'+
-    '<div style="font-weight:800;color:#0c4a6e">🧩 Projects due soon</div>'+
-    soon.map(p=>'<div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(8,145,178,0.25)"><b>'+escapeHtml(p.name)+'</b> — Due <b>'+p.dueDate+'</b>'+(p.notes?('<div style="font-size:12px;color:#0c4a6e;margin-top:4px">'+escapeHtml(p.notes).slice(0,120)+'</div>'):'')+'</div>').join('')+
-    '<button class="btn btn-cyan btn-full" style="margin-top:10px" onclick="showScreen(\'projectsScreen\')">Open Projects</button>'+
-    '</div>';
-  document.getElementById('activePanel').innerHTML+=html;
-}
+async function renderMenuProjectAlerts(){const projects=await dbGetAll('projects');const active=projects.filter(p=>p.status!=='completed');const soon=getProjectsDueSoon(active,14);if(!soon.length)return;const html='<div class="card" style="background:#e0f2fe;border:1px solid #0891b2"><div style="font-weight:800;color:#0c4a6e">🧩 Projects due soon</div>'+soon.map(p=>'<div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(8,145,178,0.25)"><b>'+escapeHtml(p.name)+'</b> — Due <b>'+p.dueDate+'</b>'+(p.notes?('<div style="font-size:12px;color:#0c4a6e;margin-top:4px">'+escapeHtml(p.notes).slice(0,120)+'</div>'):'')+'</div>').join('')+'<button class="btn btn-cyan btn-full" style="margin-top:10px" onclick="showScreen(\'projectsScreen\')">Open Projects</button></div>';document.getElementById('activePanel').innerHTML+=html;}
 
-async function renderActivePanelSummary(){
-  // Keep it minimal — only show something if tickets or follow-ups exist
-  const allSessions=await dbGetAll('sessions');
-  const day=allSessions.filter(s=>s.date===getToday() && (s.type==='ticket' || s.type==='work_item'));
-  const follow=day.filter(t=>t.followUp==='yes' || (t.followUpNote&&t.followUpNote.trim()));
-  if(!day.length && !follow.length){return}
-  let html='';
-  if(day.length){
-    const resolved=day.filter(t=>t.status==='resolved').length;
-    const pending=day.length-resolved;
-    html+='<div class="card" style="background:#f0f9ff;border:1px solid #93c5fd">'+
-      '<div style="display:flex;justify-content:space-between;align-items:center">'+
-      '<div><div style="font-weight:800;color:#1e3a8a">🎫 Tickets today</div><div style="font-size:12px;color:#1e40af">Total '+day.length+' | Resolved '+resolved+' | Pending '+pending+'</div></div>'+
-      '<button class="btn btn-pink" onclick="showScreen(\'ticketsScreen\')">Open</button>'+
-      '</div></div>';
-  }
-  if(follow.length){
-    html+='<div class="card" style="background:#fff7ed;border:1px solid #fb923c">'+
-      '<div style="font-weight:800;color:#9a3412">📌 Follow-ups</div>'+
-      follow.slice(0,4).map(t=>'<div style="margin-top:8px;font-size:12px;color:#9a3412"><b>'+escapeHtml((t.ticketNumber||'Item') )+'</b>: '+escapeHtml((t.followUpNote||'Follow-up needed'))+'</div>').join('')+
-      (follow.length>4?('<div style="margin-top:6px;font-size:12px;color:#9a3412">+'+(follow.length-4)+' more</div>'):'')+
-      '</div>';
-  }
-  document.getElementById('activePanel').innerHTML+=html;
-}
+async function renderActivePanelSummary(){const allSessions=await dbGetAll('sessions');const day=allSessions.filter(s=>s.date===getToday()&&(s.type==='ticket'||s.type==='work_item'));const follow=day.filter(t=>t.followUp==='yes'||(t.followUpNote&&t.followUpNote.trim()));if(!day.length&&!follow.length)return;let html='';if(day.length){const resolved=day.filter(t=>t.status==='resolved').length;const pending=day.length-resolved;html+='<div class="card" style="background:#f0f9ff;border:1px solid #93c5fd"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:800;color:#1e3a8a">🎫 Tickets today</div><div style="font-size:12px;color:#1e40af">Total '+day.length+' | Resolved '+resolved+' | Pending '+pending+'</div></div><button class="btn btn-pink" onclick="showScreen(\'ticketsScreen\')">Open</button></div></div>';}if(follow.length){html+='<div class="card" style="background:#fff7ed;border:1px solid #fb923c"><div style="font-weight:800;color:#9a3412">📌 Follow-ups</div>'+follow.slice(0,4).map(t=>'<div style="margin-top:8px;font-size:12px;color:#9a3412"><b>'+escapeHtml((t.ticketNumber||'Item'))+'</b>: '+escapeHtml((t.followUpNote||'Follow-up needed'))+'</div>').join('')+(follow.length>4?('<div style="margin-top:6px;font-size:12px;color:#9a3412">+'+(follow.length-4)+' more</div>':'')+'</div>';}document.getElementById('activePanel').innerHTML+=html;}
 
-function getProjectsDueSoon(projects,days){
-  const now=new Date(getToday()+'T12:00:00');
-  const max=new Date(now);max.setDate(now.getDate()+days);
-  return projects
-    .filter(p=>p.dueDate && new Date(p.dueDate+'T12:00:00')<=max)
-    .sort((a,b)=>new Date(a.dueDate)-new Date(b.dueDate));
-}
+function getProjectsDueSoon(projects,days){const now=new Date(getToday()+'T12:00:00');const max=new Date(now);max.setDate(now.getDate()+days);return projects.filter(p=>p.dueDate&&new Date(p.dueDate+'T12:00:00')<=max).sort((a,b)=>new Date(a.dueDate)-new Date(b.dueDate));}
 
-async function renderProjectsList(){
-  const projects=await dbGetAll('projects');
-  projects.sort((a,b)=> (a.dueDate||'9999-12-31').localeCompare(b.dueDate||'9999-12-31'));
-  if(!projects.length){
-    document.getElementById('projectsList').innerHTML='<div class="card"><p style="color:#888;text-align:center">No projects yet.</p></div>';
-    return;
-  }
-  const today=getToday();
-  document.getElementById('projectsList').innerHTML=projects.map(p=>{
-    const due=p.dueDate||'';
-    const dueSoon=due && due<=addDaysISO(today,14) && p.status==='active';
-    const badge = p.status==='completed' ? '<span style="color:#16a34a;font-weight:800">✅ Completed</span>' :
-                  p.status==='on_hold' ? '<span style="color:#b45309;font-weight:800">⏸ On Hold</span>' :
-                  (dueSoon?'<span style="color:#dc2626;font-weight:800">⏳ Due soon</span>':'<span style="color:#2563eb;font-weight:800">🟦 Active</span>');
-    return '<div class="card">'+
-      '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">'+
-      '<div style="flex:1"><div style="font-weight:800">'+escapeHtml(p.name)+'</div>'+
-      (due?('<div style="font-size:12px;color:#666;margin-top:2px">Due: <b>'+due+'</b></div>'):'')+
-      (p.notes?('<div style="font-size:12px;color:#666;margin-top:6px">'+escapeHtml(p.notes).slice(0,160)+'</div>'):'')+
-      '</div><div style="text-align:right">'+badge+'</div></div>'+
-      '<div class="btn-row" style="margin-top:10px">'+
-      '<button class="btn btn-sm btn-cyan btn-half" onclick="editProject(\''+p.id+'\')">Edit</button>'+
-      '<button class="btn btn-sm btn-red btn-half" onclick="deleteProject(\''+p.id+'\')">Delete</button>'+
-      '</div></div>';
-  }).join('');
-}
+async function renderProjectsList(){const projects=await dbGetAll('projects');projects.sort((a,b)=>(a.dueDate||'9999-12-31').localeCompare(b.dueDate||'9999-12-31'));if(!projects.length){document.getElementById('projectsList').innerHTML='<div class="card"><p style="color:#888;text-align:center">No projects yet.</p></div>';return;}const today=getToday();document.getElementById('projectsList').innerHTML=projects.map(p=>{const due=p.dueDate||'';const dueSoon=due&&due<=addDaysISO(today,14)&&p.status==='active';const badge=p.status==='completed'?'<span style="color:#16a34a;font-weight:800">✅ Completed</span>':p.status==='on_hold'?'<span style="color:#b45309;font-weight:800">⏸ On Hold</span>':(dueSoon?'<span style="color:#dc2626;font-weight:800">⏳ Due soon</span>':'<span style="color:#2563eb;font-weight:800">🟦 Active</span>');return '<div class="card"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px"><div style="flex:1"><div style="font-weight:800">'+escapeHtml(p.name)+'</div>'+(due?('<div style="font-size:12px;color:#666;margin-top:2px">Due: <b>'+due+'</b></div>':'')+(p.notes?('<div style="font-size:12px;color:#666;margin-top:6px">'+escapeHtml(p.notes).slice(0,160)+'</div>':''))+'</div><div style="text-align:right">'+badge+'</div></div><div class="btn-row" style="margin-top:10px"><button class="btn btn-sm btn-cyan btn-half" onclick="editProject(\''+p.id+'\')">Edit</button><button class="btn btn-sm btn-red btn-half" onclick="deleteProject(\''+p.id+'\')">Delete</button></div></div>';}).join('');}
 
-function showAddProject(){
-  editingProjectId=null;
-  document.getElementById('projectEditTitle').textContent='+ Add Project';
-  document.getElementById('projectName').value='';
-  document.getElementById('projectDue').value='';
-  document.getElementById('projectNotes').value='';
-  document.getElementById('projectStatus').value='active';
-  showScreen('projectEditScreen');
-}
+function showAddProject(){editingProjectId=null;document.getElementById('projectEditTitle').textContent='+ Add Project';document.getElementById('projectName').value='';document.getElementById('projectDue').value='';document.getElementById('projectNotes').value='';document.getElementById('projectStatus').value='active';showScreen('projectEditScreen');}
+async function editProject(id){const p=await dbGet('projects',id);if(!p)return;editingProjectId=id;document.getElementById('projectEditTitle').textContent='Edit Project';document.getElementById('projectName').value=p.name||'';document.getElementById('projectDue').value=p.dueDate||'';document.getElementById('projectNotes').value=p.notes||'';document.getElementById('projectStatus').value=p.status||'active';showScreen('projectEditScreen');}
+async function saveProject(){const name=document.getElementById('projectName').value.trim();const due=document.getElementById('projectDue').value;const notes=document.getElementById('projectNotes').value.trim();const status=document.getElementById('projectStatus').value;if(!name){alert('Project name required');return}const id=editingProjectId||('PRJ'+Date.now());await dbPut('projects',{id,name,dueDate:due,notes,status,updatedAt:getTime()});showScreen('projectsScreen');}
+async function deleteProject(id){if(!confirm('Delete this project?'))return;await dbDelete('projects',id);await renderProjectsList();}
 
-async function editProject(id){
-  const p=await dbGet('projects',id);
-  if(!p){return}
-  editingProjectId=id;
-  document.getElementById('projectEditTitle').textContent='Edit Project';
-  document.getElementById('projectName').value=p.name||'';
-  document.getElementById('projectDue').value=p.dueDate||'';
-  document.getElementById('projectNotes').value=p.notes||'';
-  document.getElementById('projectStatus').value=p.status||'active';
-  showScreen('projectEditScreen');
-}
-
-async function saveProject(){
-  const name=document.getElementById('projectName').value.trim();
-  const due=document.getElementById('projectDue').value;
-  const notes=document.getElementById('projectNotes').value.trim();
-  const status=document.getElementById('projectStatus').value;
-  if(!name){alert('Project name required');return}
-  const id=editingProjectId||('PRJ'+Date.now());
-  await dbPut('projects',{id,name,dueDate:due,notes,status,updatedAt:getTime()});
-  showScreen('projectsScreen');
-}
-
-async function deleteProject(id){
-  if(!confirm('Delete this project?'))return;
-  await dbDelete('projects',id);
-  await renderProjectsList();
-}
-
-// ==============================
-// TICKETS — simple, timestamped action log
-let editingTicketId=null;
-let editingTicketType='ticket'; // 'ticket' or 'work_item'
-let ticketActions=[];
-
+// TICKETS
+let editingTicketId=null;let editingTicketType='ticket';let ticketActions=[];
 async function startTicketCard(){editingTicketType='ticket';await openTicketEditor(null)}
 async function startWorkItem(){editingTicketType='work_item';await openTicketEditor(null)}
+async function openTicketEditor(id){editingTicketId=id;ticketActions=[];document.getElementById('ticketEditTitle').textContent=id?'Edit Ticket Card':(editingTicketType==='ticket'?'+ Ticket Card':'+ Work Item');document.getElementById('ticketNumber').value='';document.getElementById('ticketSubject').value='';document.getElementById('ticketLocation').value='';document.getElementById('ticketDevice').value='';document.getElementById('ticketIp').value='';document.getElementById('ticketStatus').value='in_progress';document.getElementById('ticketFollowUp').value='no';document.getElementById('ticketFollowUpNote').value='';document.getElementById('ticketActionInput').value='';await fillProjectDropdown();if(id){const t=await dbGet('sessions',id);if(t){editingTicketType=t.type||editingTicketType;document.getElementById('ticketNumber').value=t.ticketNumber||'';document.getElementById('ticketSubject').value=t.subject||'';document.getElementById('ticketLocation').value=t.location||'';document.getElementById('ticketDevice').value=t.device||'';document.getElementById('ticketIp').value=t.ip||'';document.getElementById('ticketStatus').value=t.status||'in_progress';document.getElementById('ticketFollowUp').value=t.followUp||'no';document.getElementById('ticketFollowUpNote').value=t.followUpNote||'';document.getElementById('ticketProject').value=t.projectId||'';ticketActions=Array.isArray(t.actions)?t.actions:[];}}renderTicketActionList();showScreen('ticketEditScreen');}
+function addTicketAction(){const v=document.getElementById('ticketActionInput').value.trim();if(!v)return;ticketActions.push({time:getTime(),text:v});document.getElementById('ticketActionInput').value='';renderTicketActionList();}
+function renderTicketActionList(){const el=document.getElementById('ticketActionList');if(!ticketActions.length){el.innerHTML='<p style="color:#888;font-size:12px">No actions yet.</p>';return}el.innerHTML=ticketActions.map((a,i)=>'<div style="display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid #eee"><div><span class="time">'+a.time.display+'</span>'+escapeHtml(a.text)+'</div><button class="btn btn-sm btn-red" onclick="deleteTicketAction('+i+')">X</button></div>').join('');}
+function deleteTicketAction(i){ticketActions.splice(i,1);renderTicketActionList();}
+async function fillProjectDropdown(){const projects=await dbGetAll('projects');const active=projects.filter(p=>p.status!=='completed');const opts=['<option value="">-- None --</option>'].concat(active.map(p=>'<option value="'+p.id+'">'+escapeHtml(p.name)+(p.dueDate?(' (Due '+p.dueDate+')'):'')+'</option>'));document.getElementById('ticketProject').innerHTML=opts.join('');}
+async function saveTicketCard(){const ticketNumber=document.getElementById('ticketNumber').value.trim();const subject=document.getElementById('ticketSubject').value.trim();if(editingTicketType==='ticket'&&!ticketNumber&&!subject){alert('Enter a ticket # or a subject');return}if(editingTicketType==='work_item'&&!subject){alert('Enter a subject');return}const projectId=document.getElementById('ticketProject').value||null;let projectName=null;if(projectId){const p=await dbGet('projects',projectId);projectName=p?.name||null;}const id=editingTicketId||('T'+Date.now());const existing=editingTicketId?await dbGet('sessions',id):null;const createdAt=existing?.createdAt||getTime();const data={id,type:editingTicketType,date:getToday(),createdAt,updatedAt:getTime(),closedAt:existing?.closedAt||null,ticketNumber:ticketNumber||null,subject:subject||null,location:document.getElementById('ticketLocation').value.trim()||null,device:document.getElementById('ticketDevice').value.trim()||null,ip:document.getElementById('ticketIp').value.trim()||null,status:document.getElementById('ticketStatus').value,followUp:document.getElementById('ticketFollowUp').value,followUpNote:document.getElementById('ticketFollowUpNote').value.trim()||null,projectId,projectName,actions:ticketActions};await dbPut('sessions',data);editingTicketId=id;alert('Saved');}
+async function closeTicketCard(){await saveTicketCard();const t=await dbGet('sessions',editingTicketId);if(!t)return;t.closedAt=getTime();t.updatedAt=getTime();await dbPut('sessions',t);showScreen('ticketsScreen');}
+async function renderTicketsToday(){const all=await dbGetAll('sessions');const today=all.filter(s=>s.date===getToday()&&(s.type==='ticket'||s.type==='work_item')).sort((a,b)=>(b.updatedAt?.ms||0)-(a.updatedAt?.ms||0));if(!today.length){document.getElementById('ticketsTodayList').innerHTML='<div class="card"><p style="color:#888;text-align:center">No ticket cards yet today.</p></div>';return;}const iconStatus=(st)=>{const map={resolved:'✅',in_progress:'🟦',pending_customer:'🟡',pending_internal:'🟡',escalated_onsite:'🚗'};return map[st]||'🟦';};document.getElementById('ticketsTodayList').innerHTML=today.map(t=>{const title=(t.ticketNumber?('<b>'+escapeHtml(t.ticketNumber)+'</b> – '):'')+escapeHtml(t.subject||'Work Item');const sub=[t.location?escapeHtml(t.location):null,t.projectName?('Project: '+escapeHtml(t.projectName)):null].filter(Boolean).join(' | ');const follow=(t.followUp==='yes'||t.followUpNote)?('<div style="margin-top:6px;font-size:12px;color:#b45309">📌 '+escapeHtml(t.followUpNote||'Follow-up needed')+'</div>'):'';const closed=t.closedAt?'<span style="color:#16a34a;font-weight:800">Closed</span>':'<span style="color:#2563eb;font-weight:800">Open</span>';return '<div class="card"><div style="display:flex;justify-content:space-between;gap:10px"><div style="flex:1"><div>'+iconStatus(t.status)+' '+title+'</div>'+(sub?('<div style="font-size:12px;color:#666;margin-top:4px">'+sub+'</div>':'')+(t.actions?.length?('<div style="font-size:12px;color:#666;margin-top:6px">Actions: '+t.actions.length+'</div>':'')+follow+'</div><div style="text-align:right">'+closed+'<div style="font-size:12px;color:#666;margin-top:4px">'+(t.status||'').replaceAll('_',' ')+'</div></div></div><div class="btn-row" style="margin-top:10px"><button class="btn btn-sm btn-indigo btn-half" onclick="openTicketEditor(\''+t.id+'\')">Edit</button><button class="btn btn-sm btn-red btn-half" onclick="deleteTicket(\''+t.id+'\')">Delete</button></div></div>';}).join('');}
+async function deleteTicket(id){if(!confirm('Delete this ticket card?'))return;await dbDelete('sessions',id);await renderTicketsToday();}
 
-async function openTicketEditor(id){
-  editingTicketId=id;
-  ticketActions=[];
-  document.getElementById('ticketEditTitle').textContent = id ? 'Edit Ticket Card' : (editingTicketType==='ticket' ? '+ Ticket Card' : '+ Work Item');
-  // reset fields
-  document.getElementById('ticketNumber').value='';
-  document.getElementById('ticketSubject').value='';
-  document.getElementById('ticketLocation').value='';
-  document.getElementById('ticketDevice').value='';
-  document.getElementById('ticketIp').value='';
-  document.getElementById('ticketStatus').value='in_progress';
-  document.getElementById('ticketFollowUp').value='no';
-  document.getElementById('ticketFollowUpNote').value='';
-  document.getElementById('ticketActionInput').value='';
-  await fillProjectDropdown();
-  if(id){
-    const t=await dbGet('sessions',id);
-    if(t){
-      editingTicketType=t.type||editingTicketType;
-      document.getElementById('ticketNumber').value=t.ticketNumber||'';
-      document.getElementById('ticketSubject').value=t.subject||'';
-      document.getElementById('ticketLocation').value=t.location||'';
-      document.getElementById('ticketDevice').value=t.device||'';
-      document.getElementById('ticketIp').value=t.ip||'';
-      document.getElementById('ticketStatus').value=t.status||'in_progress';
-      document.getElementById('ticketFollowUp').value=t.followUp||'no';
-      document.getElementById('ticketFollowUpNote').value=t.followUpNote||'';
-      document.getElementById('ticketProject').value=t.projectId||'';
-      ticketActions = Array.isArray(t.actions) ? t.actions : [];
-    }
-  }else{
-    // default: if only 2 projects due this week, don't force
-  }
-  renderTicketActionList();
-  showScreen('ticketEditScreen');
-}
-
-function addTicketAction(){
-  const v=document.getElementById('ticketActionInput').value.trim();
-  if(!v){return}
-  ticketActions.push({time:getTime(),text:v});
-  document.getElementById('ticketActionInput').value='';
-  renderTicketActionList();
-}
-
-function renderTicketActionList(){
-  const el=document.getElementById('ticketActionList');
-  if(!ticketActions.length){el.innerHTML='<p style="color:#888;font-size:12px">No actions yet.</p>';return}
-  el.innerHTML=ticketActions.map((a,i)=>
-    '<div style="display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid #eee">'+
-    '<div><span class="time">'+a.time.display+'</span>'+escapeHtml(a.text)+'</div>'+
-    '<button class="btn btn-sm btn-red" onclick="deleteTicketAction('+i+')">X</button>'+
-    '</div>'
-  ).join('');
-}
-
-function deleteTicketAction(i){
-  ticketActions.splice(i,1);
-  renderTicketActionList();
-}
-
-async function fillProjectDropdown(){
-  const projects=await dbGetAll('projects');
-  const active=projects.filter(p=>p.status!=='completed');
-  const opts = ['<option value=\"\">-- None --</option>']
-    .concat(active.map(p=>'<option value=\"'+p.id+'\">'+escapeHtml(p.name)+(p.dueDate?(' (Due '+p.dueDate+')'):'')+'</option>'));
-  document.getElementById('ticketProject').innerHTML=opts.join('');
-}
-
-async function saveTicketCard(){
-  const ticketNumber=document.getElementById('ticketNumber').value.trim();
-  const subject=document.getElementById('ticketSubject').value.trim();
-  if(editingTicketType==='ticket' && !ticketNumber && !subject){alert('Enter a ticket # or a subject');return}
-  if(editingTicketType==='work_item' && !subject){alert('Enter a subject');return}
-
-  const projectId=document.getElementById('ticketProject').value||null;
-  let projectName=null;
-  if(projectId){
-    const p=await dbGet('projects',projectId);
-    projectName=p?.name||null;
-  }
-  const id=editingTicketId||('T'+Date.now());
-  const existing = editingTicketId ? await dbGet('sessions',id) : null;
-  const createdAt = existing?.createdAt || getTime();
-
-  const data={
-    id,
-    type:editingTicketType,
-    date:getToday(),
-    createdAt,
-    updatedAt:getTime(),
-    closedAt: existing?.closedAt || null,
-    ticketNumber: ticketNumber || null,
-    subject: subject || null,
-    location: document.getElementById('ticketLocation').value.trim()||null,
-    device: document.getElementById('ticketDevice').value.trim()||null,
-    ip: document.getElementById('ticketIp').value.trim()||null,
-    status: document.getElementById('ticketStatus').value,
-    followUp: document.getElementById('ticketFollowUp').value,
-    followUpNote: document.getElementById('ticketFollowUpNote').value.trim()||null,
-    projectId,
-    projectName,
-    actions: ticketActions
-  };
-  await dbPut('sessions',data);
-  editingTicketId=id;
-  alert('Saved');
-}
-
-async function closeTicketCard(){
-  await saveTicketCard();
-  const t=await dbGet('sessions',editingTicketId);
-  if(!t){return}
-  t.closedAt=getTime();
-  t.updatedAt=getTime();
-  await dbPut('sessions',t);
-  showScreen('ticketsScreen');
-}
-
-async function renderTicketsToday(){
-  const all=await dbGetAll('sessions');
-  const today=all.filter(s=>s.date===getToday() && (s.type==='ticket' || s.type==='work_item'))
-    .sort((a,b)=> (b.updatedAt?.ms||0)-(a.updatedAt?.ms||0));
-  if(!today.length){
-    document.getElementById('ticketsTodayList').innerHTML='<div class="card"><p style="color:#888;text-align:center">No ticket cards yet today.</p></div>';
-    return;
-  }
-  const iconStatus = (st)=>{
-    const map={resolved:'✅',in_progress:'🟦',pending_customer:'🟡',pending_internal:'🟡',escalated_onsite:'🚗'};
-    return map[st]||'🟦';
-  };
-  document.getElementById('ticketsTodayList').innerHTML = today.map(t=>{
-    const title=(t.ticketNumber?('<b>'+escapeHtml(t.ticketNumber)+'</b> – '):'')+escapeHtml(t.subject||'Work Item');
-    const sub=[t.location?escapeHtml(t.location):null, t.projectName?('Project: '+escapeHtml(t.projectName)):null].filter(Boolean).join(' | ');
-    const follow=(t.followUp==='yes' || t.followUpNote)?('<div style="margin-top:6px;font-size:12px;color:#b45309">📌 '+escapeHtml(t.followUpNote||'Follow-up needed')+'</div>'):'';
-    const closed=t.closedAt?'<span style="color:#16a34a;font-weight:800">Closed</span>':'<span style="color:#2563eb;font-weight:800">Open</span>';
-    return '<div class="card">'+
-      '<div style="display:flex;justify-content:space-between;gap:10px">'+
-      '<div style="flex:1"><div>'+iconStatus(t.status)+' '+title+'</div>'+
-      (sub?('<div style="font-size:12px;color:#666;margin-top:4px">'+sub+'</div>'):'')+
-      (t.actions?.length?('<div style="font-size:12px;color:#666;margin-top:6px">Actions: '+t.actions.length+'</div>'):'')+
-      follow+
-      '</div><div style="text-align:right">'+closed+'<div style="font-size:12px;color:#666;margin-top:4px">'+(t.status||'').replaceAll('_',' ')+'</div></div>'+
-      '</div>'+
-      '<div class="btn-row" style="margin-top:10px">'+
-        '<button class="btn btn-sm btn-indigo btn-half" onclick="openTicketEditor(\''+t.id+'\')">Edit</button>'+
-        '<button class="btn btn-sm btn-red btn-half" onclick="deleteTicket(\''+t.id+'\')">Delete</button>'+
-      '</div>'+
-    '</div>';
-  }).join('');
-}
-
-async function deleteTicket(id){
-  if(!confirm('Delete this ticket card?'))return;
-  await dbDelete('sessions',id);
-  await renderTicketsToday();
-}
-
-// ==============================
-// DAILY BUNDLE EXPORT (ZIP, no dependencies)
-function escapeHtml(s){return String(s||'').replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]))}
+// UTILITIES
+function escapeHtml(s){return String(s||'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 function addDaysISO(iso,days){const d=new Date(iso+'T12:00:00');d.setDate(d.getDate()+days);return d.toISOString().split('T')[0]}
 
-function crc32(buf){
-  let crc = 0 ^ (-1);
-  for (let i = 0; i < buf.length; i++) {
-    crc = (crc >>> 8) ^ CRC_TABLE[(crc ^ buf[i]) & 0xFF];
-  }
-  return (crc ^ (-1)) >>> 0;
-}
-const CRC_TABLE = (() => {
-  let c, table = new Uint32Array(256);
-  for (let n = 0; n < 256; n++) {
-    c = n;
-    for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
-    table[n] = c >>> 0;
-  }
-  return table;
-})();
-
+// ZIP
+function crc32(buf){let crc=0^(-1);for(let i=0;i<buf.length;i++){crc=(crc>>>8)^CRC_TABLE[(crc^buf[i])&0xFF];}return(crc^(-1))>>>0;}
+const CRC_TABLE=(()=>{let c,table=new Uint32Array(256);for(let n=0;n<256;n++){c=n;for(let k=0;k<8;k++)c=(c&1)?(0xEDB88320^(c>>>1)):(c>>>1);table[n]=c>>>0;}return table;})();
 function u16(v){const a=new Uint8Array(2);a[0]=v&255;a[1]=(v>>>8)&255;return a}
 function u32(v){const a=new Uint8Array(4);a[0]=v&255;a[1]=(v>>>8)&255;a[2]=(v>>>16)&255;a[3]=(v>>>24)&255;return a}
-function concat(arrays){
-  let total=0;arrays.forEach(a=>total+=a.length);
-  const out=new Uint8Array(total);let off=0;
-  arrays.forEach(a=>{out.set(a,off);off+=a.length});
-  return out;
-}
+function concat(arrays){let total=0;arrays.forEach(a=>total+=a.length);const out=new Uint8Array(total);let off=0;arrays.forEach(a=>{out.set(a,off);off+=a.length});return out;}
 
-function makeZip(fileMap){
-  // fileMap: { "path/name.txt": "content" }
-  const encoder=new TextEncoder();
-  const localParts=[];
-  const centralParts=[];
-  let offset=0;
-  let fileCount=0;
+function makeZip(fileMap){const encoder=new TextEncoder();const localParts=[];const centralParts=[];let offset=0;let fileCount=0;for(const[name,content]of Object.entries(fileMap)){fileCount++;const data=(content instanceof Uint8Array)?content:encoder.encode(String(content));const crc=crc32(data);const nameBytes=encoder.encode(name);const localHeader=concat([u32(0x04034b50),u16(20),u16(0),u16(0),u16(0),u16(0),u32(crc),u32(data.length),u32(data.length),u16(nameBytes.length),u16(0),nameBytes]);localParts.push(localHeader,data);const centralHeader=concat([u32(0x02014b50),u16(20),u16(20),u16(0),u16(0),u16(0),u16(0),u32(crc),u32(data.length),u32(data.length),u16(nameBytes.length),u16(0),u16(0),u16(0),u16(0),u32(0),u32(offset),nameBytes]);centralParts.push(centralHeader);offset+=localHeader.length+data.length;}const centralDir=concat(centralParts);const end=concat([u32(0x06054b50),u16(0),u16(0),u16(fileCount),u16(fileCount),u32(centralDir.length),u32(offset),u16(0)]);const zipData=concat([...localParts,centralDir,end]);return new Blob([zipData],{type:'application/zip'});}
 
-  for(const [name,content] of Object.entries(fileMap)){
-    fileCount++;
-    const data = (content instanceof Uint8Array) ? content : encoder.encode(String(content));
-    const crc = crc32(data);
-    const nameBytes = encoder.encode(name);
-    // Local file header
-    const localHeader = concat([
-      u32(0x04034b50), // signature
-      u16(20), // version
-      u16(0), // flags
-      u16(0), // method store
-      u16(0), // mod time
-      u16(0), // mod date
-      u32(crc),
-      u32(data.length),
-      u32(data.length),
-      u16(nameBytes.length),
-      u16(0), // extra len
-      nameBytes
-    ]);
-    localParts.push(localHeader, data);
+function downloadBlob(blob,filename){const link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download=filename;link.click();setTimeout(()=>URL.revokeObjectURL(link.href),2000);}
 
-    // Central directory header
-    const centralHeader = concat([
-      u32(0x02014b50),
-      u16(20),u16(20),
-      u16(0),u16(0),
-      u16(0),u16(0),
-      u32(crc),
-      u32(data.length),
-      u32(data.length),
-      u16(nameBytes.length),
-      u16(0),u16(0),
-      u16(0),u16(0),
-      u32(0),
-      u32(offset),
-      nameBytes
-    ]);
-    centralParts.push(centralHeader);
+async function exportSnapshotNow(){try{const dateStr=getToday();const ts=new Date();const hhmm=ts.toTimeString().slice(0,5).replace(':','');const kronos=await dbGet('kronos',dateStr)||{date:dateStr,punches:[],pto:[],overtimeReason:null};const clarityAll=await dbGetAll('clarityEntries');const clarity=clarityAll.filter(e=>e.date===dateStr);const concurAll=await dbGetAll('concurEntries');const concur=concurAll.filter(e=>e.date===dateStr);const notesAll=await dbGetAll('notes');const notes=notesAll.filter(n=>n.date===dateStr);const sessionsAll=await dbGetAll('sessions');const sessions=sessionsAll.filter(s=>s.date===dateStr);const practices=await dbGetAll('practices');const projects=await dbGetAll('projects');const settings=await dbGetAll('settings');const evidenceAll=await dbGetAll('evidence');const evidence=evidenceAll.filter(e=>e.date===dateStr);const snapshot={schema:'wcc.snapshot.v14.1',date:dateStr,generatedAt:getTime(),kronos,clarityEntries:clarity,concurEntries:concur,quickNotes:notes,sessions,practices,projects,settings,evidence};const base='WCC_SNAPSHOT_'+dateStr+'_'+hhmm;const files={[base+'/snapshot_'+dateStr+'_'+hhmm+'.json']:JSON.stringify(snapshot,null,2)};const zip=makeZip(files);downloadBlob(zip,base+'.zip');await dbPut('settings',{id:'lastSnapshotAt',value:new Date().toISOString()});showToast('Snapshot exported: '+base+'.zip');}catch(err){alert('Snapshot failed: '+err);}}
 
-    offset += localHeader.length + data.length;
-  }
-
-  const centralDir = concat(centralParts);
-  const end = concat([
-    u32(0x06054b50),
-    u16(0),u16(0),
-    u16(fileCount),u16(fileCount),
-    u32(centralDir.length),
-    u32(offset),
-    u16(0)
-  ]);
-
-  const zipData = concat([...localParts, centralDir, end]);
-  return new Blob([zipData],{type:'application/zip'});
-}
-
-function downloadBlob(blob,filename){
-  const link=document.createElement('a');
-  link.href=URL.createObjectURL(blob);
-  link.download=filename;
-  link.click();
-  setTimeout(()=>URL.revokeObjectURL(link.href),2000);
-}
-
-async function exportSnapshotNow(){
-  try{
-    const dateStr=getToday();
-    const ts=new Date();
-    const hhmm=ts.toTimeString().slice(0,5).replace(':','');
-    const kronos=await dbGet('kronos',dateStr) || {date:dateStr,punches:[],pto:[],overtimeReason:null};
-    const clarityAll=await dbGetAll('clarityEntries');
-    const clarity=clarityAll.filter(e=>e.date===dateStr);
-    const concurAll=await dbGetAll('concurEntries');
-    const concur=concurAll.filter(e=>e.date===dateStr);
-    const notesAll=await dbGetAll('notes');
-    const notes=notesAll.filter(n=>n.date===dateStr);
-    const sessionsAll=await dbGetAll('sessions');
-    const sessions=sessionsAll.filter(s=>s.date===dateStr);
-    const practices=await dbGetAll('practices');
-    const projects=await dbGetAll('projects');
-    const settings=await dbGetAll('settings');
-    const evidenceAll=await dbGetAll('evidence');
-    const evidence=evidenceAll.filter(e=>e.date===dateStr);
-    const snapshot={schema:'wcc.snapshot.v14',date:dateStr,generatedAt:getTime(),kronos,clarityEntries:clarity,concurEntries:concur,quickNotes:notes,sessions,practices,projects,settings,evidence};
-    const base='WCC_SNAPSHOT_'+dateStr+'_'+hhmm;
-    const files={ [base+'/snapshot_'+dateStr+'_'+hhmm+'.json']: JSON.stringify(snapshot,null,2) };
-    const zip=makeZip(files);
-    downloadBlob(zip, base+'.zip');
-    await dbPut('settings',{id:'lastSnapshotAt',value: new Date().toISOString()});
-    showToast('Snapshot exported: '+base+'.zip');
-  }catch(err){ alert('Snapshot failed: '+err); }
-}
-
-async function exportDailyBundle(){
-  const balance=await getCloseDayBalance();
-  const v=validateDayForEOD(balance);
-  if(!v.ok){alert(v.message);return}
-
-  const dateStr=getToday();
-  const eodText=await buildEODText(dateStr);
-
-  const kronos=await dbGet('kronos',dateStr) || {date:dateStr,punches:[],pto:[],overtimeReason:null};
-  const clarityAll=await dbGetAll('clarityEntries');
-  const clarity=clarityAll.filter(e=>e.date===dateStr);
-  const concurAll=await dbGetAll('concurEntries');
-  const concur=concurAll.filter(e=>e.date===dateStr);
-  const notesAll=await dbGetAll('notes');
-  const notes=notesAll.filter(n=>n.date===dateStr);
-  const sessionsAll=await dbGetAll('sessions');
-  const tickets=sessionsAll.filter(s=>s.date===dateStr && (s.type==='ticket' || s.type==='work_item'));
-  const projects=await dbGetAll('projects');
-  const evidenceAll=await dbGetAll('evidence');
-  const evidence=evidenceAll.filter(e=>e.date===dateStr);
-
-  const dailyJson={
-    schema:'wcc.daily.v14',
-    date:dateStr,
-    generatedAt:getTime(),
-    kronos,
-    clarityEntries:clarity,
-    concurEntries:concur,
-    quickNotes:notes,
-    tickets,
-    projects,
-    evidence
-  };
-
-  const base='WCC_'+dateStr;
-  const files={
-    [base+'/eod_'+dateStr+'.txt']: eodText,
-    [base+'/daily_'+dateStr+'.json']: JSON.stringify(dailyJson,null,2),
-    [base+'/clarity_'+dateStr+'.json']: JSON.stringify(clarity,null,2),
-    [base+'/concur_'+dateStr+'.json']: JSON.stringify(concur,null,2),
-    [base+'/tickets_'+dateStr+'.json']: JSON.stringify(tickets,null,2),
-    [base+'/kronos_'+dateStr+'.json']: JSON.stringify(kronos,null,2),
-    [base+'/notes_'+dateStr+'.json']: JSON.stringify(notes,null,2),
-    [base+'/evidence_'+dateStr+'.json']: JSON.stringify(evidence,null,2)
-  };
-
-  const zip=makeZip(files);
-  downloadBlob(zip, base+'.zip');
-  await dbPut('settings',{id:'lastDailyExportDate',value:dateStr});
-  showToast('Daily bundle exported: '+base+'.zip');
-  updateExportReminder().catch(()=>{});
-}
+async function exportDailyBundle(){const balance=await getCloseDayBalance();const v=validateDayForEOD(balance);if(!v.ok){alert(v.message);return}const dateStr=getToday();const eodText=await buildEODText(dateStr);const kronos=await dbGet('kronos',dateStr)||{date:dateStr,punches:[],pto:[],overtimeReason:null};const clarityAll=await dbGetAll('clarityEntries');const clarity=clarityAll.filter(e=>e.date===dateStr);const concurAll=await dbGetAll('concurEntries');const concur=concurAll.filter(e=>e.date===dateStr);const notesAll=await dbGetAll('notes');const notes=notesAll.filter(n=>n.date===dateStr);const sessionsAll=await dbGetAll('sessions');const tickets=sessionsAll.filter(s=>s.date===dateStr&&(s.type==='ticket'||s.type==='work_item'));const projects=await dbGetAll('projects');const evidenceAll=await dbGetAll('evidence');const evidence=evidenceAll.filter(e=>e.date===dateStr);const dailyJson={schema:'wcc.daily.v14.1',date:dateStr,generatedAt:getTime(),kronos,clarityEntries:clarity,concurEntries:concur,quickNotes:notes,tickets,projects,evidence};const base='WCC_'+dateStr;const files={[base+'/eod_'+dateStr+'.txt']:eodText,[base+'/daily_'+dateStr+'.json']:JSON.stringify(dailyJson,null,2),[base+'/clarity_'+dateStr+'.json']:JSON.stringify(clarity,null,2),[base+'/concur_'+dateStr+'.json']:JSON.stringify(concur,null,2),[base+'/tickets_'+dateStr+'.json']:JSON.stringify(tickets,null,2),[base+'/kronos_'+dateStr+'.json']:JSON.stringify(kronos,null,2),[base+'/notes_'+dateStr+'.json']:JSON.stringify(notes,null,2),[base+'/evidence_'+dateStr+'.json']:JSON.stringify(evidence,null,2)};const zip=makeZip(files);downloadBlob(zip,base+'.zip');await dbPut('settings',{id:'lastDailyExportDate',value:dateStr});showToast('Daily bundle exported: '+base+'.zip');updateExportReminder().catch(()=>{});}
 
 // ==============================
 
-initDB().then(()=>{showScreen('menuScreen');updateKronosStatus();updateSaveStatus();updateExportReminder().catch(()=>{})}).catch(e=>alert('DB Error: '+e.message));
+
+// ==============================
+// DASHBOARD & DATA MODULE — v14.1
+// ==============================
+
+// --- RESTORE ---
+let __restoreData=null;
+
+async function handleRestoreFile(){
+  const input=document.getElementById('restoreFileInput');
+  const preview=document.getElementById('restorePreview');
+  const result=document.getElementById('restoreResult');
+  preview.classList.add('hidden');
+  result.classList.add('hidden');
+  __restoreData=null;
+  if(!input.files||!input.files[0])return;
+  const file=input.files[0];
+  try{
+    const text=await file.text();
+    const data=JSON.parse(text);
+    __restoreData=data;
+    const schema=data.schema||data.type||'unknown';
+    const validSchemas=['wcc.daily.v14','wcc.daily.v14.1','wcc.snapshot.v14','wcc.snapshot.v14.1','full_backup','wcc.archive.v14'];
+    const isValid=validSchemas.includes(schema);
+    let html='<div style="margin-bottom:8px"><b>File:</b> '+escapeHtml(file.name)+'</div>';
+    html+='<div style="margin-bottom:8px"><b>Schema:</b> <span style="color:'+(isValid?'#38a169':'#e53e3e')+'">'+escapeHtml(schema)+(isValid?' ✅':' ⚠️ Unknown')+'</span></div>';
+    if(data.date)html+='<div style="margin-bottom:8px"><b>Date:</b> '+escapeHtml(data.date)+'</div>';
+    if(data.exported||data.generatedAt)html+='<div style="margin-bottom:8px"><b>Generated:</b> '+escapeHtml(typeof(data.generatedAt)==='object'?data.generatedAt.iso:(data.generatedAt||data.exported))+'</div>';
+    const stores=['kronos','clarityEntries','concurEntries','sessions','tickets','practices','projects','evidence','notes','quickNotes','settings'];
+    let totalRecords=0;
+    html+='<div class="section-title" style="margin-top:10px">Records Found</div>';
+    stores.forEach(s=>{
+      let arr=data[s];
+      if(arr&&!Array.isArray(arr)){arr=[arr]}
+      if(arr&&arr.length){
+        html+='<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px"><span>'+s+'</span><span style="font-weight:600">'+arr.length+'</span></div>';
+        totalRecords+=arr.length;
+      }
+    });
+    let minDate='9999',maxDate='0000';
+    ['clarityEntries','concurEntries','sessions','tickets','evidence','quickNotes','notes'].forEach(s=>{
+      const arr=data[s];
+      if(Array.isArray(arr))arr.forEach(r=>{const d=r.date||'';if(d&&d<minDate)minDate=d;if(d&&d>maxDate)maxDate=d;});
+    });
+    if(minDate!=='9999')html+='<div style="margin-top:8px;font-size:13px"><b>Date range:</b> '+minDate+' → '+maxDate+'</div>';
+    html+='<div style="margin-top:8px;font-size:13px;font-weight:700">Total records: '+totalRecords+'</div>';
+    if(!isValid)html+='<div class="warning-box" style="margin-top:8px">⚠️ Unrecognized schema. Proceed with caution.</div>';
+    document.getElementById('restorePreviewContent').innerHTML=html;
+    preview.classList.remove('hidden');
+  }catch(err){
+    result.innerHTML='<div class="warning-box">❌ Could not parse file: '+escapeHtml(err.message)+'</div>';
+    result.classList.remove('hidden');
+  }
+}
+
+function initRestoreListeners(){
+  const rm=document.getElementById('restoreMode');
+  if(rm)rm.addEventListener('change',function(){
+    document.getElementById('restoreReplaceWarn').classList.toggle('hidden',this.value!=='replace');
+  });
+}
+
+async function confirmRestore(){
+  if(!__restoreData){alert('No backup loaded');return}
+  const mode=document.getElementById('restoreMode').value;
+  if(mode==='replace'){
+    if(!confirm('⚠️ FULL REPLACE: This will DELETE all current data and import the backup. Continue?'))return;
+    if(!confirm('FINAL CONFIRMATION: All existing data will be permanently lost. Are you absolutely sure?'))return;
+  }else{
+    if(!confirm('Merge restore: Missing records will be added. Existing records will NOT be overwritten. Continue?'))return;
+  }
+  try{
+    if(mode==='replace')await executeFullReplace(__restoreData);
+    else await executeMergeRestore(__restoreData);
+    document.getElementById('restoreResult').innerHTML='<div class="success-box">✅ Restore completed successfully.</div>';
+    document.getElementById('restoreResult').classList.remove('hidden');
+    document.getElementById('restorePreview').classList.add('hidden');
+    showToast('Restore complete');
+  }catch(err){
+    document.getElementById('restoreResult').innerHTML='<div class="warning-box">❌ Restore failed: '+escapeHtml(err.message)+'</div>';
+    document.getElementById('restoreResult').classList.remove('hidden');
+  }
+}
+
+async function executeFullReplace(data){
+  const stores=['sessions','kronos','notes','settings','clarityEntries','concurEntries','practices','projects','evidence'];
+  for(const store of stores){const all=await dbGetAll(store);for(const rec of all)await dbDelete(store,store==='kronos'?rec.date:rec.id);}
+  await importRestoreData(data);
+}
+
+async function executeMergeRestore(data){await importRestoreData(data);}
+
+async function importRestoreData(data){
+  const mapping=[
+    {key:'kronos',store:'kronos',isArray:true,keyField:'date'},
+    {key:'clarityEntries',store:'clarityEntries',isArray:true,keyField:'id'},
+    {key:'concurEntries',store:'concurEntries',isArray:true,keyField:'id'},
+    {key:'practices',store:'practices',isArray:true,keyField:'id'},
+    {key:'projects',store:'projects',isArray:true,keyField:'id'},
+    {key:'evidence',store:'evidence',isArray:true,keyField:'id'},
+    {key:'sessions',store:'sessions',isArray:true,keyField:'id'},
+    {key:'tickets',store:'sessions',isArray:true,keyField:'id'},
+    {key:'notes',store:'notes',isArray:true,keyField:'id'},
+    {key:'quickNotes',store:'notes',isArray:true,keyField:'id'},
+    {key:'settings',store:'settings',isArray:true,keyField:'id'},
+    {key:'clarityCategories',store:'settings',isArray:false,keyField:'id',wrap:'clarityCategories'}
+  ];
+  for(const m of mapping){
+    let arr=data[m.key];if(!arr)continue;
+    if(m.wrap){await dbPut(m.store,{id:m.wrap,value:arr});continue;}
+    if(!Array.isArray(arr))arr=[arr];
+    for(const rec of arr){
+      if(!rec)continue;
+      if(m.store==='kronos'){if(!rec.date)continue;}else{if(!rec.id)continue;}
+      try{await dbPut(m.store,rec)}catch(e){console.warn('Restore skip:',m.store,e)}
+    }
+  }
+}
+
+// --- STORAGE HEALTH ---
+async function initStorageHealth(){
+  if(navigator.storage&&navigator.storage.estimate){
+    try{
+      const est=await navigator.storage.estimate();
+      const usedMB=(est.usage/1048576).toFixed(2);const quotaMB=(est.quota/1048576).toFixed(0);
+      const pct=est.quota>0?((est.usage/est.quota)*100).toFixed(1):0;
+      document.getElementById('storageEstimate').innerHTML='<div style="font-size:18px;font-weight:700">'+usedMB+' MB</div><div style="font-size:12px;color:#666">of '+quotaMB+' MB available ('+pct+'%)</div>';
+      document.getElementById('storageMeter').style.width=Math.min(pct,100)+'%';
+      document.getElementById('storageMeter').style.background=pct>80?'#e53e3e':(pct>50?'#d69e2e':'#38a169');
+      document.getElementById('storageDetail').textContent='Used: '+usedMB+' MB | Available: '+quotaMB+' MB';
+    }catch(e){document.getElementById('storageEstimate').textContent='Storage API not available';}
+  }else{document.getElementById('storageEstimate').textContent='Storage API not supported';}
+  const storeNames=['sessions','kronos','notes','settings','clarityEntries','concurEntries','practices','projects','evidence'];
+  let html='';let totalRecs=0;
+  for(const s of storeNames){
+    try{const all=await dbGetAll(s);html+='<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #eee;font-size:13px"><span>'+s+'</span><span style="font-weight:600">'+all.length+'</span></div>';totalRecs+=all.length;}
+    catch(e){html+='<div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;color:#e53e3e"><span>'+s+'</span><span>error</span></div>';}
+  }
+  html+='<div style="display:flex;justify-content:space-between;padding:8px 0;font-weight:700;border-top:2px solid #ddd;margin-top:4px"><span>Total</span><span>'+totalRecs+'</span></div>';
+  document.getElementById('storageRecordCounts').innerHTML=html;
+  const lastSnap=await dbGet('settings','lastSnapshotAt');const lastDaily=await dbGet('settings','lastDailyExportDate');
+  let bHtml='';
+  bHtml+='<div style="padding:6px 0;font-size:13px">Last Snapshot: <b>'+(lastSnap?lastSnap.value:'Never')+'</b></div>';
+  bHtml+='<div style="padding:6px 0;font-size:13px">Last Daily Export: <b>'+(lastDaily?lastDaily.value:'Never')+'</b></div>';
+  const today=getToday();
+  if(!lastDaily||lastDaily.value!==today){bHtml+='<div class="warning-box" style="margin-top:6px">⚠️ No daily export for today yet.</div>';}
+  else{bHtml+='<div class="success-box" style="margin-top:6px">✅ Today\'s daily export complete.</div>';}
+  document.getElementById('storageBackupStatus').innerHTML=bHtml;
+}
+
+async function runBackupIntegrityCheck(){
+  const el=document.getElementById('backupIntegrityResult');el.classList.remove('hidden');
+  el.innerHTML='<div style="color:#666">Running check...</div>';
+  try{
+    const k=await dbGetAll('kronos'),cl=await dbGetAll('clarityEntries'),co=await dbGetAll('concurEntries'),
+          p=await dbGetAll('practices'),pr=await dbGetAll('projects'),ev=await dbGetAll('evidence'),
+          s=await dbGetAll('sessions'),n=await dbGetAll('notes'),st=await dbGetAll('settings');
+    const data={kronos:k,clarityEntries:cl,concurEntries:co,practices:p,projects:pr,evidence:ev,sessions:s,notes:n,settings:st};
+    const json=JSON.stringify(data);const reparsed=JSON.parse(json);
+    let issues=[];
+    for(const key of Object.keys(data)){if(data[key].length!==reparsed[key].length)issues.push(key+': count mismatch');}
+    const totalSize=(json.length/1024).toFixed(1);
+    if(issues.length){el.innerHTML='<div class="warning-box">⚠️ Issues:<br>'+issues.map(escapeHtml).join('<br>')+'</div>';}
+    else{el.innerHTML='<div class="success-box">✅ All data OK. Export size: '+totalSize+' KB. All '+Object.keys(data).length+' stores verified.</div>';}
+  }catch(err){el.innerHTML='<div class="warning-box">❌ Check failed: '+escapeHtml(err.message)+'</div>';}
+}
+
+// --- DATA INTEGRITY ---
+async function runIntegrityScan(){
+  document.getElementById('integrityScanResults').classList.remove('hidden');
+  document.getElementById('integritySummary').innerHTML='<div style="color:#666">Scanning...</div>';
+  document.getElementById('integrityIssuesList').innerHTML='';
+  const issues=[];
+  try{
+    const allSessions=await dbGetAll('sessions'),allProjects=await dbGetAll('projects'),allClarity=await dbGetAll('clarityEntries');
+    const allCategories=await getClarityCategories(),allPractices=await dbGetAll('practices'),allConcur=await dbGetAll('concurEntries');
+    const projectIds=new Set(allProjects.map(p=>p.id)),categoryIds=new Set(allCategories.map(c=>c.id)),practiceIds=new Set(allPractices.map(p=>p.id));
+    allSessions.filter(s=>s.projectId&&!projectIds.has(s.projectId)).forEach(s=>{issues.push({type:'orphan_project',severity:'medium',store:'sessions',id:s.id,desc:'Ticket "'+escapeHtml(s.ticketNumber||s.subject||s.id)+'" refs deleted project: '+escapeHtml(s.projectId),fixLabel:'Clear ref',fixFn:'fixOrphanProject("'+s.id+'")'});});
+    allClarity.filter(e=>e.category&&!categoryIds.has(e.category)).forEach(e=>{issues.push({type:'missing_category',severity:'low',store:'clarityEntries',id:e.id,desc:'Clarity '+escapeHtml(e.id)+' ('+escapeHtml(e.categoryName||e.category)+') missing category',fixLabel:null});});
+    allConcur.filter(e=>e.type==='mileage').forEach(e=>{
+      if(e.fromPracticeId&&!practiceIds.has(e.fromPracticeId))issues.push({type:'orphan_practice',severity:'low',store:'concurEntries',id:e.id,desc:'Mileage FROM deleted practice: '+escapeHtml(e.fromPracticeName||e.fromPracticeId),fixLabel:null});
+      if(e.toPracticeId&&!practiceIds.has(e.toPracticeId))issues.push({type:'orphan_practice',severity:'low',store:'concurEntries',id:e.id,desc:'Mileage TO deleted practice: '+escapeHtml(e.toPracticeName||e.toPracticeId),fixLabel:null});
+    });
+    allSessions.filter(s=>!s.date).forEach(s=>{issues.push({type:'no_date',severity:'medium',store:'sessions',id:s.id,desc:'Session '+escapeHtml(s.id)+' has no date',fixLabel:null});});
+    allClarity.filter(e=>!e.minutes||e.minutes<=0).forEach(e=>{issues.push({type:'zero_time',severity:'low',store:'clarityEntries',id:e.id,desc:'Clarity '+escapeHtml(e.id)+' on '+e.date+' has 0 minutes',fixLabel:'Delete',fixFn:'fixDeleteRecord("clarityEntries","'+e.id+'")'});});
+    const allKronos=await dbGetAll('kronos');
+    allKronos.forEach(k=>{if(!k.punches||k.punches.length<2)return;const seen=new Set();k.punches.forEach(p=>{const key=p.type+'@'+p.kronosTime;if(seen.has(key))issues.push({type:'dup_punch',severity:'medium',store:'kronos',id:k.date,desc:'Dup punch '+k.date+': '+p.type+' at '+p.kronosTime,fixLabel:null});seen.add(key);});});
+  }catch(err){issues.push({type:'error',severity:'high',desc:'Scan error: '+err.message});}
+  const sevColors={high:'#e53e3e',medium:'#d69e2e',low:'#718096'};
+  if(!issues.length){document.getElementById('integritySummary').innerHTML='<div class="success-box">✅ No issues found. All data references consistent.</div>';}
+  else{
+    const hi=issues.filter(i=>i.severity==='high').length,med=issues.filter(i=>i.severity==='medium').length,lo=issues.filter(i=>i.severity==='low').length;
+    document.getElementById('integritySummary').innerHTML='<div class="warning-box">Found '+issues.length+' issue(s)'+(hi?' | 🔴 '+hi+' high':'')+(med?' | 🟡 '+med+' medium':'')+(lo?' | ⚪ '+lo+' low':'')+'</div>';
+    document.getElementById('integrityIssuesList').innerHTML=issues.map(iss=>{
+      const c=sevColors[iss.severity]||'#666';
+      const fixBtn=iss.fixFn?'<button class="btn btn-sm btn-orange" onclick="'+iss.fixFn+'" style="margin-top:6px">🔧 '+(iss.fixLabel||'Fix')+'</button>':'';
+      return '<div class="card" style="border-left:4px solid '+c+'"><div style="font-size:13px">'+iss.desc+'</div><div style="font-size:11px;color:#888;margin-top:4px">'+escapeHtml(iss.type)+' | '+(iss.store||'')+' | '+(iss.id||'')+'</div>'+fixBtn+'</div>';
+    }).join('');
+  }
+}
+
+async function fixOrphanProject(sessionId){if(!confirm('Clear project reference?'))return;const s=await dbGet('sessions',sessionId);if(!s)return;s.projectId=null;s.projectName=null;await dbPut('sessions',s);showToast('Fixed');await runIntegrityScan();}
+async function fixDeleteRecord(store,id){if(!confirm('Delete this record?'))return;await dbDelete(store,id);showToast('Deleted');await runIntegrityScan();}
+
+// --- DASHBOARD VIEW ---
+async function initDashboardView(){await buildTodayDash();}
+function fmtHM(mins){return Math.floor(mins/60)+':'+String(mins%60).padStart(2,'0')}
+
+function switchDashTab(tab){
+  ['today','week','month'].forEach(t=>{
+    document.getElementById('dashTab'+t.charAt(0).toUpperCase()+t.slice(1)).className='btn btn-sm btn-'+(t===tab?'blue':'gray')+' btn-half';
+    document.getElementById('dash'+t.charAt(0).toUpperCase()+t.slice(1)+'Panel').classList.toggle('hidden',t!==tab);
+  });
+  if(tab==='today')buildTodayDash();else if(tab==='week')buildWeekDash();else if(tab==='month')buildMonthDash();
+}
+
+async function buildTodayDash(){
+  const today=getToday(),kronos=await getKronosToday(),kronosMin=calculateKronosHours(kronos);
+  const clarityAll=await dbGetAll('clarityEntries'),clarityToday=clarityAll.filter(e=>e.date===today),clarityMin=clarityToday.reduce((s,e)=>s+e.minutes,0);
+  const concurToday=(await dbGetAll('concurEntries')).filter(e=>e.date===today);
+  const ticketsToday=(await dbGetAll('sessions')).filter(s=>s.date===today&&(s.type==='ticket'||s.type==='work_item'));
+  const evidenceToday=(await dbGetAll('evidence')).filter(e=>e.date===today);
+  const lastPunch=kronos.punches?.length?kronos.punches[kronos.punches.length-1]:null;
+  const kLabels={in:'🟢 Clocked In',out:'🔴 Clocked Out',lunch_start:'🍴 On Lunch',lunch_end:'🟢 Back from Lunch'};
+  let html='<div class="card"><div style="text-align:center;padding:8px 0"><div style="font-size:12px;color:#888">Kronos Status</div><div style="font-size:20px;font-weight:700;margin:4px 0">'+(lastPunch?kLabels[lastPunch.type]:'No punches')+'</div></div>';
+  html+='<div style="display:flex;justify-content:space-around;text-align:center;margin-top:12px;padding-top:12px;border-top:1px solid #eee">';
+  html+='<div><div style="font-size:28px;font-weight:700;color:#1a365d">'+fmtHM(kronosMin)+'</div><div style="font-size:11px;color:#888">Kronos</div></div>';
+  html+='<div><div style="font-size:28px;font-weight:700;color:#5a67d8">'+fmtHM(clarityMin)+'</div><div style="font-size:11px;color:#888">Clarity</div></div>';
+  html+='<div><div style="font-size:28px;font-weight:700;color:#319795">'+concurToday.length+'</div><div style="font-size:11px;color:#888">Expenses</div></div>';
+  html+='<div><div style="font-size:28px;font-weight:700;color:#d53f8c">'+ticketsToday.length+'</div><div style="font-size:11px;color:#888">Tickets</div></div>';
+  html+='<div><div style="font-size:28px;font-weight:700;color:#e53e3e">'+evidenceToday.length+'</div><div style="font-size:11px;color:#888">Evidence</div></div>';
+  html+='</div></div>';
+  if(clarityToday.length){
+    html+='<div class="card"><div class="section-title">Clarity Breakdown</div>';
+    const catTotals={};clarityToday.forEach(e=>{catTotals[e.categoryName]=(catTotals[e.categoryName]||0)+e.minutes});
+    Object.entries(catTotals).sort((a,b)=>b[1]-a[1]).forEach(([cat,min])=>{
+      const pct=clarityMin>0?((min/clarityMin)*100).toFixed(0):0;
+      html+='<div style="margin:6px 0"><div style="display:flex;justify-content:space-between;font-size:13px"><span>'+escapeHtml(cat)+'</span><span style="font-weight:600">'+fmtHM(min)+' ('+pct+'%)</span></div>';
+      html+='<div style="background:#e2e8f0;border-radius:4px;height:8px;margin-top:3px"><div style="background:#5a67d8;height:100%;border-radius:4px;width:'+pct+'%"></div></div></div>';
+    });
+    html+='</div>';
+  }
+  document.getElementById('dashTodayPanel').innerHTML=html;
+}
+
+async function buildWeekDash(){
+  const today=new Date(),dow=today.getDay(),sunday=new Date(today);sunday.setDate(today.getDate()-dow);
+  const dates=[];for(let i=0;i<7;i++){const d=new Date(sunday);d.setDate(sunday.getDate()+i);dates.push(d.toISOString().split('T')[0])}
+  const clarityAll=await dbGetAll('clarityEntries');const dayNames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  let html='<div class="card"><div class="section-title">Daily Breakdown</div>';let weekTotal=0;
+  dates.forEach((date,i)=>{
+    const dayMin=clarityAll.filter(e=>e.date===date).reduce((s,e)=>s+e.minutes,0);weekTotal+=dayMin;
+    const isToday=date===getToday(),pct=Math.min((dayMin/480)*100,100).toFixed(0);
+    html+='<div style="display:flex;align-items:center;gap:8px;padding:6px 0;'+(isToday?'background:#f0f9ff;margin:0 -8px;padding:6px 8px;border-radius:6px':'')+'"><div style="width:36px;font-size:12px;font-weight:'+(isToday?'800':'400')+';color:'+(isToday?'#1a365d':'#666')+'">'+dayNames[i]+'</div>';
+    html+='<div style="flex:1;background:#e2e8f0;border-radius:4px;height:16px"><div style="background:'+(dayMin>=480?'#38a169':(dayMin>0?'#d69e2e':'#e2e8f0'))+';height:100%;border-radius:4px;width:'+pct+'%;min-width:'+(dayMin>0?'2px':'0')+'"></div></div>';
+    html+='<div style="width:44px;text-align:right;font-size:12px;font-weight:600">'+fmtHM(dayMin)+'</div></div>';
+  });
+  html+='<div style="border-top:2px solid #ddd;margin-top:8px;padding-top:8px;display:flex;justify-content:space-between;font-weight:700"><span>Week Total</span><span>'+fmtHM(weekTotal)+'</span></div></div>';
+  const weekEntries=clarityAll.filter(e=>dates.includes(e.date));
+  if(weekEntries.length){
+    const catTotals={};weekEntries.forEach(e=>{catTotals[e.categoryName]=(catTotals[e.categoryName]||0)+e.minutes});
+    html+='<div class="card"><div class="section-title">Week Categories</div>';
+    Object.entries(catTotals).sort((a,b)=>b[1]-a[1]).forEach(([cat,min])=>{html+='<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px"><span>'+escapeHtml(cat)+'</span><span style="font-weight:600">'+fmtHM(min)+'</span></div>';});
+    html+='</div>';
+  }
+  document.getElementById('dashWeekPanel').innerHTML=html;
+}
+
+async function buildMonthDash(){
+  const today=new Date(),yr=today.getFullYear(),mo=today.getMonth();
+  const monthStart=yr+'-'+String(mo+1).padStart(2,'0')+'-01',monthEnd=new Date(yr,mo+1,1).toISOString().split('T')[0];
+  const clarityAll=await dbGetAll('clarityEntries'),monthEntries=clarityAll.filter(e=>e.date>=monthStart&&e.date<monthEnd);
+  const totalMin=monthEntries.reduce((s,e)=>s+e.minutes,0),days=new Set(monthEntries.map(e=>e.date)),avgMin=days.size>0?Math.round(totalMin/days.size):0;
+  const dayTotals={};monthEntries.forEach(e=>{dayTotals[e.date]=(dayTotals[e.date]||0)+e.minutes});
+  let busiestDay=null,busiestMin=0;Object.entries(dayTotals).forEach(([d,m])=>{if(m>busiestMin){busiestDay=d;busiestMin=m}});
+  const catTotals={};monthEntries.forEach(e=>{catTotals[e.categoryName]=(catTotals[e.categoryName]||0)+e.minutes});
+  const monthName=today.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  let html='<div class="card"><div class="section-title">'+escapeHtml(monthName)+' Summary</div>';
+  html+='<div style="display:flex;justify-content:space-around;text-align:center;padding:12px 0">';
+  html+='<div><div style="font-size:24px;font-weight:700">'+fmtHM(totalMin)+'</div><div style="font-size:11px;color:#888">Total</div></div>';
+  html+='<div><div style="font-size:24px;font-weight:700">'+days.size+'</div><div style="font-size:11px;color:#888">Days Logged</div></div>';
+  html+='<div><div style="font-size:24px;font-weight:700">'+fmtHM(avgMin)+'</div><div style="font-size:11px;color:#888">Avg / Day</div></div></div>';
+  if(busiestDay)html+='<div style="font-size:13px;color:#666;padding:6px 0;border-top:1px solid #eee">Busiest: <b>'+busiestDay+'</b> ('+fmtHM(busiestMin)+')</div>';
+  html+='</div>';
+  if(Object.keys(catTotals).length){
+    html+='<div class="card"><div class="section-title">Top Categories</div>';
+    Object.entries(catTotals).sort((a,b)=>b[1]-a[1]).slice(0,8).forEach(([cat,min])=>{
+      const pct=totalMin>0?((min/totalMin)*100).toFixed(0):0;
+      html+='<div style="margin:6px 0"><div style="display:flex;justify-content:space-between;font-size:13px"><span>'+escapeHtml(cat)+'</span><span style="font-weight:600">'+fmtHM(min)+' ('+pct+'%)</span></div>';
+      html+='<div style="background:#e2e8f0;border-radius:4px;height:8px;margin-top:3px"><div style="background:#805ad5;height:100%;border-radius:4px;width:'+pct+'%"></div></div></div>';
+    });
+    html+='</div>';
+  }
+  const monthTickets=(await dbGetAll('sessions')).filter(s=>s.date>=monthStart&&s.date<monthEnd&&(s.type==='ticket'||s.type==='work_item'));
+  const monthEvidence=(await dbGetAll('evidence')).filter(e=>e.date>=monthStart&&e.date<monthEnd);
+  if(monthTickets.length||monthEvidence.length){
+    html+='<div class="card"><div class="section-title">Activity</div><div style="display:flex;justify-content:space-around;text-align:center">';
+    html+='<div><div style="font-size:24px;font-weight:700">'+monthTickets.length+'</div><div style="font-size:11px;color:#888">Tickets</div></div>';
+    html+='<div><div style="font-size:24px;font-weight:700">'+monthEvidence.length+'</div><div style="font-size:11px;color:#888">Evidence</div></div></div></div>';
+  }
+  document.getElementById('dashMonthPanel').innerHTML=html;
+}
+
+// --- CSV EXPORT ---
+function getCSVDateRange(){return{from:document.getElementById('csvDateFrom').value||'0000-01-01',to:document.getElementById('csvDateTo').value||'9999-12-31'};}
+function csvEscape(val){const s=String(val==null?'':val);if(s.includes(',')||s.includes('"')||s.includes('\n'))return '"'+s.replace(/"/g,'""')+'"';return s;}
+function downloadCSV(headers,rows,filename){const lines=[headers.map(csvEscape).join(',')];rows.forEach(r=>lines.push(r.map(csvEscape).join(',')));downloadTextFile(lines.join('\n'),filename);}
+
+async function exportClarityCSV(){
+  const range=getCSVDateRange(),all=await dbGetAll('clarityEntries');
+  const filtered=all.filter(e=>e.date>=range.from&&e.date<=range.to).sort((a,b)=>a.date.localeCompare(b.date));
+  if(!filtered.length){alert('No Clarity entries in range');return}
+  downloadCSV(['Date','Category','CategoryName','Hours','Minutes','RawMinutes','Notes','Time'],filtered.map(e=>[e.date,e.category,e.categoryName,Math.floor(e.minutes/60),e.minutes%60,e.rawMinutes||e.minutes,e.notes||'',e.time?.display||'']),'clarity_'+range.from+'_to_'+range.to+'.csv');
+  document.getElementById('csvExportResult').innerHTML='<div class="success-box">✅ Exported '+filtered.length+' Clarity entries</div>';
+  document.getElementById('csvExportResult').classList.remove('hidden');showToast('CSV exported');
+}
+
+async function exportConcurCSV(){
+  const range=getCSVDateRange(),all=await dbGetAll('concurEntries');
+  const filtered=all.filter(e=>e.date>=range.from&&e.date<=range.to).sort((a,b)=>a.date.localeCompare(b.date));
+  if(!filtered.length){alert('No Concur entries in range');return}
+  downloadCSV(['Date','Type','From','To','Location','Description','MealType','Dining','CompanionId','Amount'],filtered.map(e=>[e.date,e.type,e.fromDisplay||e.fromAddr||'',e.toDisplay||e.toAddr||'',e.location||'',e.description||'',e.mealType||'',e.dining||'',e.companionId||'',e.amount!=null?e.amount.toFixed(2):'']),'concur_'+range.from+'_to_'+range.to+'.csv');
+  document.getElementById('csvExportResult').innerHTML='<div class="success-box">✅ Exported '+filtered.length+' Concur entries</div>';
+  document.getElementById('csvExportResult').classList.remove('hidden');showToast('CSV exported');
+}
+
+async function exportTicketsCSV(){
+  const range=getCSVDateRange(),all=await dbGetAll('sessions');
+  const filtered=all.filter(s=>s.date>=range.from&&s.date<=range.to&&(s.type==='ticket'||s.type==='work_item')).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  if(!filtered.length){alert('No tickets in range');return}
+  downloadCSV(['Date','Type','TicketNumber','Subject','Location','Device','IP','Status','Project','FollowUp','FollowUpNote','ActionCount'],filtered.map(t=>[t.date,t.type,t.ticketNumber||'',t.subject||'',t.location||'',t.device||'',t.ip||'',t.status||'',t.projectName||'',t.followUp||'no',t.followUpNote||'',(t.actions||[]).length]),'tickets_'+range.from+'_to_'+range.to+'.csv');
+  document.getElementById('csvExportResult').innerHTML='<div class="success-box">✅ Exported '+filtered.length+' tickets</div>';
+  document.getElementById('csvExportResult').classList.remove('hidden');showToast('CSV exported');
+}
+
+async function exportEvidenceCSV(){
+  const range=getCSVDateRange(),all=await dbGetAll('evidence');
+  const filtered=all.filter(e=>e.date>=range.from&&e.date<=range.to).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  if(!filtered.length){alert('No evidence in range');return}
+  downloadCSV(['ID','Date','Time','EventType','Category','Location','ActorsInvolved','Description','ImpactLevel','EvidenceStrength','QuoteCount','Notes'],filtered.map(e=>[e.id,e.date,e.time_of_event||'',e.event_type||'',e.category||'',e.location||'',(e.actors_involved||[]).join('; '),e.description||'',e.impact_level||'',e.evidence_strength||'',(e.direct_quotes||[]).length,e.notes||'']),'evidence_'+range.from+'_to_'+range.to+'.csv');
+  document.getElementById('csvExportResult').innerHTML='<div class="success-box">✅ Exported '+filtered.length+' evidence records</div>';
+  document.getElementById('csvExportResult').classList.remove('hidden');showToast('CSV exported');
+}
+
+// --- ARCHIVE ---
+async function previewArchive(){
+  const cutoff=document.getElementById('archiveCutoffDate').value;if(!cutoff){alert('Select a cutoff date');return}
+  const stores=[{name:'clarityEntries',label:'Clarity Entries'},{name:'concurEntries',label:'Concur Expenses'},{name:'sessions',label:'Sessions/Tickets'},{name:'notes',label:'Quick Notes'},{name:'evidence',label:'Evidence'}];
+  let html='<div style="font-size:13px;margin-bottom:8px">Records <b>before '+cutoff+'</b> to be archived:</div>';let totalOld=0;
+  for(const s of stores){const all=await dbGetAll(s.name);const old=all.filter(r=>r.date&&r.date<cutoff);totalOld+=old.length;
+    html+='<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px"><span>'+s.label+'</span><span style="font-weight:600">'+old.length+'</span></div>';}
+  const oldKronos=(await dbGetAll('kronos')).filter(k=>k.date<cutoff);totalOld+=oldKronos.length;
+  html+='<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px"><span>Kronos Days</span><span style="font-weight:600">'+oldKronos.length+'</span></div>';
+  html+='<div style="border-top:2px solid #ddd;margin-top:8px;padding-top:8px;font-weight:700">Total: '+totalOld+'</div>';
+  if(!totalOld)html+='<div class="info-box" style="margin-top:8px">No records before '+cutoff+'.</div>';
+  document.getElementById('archivePreviewContent').innerHTML=html;
+  document.getElementById('archivePreview').classList.toggle('hidden',!totalOld);
+  window.__archiveCutoff=cutoff;
+}
+
+async function executeArchive(){
+  const cutoff=window.__archiveCutoff;if(!cutoff){alert('No cutoff set');return}
+  if(!confirm('Export + DELETE all records before '+cutoff+'?'))return;
+  if(!confirm('FINAL CONFIRMATION: Archived records will be permanently deleted after export.'))return;
+  const archiveData={schema:'wcc.archive.v14',cutoff,archivedAt:getTime()};
+  const dateStores=['clarityEntries','concurEntries','sessions','notes','evidence'];
+  for(const store of dateStores){const all=await dbGetAll(store);archiveData[store]=all.filter(r=>r.date&&r.date<cutoff);}
+  archiveData.kronos=(await dbGetAll('kronos')).filter(k=>k.date<cutoff);
+  const base='WCC_ARCHIVE_before_'+cutoff,files={};files[base+'/archive.json']=JSON.stringify(archiveData,null,2);
+  const zip=makeZip(files);downloadBlob(zip,base+'.zip');
+  for(const store of dateStores){for(const rec of archiveData[store]){try{await dbDelete(store,rec.id)}catch(e){}}}
+  for(const k of archiveData.kronos){try{await dbDelete('kronos',k.date)}catch(e){}}
+  const totalPurged=dateStores.reduce((s,st)=>(archiveData[st]||[]).length+s,0)+archiveData.kronos.length;
+  document.getElementById('archiveResult').innerHTML='<div class="success-box">✅ Archived and purged '+totalPurged+' records. ZIP downloaded.</div>';
+  document.getElementById('archiveResult').classList.remove('hidden');document.getElementById('archivePreview').classList.add('hidden');
+  showToast('Archive complete: '+totalPurged+' records purged');
+}
+
+// --- SCREEN INIT ---
+function initCSVExportScreen(){
+  const today=new Date(),firstOfMonth=new Date(today.getFullYear(),today.getMonth(),1);
+  document.getElementById('csvDateFrom').value=firstOfMonth.toISOString().split('T')[0];
+  document.getElementById('csvDateTo').value=getToday();
+  document.getElementById('csvExportResult').classList.add('hidden');
+}
+function initArchiveScreen(){
+  const cutoff=new Date();cutoff.setDate(cutoff.getDate()-90);
+  document.getElementById('archiveCutoffDate').value=cutoff.toISOString().split('T')[0];
+  document.getElementById('archivePreview').classList.add('hidden');
+  document.getElementById('archiveResult').classList.add('hidden');
+}
+
+
+initDB().then(()=>{showScreen('menuScreen');initRestoreListeners();updateKronosStatus();updateSaveStatus();updateExportReminder().catch(()=>{})}).catch(e=>alert('DB Error: '+e.message));
 </script>
 
 <script>
 (function(){
-  // Service worker for offline cache (only works when served over http/https)
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
       navigator.serviceWorker.register('./sw.js').catch(function(){});
