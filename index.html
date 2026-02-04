@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html>
 <head>
 <meta charset="UTF-8">
@@ -64,6 +65,7 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
 .export-reminder{font-size:12px;margin-top:4px;padding:4px 8px;border-radius:8px;background:#b91c1c;color:#fff;cursor:pointer;display:inline-block}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;z-index:9999;background:#111;color:#fff;padding:10px 14px;border-radius:12px;font-size:13px;max-width:92%;text-align:center;box-shadow:0 8px 20px rgba(0,0,0,.25)}
 </style>
+
 </head>
 <body>
 <div class="clock-bar">
@@ -76,8 +78,9 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
 <div id="toast" class="toast hidden"></div>
 
 <!-- MAIN MENU -->
+
 <div id="menuScreen">
-  <h1>🔧 Work Command Center v13</h1>
+  <h1>🔧 Work Command Center v14</h1>
   <div id="kronosStatus"></div>
   <div id="activePanel"></div>
 
@@ -94,8 +97,8 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
     <div style="font-size:11px;color:#666;margin-top:6px">Tip: tap fast now, add details later in Clarity notes.</div>
   </div>
 
-  <button class="btn btn-blue btn-full" onclick="showScreen('newSessionScreen')" style="padding:16px;font-size:16px">▶️ Start New Session</button>
-  <button class="btn btn-red btn-full" onclick="showScreen('evidenceScreen')" style="padding:14px;font-size:15px">🛡️ Evidence Capture <span id="evidenceBadge" style="background:rgba(255,255,255,0.25);padding:2px 8px;border-radius:10px;font-size:12px"></span></button>
+<button class="btn btn-blue btn-full" onclick="showScreen('newSessionScreen')" style="padding:16px;font-size:16px">▶️ Start New Session</button>
+<button class="btn btn-red btn-full" onclick="showScreen('evidenceScreen')" style="padding:14px;font-size:15px">🛡️ Evidence Capture <span id="evidenceBadge" style="background:rgba(255,255,255,0.25);padding:2px 8px;border-radius:10px;font-size:12px"></span></button>
 
   <div class="btn-row">
     <button class="btn btn-pink btn-half" onclick="showScreen('ticketsScreen')">🎫 Tickets</button>
@@ -123,6 +126,7 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
 </div>
 
 <!-- KRONOS SCREEN -->
+
 <div id="kronosScreen" class="hidden">
   <h1>⏰ Kronos Time Clock</h1>
   <div id="kronosLockBanner" class="hidden">
@@ -168,6 +172,7 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
 </div>
 
 <!-- CLARITY TIME SCREEN -->
+
 <div id="clarityTimeScreen" class="hidden">
   <h1>⏱️ Clarity Time Entry</h1>
   <div id="clarityLockBanner" class="hidden">
@@ -199,6 +204,7 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
 </div>
 
 <!-- CLARITY CATEGORIES -->
+
 <div id="clarityCategoriesScreen" class="hidden">
   <h1>⚙️ Clarity Categories</h1>
   <div class="card">
@@ -215,6 +221,7 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
 </div>
 
 <!-- ADD CLARITY PROJECT -->
+
 <div id="clarityEditScreen" class="hidden">
   <h1>+ Add Project Category</h1>
   <div class="card">
@@ -228,6 +235,7 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
 </div>
 
 <!-- CONCUR SCREEN -->
+
 <div id="concurScreen" class="hidden">
   <h1>💳 Concur Expenses</h1>
   <div class="card">
@@ -304,10 +312,8 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
     <div class="section-title">Today's Expenses</div>
     <div id="concurEntryList"></div>
   </div>
-  <button class="btn btn-gray btn-full" onclick="showScreen('menuScreen')">← Back</button>
+  <button class="btn btn-gray btn-full" onclick="concurGoBack()">← Back</button>
 </div>
-
-<!-- CLOSE MY DAY -->
 <div id="closeDayScreen" class="hidden">
   <h1>✅ Close My Day</h1>
   <div class="card">
@@ -330,6 +336,7 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
 </div>
 
 <!-- WEEKLY REPORTS -->
+
 <div id="weeklyReportsScreen" class="hidden">
   <h1>📊 Weekly Reports</h1>
   <div class="card">
@@ -348,6 +355,7 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
 </div>
 
 <!-- WEEKLY OUTPUT -->
+
 <div id="weeklyOutputScreen" class="hidden">
   <h1 id="weeklyOutputTitle">📊 Weekly Report</h1>
   <textarea class="output" id="weeklyOutputText" readonly></textarea>
@@ -361,6 +369,7 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
 </div>
 
 <!-- TODAY -->
+
 <div id="todayScreen" class="hidden">
   <h1>📊 Today's Sessions</h1>
   <div id="todayStats" class="card"></div>
@@ -369,6 +378,7 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
 </div>
 
 <!-- EOD -->
+
 <div id="eodScreen" class="hidden">
   <h1 id="eodTitle">📝 End of Day</h1>
   <textarea class="output" id="eodText" readonly></textarea>
@@ -382,6 +392,7 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
 </div>
 
 <!-- HISTORY -->
+
 <div id="historyScreen" class="hidden">
   <h1>📅 History</h1>
   <div class="card">
@@ -398,8 +409,8 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
   <button class="btn btn-gray btn-full" onclick="showScreen('menuScreen')">← Back</button>
 </div>
 
-
 <!-- TICKETS -->
+
 <div id="ticketsScreen" class="hidden">
   <h1>🎫 Tickets & Work Items</h1>
   <div class="card">
@@ -411,6 +422,7 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
 </div>
 
 <!-- ADD/EDIT TICKET CARD -->
+
 <div id="ticketEditScreen" class="hidden">
   <h1 id="ticketEditTitle">+ Ticket Card</h1>
   <div class="card">
@@ -425,30 +437,33 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
       <input type="text" id="ticketIp" placeholder="IP (optional)" style="flex:1">
     </div>
 
-    <div class="section-title">Project (optional)</div>
-    <select id="ticketProject"></select>
+```
+<div class="section-title">Project (optional)</div>
+<select id="ticketProject"></select>
 
-    <div class="section-title">Status</div>
-    <select id="ticketStatus">
-      <option value="in_progress">In Progress</option>
-      <option value="resolved">Resolved</option>
-      <option value="pending_customer">Pending Customer</option>
-      <option value="pending_internal">Pending Internal</option>
-      <option value="escalated_onsite">Escalated Onsite</option>
-    </select>
+<div class="section-title">Status</div>
+<select id="ticketStatus">
+  <option value="in_progress">In Progress</option>
+  <option value="resolved">Resolved</option>
+  <option value="pending_customer">Pending Customer</option>
+  <option value="pending_internal">Pending Internal</option>
+  <option value="escalated_onsite">Escalated Onsite</option>
+</select>
 
-    <div class="section-title">Quick Action Log</div>
-    <input type="text" id="ticketActionInput" placeholder="Type action and tap Add (timestamped)">
-    <button class="btn btn-indigo btn-full" onclick="addTicketAction()">+ Add Action</button>
-    <div id="ticketActionList" style="margin-top:8px"></div>
+<div class="section-title">Quick Action Log</div>
+<input type="text" id="ticketActionInput" placeholder="Type action and tap Add (timestamped)">
+<button class="btn btn-indigo btn-full" onclick="addTicketAction()">+ Add Action</button>
+<div id="ticketActionList" style="margin-top:8px"></div>
 
-    <div class="section-title">Follow-up needed?</div>
-    <select id="ticketFollowUp">
-      <option value="no">No</option>
-      <option value="yes">Yes</option>
-    </select>
-    <div class="section-title">Follow-up note (optional)</div>
-    <input type="text" id="ticketFollowUpNote" placeholder="What needs to happen next">
+<div class="section-title">Follow-up needed?</div>
+<select id="ticketFollowUp">
+  <option value="no">No</option>
+  <option value="yes">Yes</option>
+</select>
+<div class="section-title">Follow-up note (optional)</div>
+<input type="text" id="ticketFollowUpNote" placeholder="What needs to happen next">
+```
+
   </div>
 
   <div class="btn-row">
@@ -459,6 +474,7 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
 </div>
 
 <!-- PROJECTS -->
+
 <div id="projectsScreen" class="hidden">
   <h1>🧩 Light Projects</h1>
   <div class="card">
@@ -490,6 +506,7 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
 </div>
 
 <!-- SETTINGS -->
+
 <div id="settingsScreen" class="hidden">
   <h1>⚙️ Settings</h1>
   <div class="card">
@@ -509,6 +526,7 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
 </div>
 
 <!-- PRACTICES SCREEN -->
+
 <div id="practicesScreen" class="hidden">
   <h1>🏥 Practices</h1>
   <div class="card">
@@ -519,6 +537,7 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
 </div>
 
 <!-- ADD/EDIT PRACTICE -->
+
 <div id="practiceEditScreen" class="hidden">
   <h1 id="practiceEditTitle">+ Add Practice</h1>
   <div class="card">
@@ -534,6 +553,7 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
 </div>
 
 <!-- NEW SESSION -->
+
 <div id="newSessionScreen" class="hidden">
   <h1>▶️ What are you doing?</h1>
   <div class="card">
@@ -569,6 +589,7 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
 </div>
 
 <!-- EVIDENCE LIST -->
+
 <div id="evidenceScreen" class="hidden">
   <h1>🛡️ Evidence Capture</h1>
   <div id="evidenceLockBanner" class="hidden">
@@ -591,72 +612,76 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
 </div>
 
 <!-- EVIDENCE CAPTURE / EDIT -->
+
 <div id="evidenceCaptureScreen" class="hidden">
   <h1 id="evidenceCaptureTitle">+ Capture Event</h1>
   <div class="card">
     <div class="section-title">What happened? *</div>
     <textarea id="evDescription" placeholder="Describe the event factually. Who did what, when, where." style="min-height:100px"></textarea>
 
-    <div class="btn-row">
-      <div style="flex:1">
-        <div class="section-title">Date</div>
-        <input type="date" id="evDate">
-      </div>
-      <div style="flex:1">
-        <div class="section-title">Time</div>
-        <input type="time" id="evTime">
-      </div>
-    </div>
+```
+<div class="btn-row">
+  <div style="flex:1">
+    <div class="section-title">Date</div>
+    <input type="date" id="evDate">
+  </div>
+  <div style="flex:1">
+    <div class="section-title">Time</div>
+    <input type="time" id="evTime">
+  </div>
+</div>
 
-    <div class="section-title">Event Type</div>
-    <select id="evEventType">
-      <option value="Verbal">Verbal</option>
-      <option value="Meeting">Meeting</option>
-      <option value="Call">Call</option>
-      <option value="Chat">Chat / Teams</option>
-      <option value="Email">Email</option>
-      <option value="iMessage">iMessage / Text</option>
-      <option value="Observation">Observation</option>
-      <option value="Site_Visit">Site Visit</option>
-      <option value="Photo_Evidence">Photo Evidence</option>
-    </select>
+<div class="section-title">Event Type</div>
+<select id="evEventType">
+  <option value="Verbal">Verbal</option>
+  <option value="Meeting">Meeting</option>
+  <option value="Call">Call</option>
+  <option value="Chat">Chat / Teams</option>
+  <option value="Email">Email</option>
+  <option value="iMessage">iMessage / Text</option>
+  <option value="Observation">Observation</option>
+  <option value="Site_Visit">Site Visit</option>
+  <option value="Photo_Evidence">Photo Evidence</option>
+</select>
 
-    <div class="section-title">Category</div>
-    <select id="evCategory">
-      <option value="Retaliation">Retaliation</option>
-      <option value="Surveillance">Surveillance</option>
-      <option value="DisparateTreatment">Disparate Treatment</option>
-      <option value="HostileEnvironment">Hostile Environment</option>
-      <option value="Gaslighting">Gaslighting</option>
-      <option value="PublicShaming">Public Shaming</option>
-      <option value="MedicalLeave">Medical Leave / FMLA</option>
-      <option value="Workplace_Injury">Workplace Injury</option>
-      <option value="Equipment_Access">Equipment / Access</option>
-      <option value="Manufactured_Blame">Manufactured Blame</option>
-      <option value="Forced_Collaboration">Forced Collaboration</option>
-      <option value="PerformanceReview">Performance Review</option>
-      <option value="Technical_Work">Technical Work</option>
-      <option value="Other">Other</option>
-    </select>
+<div class="section-title">Category</div>
+<select id="evCategory">
+  <option value="Retaliation">Retaliation</option>
+  <option value="Surveillance">Surveillance</option>
+  <option value="DisparateTreatment">Disparate Treatment</option>
+  <option value="HostileEnvironment">Hostile Environment</option>
+  <option value="Gaslighting">Gaslighting</option>
+  <option value="PublicShaming">Public Shaming</option>
+  <option value="MedicalLeave">Medical Leave / FMLA</option>
+  <option value="Workplace_Injury">Workplace Injury</option>
+  <option value="Equipment_Access">Equipment / Access</option>
+  <option value="Manufactured_Blame">Manufactured Blame</option>
+  <option value="Forced_Collaboration">Forced Collaboration</option>
+  <option value="PerformanceReview">Performance Review</option>
+  <option value="Technical_Work">Technical Work</option>
+  <option value="Other">Other</option>
+</select>
 
-    <div class="section-title">Location (optional)</div>
-    <input type="text" id="evLocation" placeholder="WebEx, office, practice name...">
+<div class="section-title">Location (optional)</div>
+<input type="text" id="evLocation" placeholder="WebEx, office, practice name...">
 
-    <div class="section-title">People Involved</div>
-    <div id="evActorChips" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px"></div>
-    <div class="btn-row" style="flex-wrap:wrap">
-      <button class="btn btn-sm btn-gray" onclick="toggleEvActor('Walter Lopez')">Walter</button>
-      <button class="btn btn-sm btn-gray" onclick="toggleEvActor('Linda Mimms')">Linda</button>
-      <button class="btn btn-sm btn-gray" onclick="toggleEvActor('Candi Barfield')">Candi</button>
-      <button class="btn btn-sm btn-gray" onclick="toggleEvActor('George Williams')">George</button>
-      <button class="btn btn-sm btn-gray" onclick="toggleEvActor('Kelly Trout')">Kelly</button>
-      <button class="btn btn-sm btn-gray" onclick="toggleEvActor('Byron Calahan')">Byron</button>
-      <button class="btn btn-sm btn-gray" onclick="toggleEvActor('Orlando Molina')">Orlando</button>
-    </div>
-    <div class="btn-row">
-      <input type="text" id="evActorCustom" placeholder="Other person..." style="flex:2;margin:0">
-      <button class="btn btn-sm btn-indigo" onclick="addCustomEvActor()" style="flex:0 0 auto">+ Add</button>
-    </div>
+<div class="section-title">People Involved</div>
+<div id="evActorChips" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px"></div>
+<div class="btn-row" style="flex-wrap:wrap">
+  <button class="btn btn-sm btn-gray" onclick="toggleEvActor('Walter Lopez')">Walter</button>
+  <button class="btn btn-sm btn-gray" onclick="toggleEvActor('Linda Mimms')">Linda</button>
+  <button class="btn btn-sm btn-gray" onclick="toggleEvActor('Candi Barfield')">Candi</button>
+  <button class="btn btn-sm btn-gray" onclick="toggleEvActor('George Williams')">George</button>
+  <button class="btn btn-sm btn-gray" onclick="toggleEvActor('Kelly Trout')">Kelly</button>
+  <button class="btn btn-sm btn-gray" onclick="toggleEvActor('Byron Calahan')">Byron</button>
+  <button class="btn btn-sm btn-gray" onclick="toggleEvActor('Orlando Molina')">Orlando</button>
+</div>
+<div class="btn-row">
+  <input type="text" id="evActorCustom" placeholder="Other person..." style="flex:2;margin:0">
+  <button class="btn btn-sm btn-indigo" onclick="addCustomEvActor()" style="flex:0 0 auto">+ Add</button>
+</div>
+```
+
   </div>
 
   <div class="card">
@@ -693,11 +718,13 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
     <input type="text" id="evNotes" placeholder="Additional factual context">
   </div>
 
-  <button class="btn btn-green btn-full" onclick="saveEvidence()" style="padding:14px">💾 Save Evidence</button>
-  <button class="btn btn-gray btn-full" onclick="showScreen('evidenceScreen')">← Cancel</button>
+<button class="btn btn-green btn-full" onclick="saveEvidence()" style="padding:14px">💾 Save Evidence</button>
+<button class="btn btn-gray btn-full" onclick="showScreen('evidenceScreen')">← Cancel</button>
+
 </div>
 
 <!-- ACTIVE SESSION -->
+
 <div id="activeSessionScreen" class="hidden">
   <h1 id="activeSessionTitle">🖥️ Session</h1>
   <div class="card" style="text-align:center">
@@ -850,6 +877,36 @@ document.addEventListener('input', (e)=>{
   }
 });
 
+async function wccCopyText(text){
+  // iOS PWA-safe clipboard copy
+  // Method 1: Clipboard API (works on Android/Desktop)
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    try{await navigator.clipboard.writeText(text);return true}catch(e){}
+  }
+  // Method 2: iOS-safe textarea + execCommand fallback
+  const ta=document.createElement('textarea');
+  ta.value=text;
+  ta.setAttribute('readonly','');
+  ta.style.cssText='position:fixed;left:-9999px;top:0;opacity:0;';
+  document.body.appendChild(ta);
+  // iOS-specific: needs contentEditable + readOnly dance
+  const range=document.createRange();
+  const sel=window.getSelection();
+  ta.contentEditable=true;
+  ta.readOnly=false;
+  ta.focus();
+  ta.setSelectionRange(0,ta.value.length);
+  let ok=false;
+  try{ok=document.execCommand('copy')}catch(e){}
+  document.body.removeChild(ta);
+  if(ok)return true;
+  // Method 3: native share as last resort
+  if(navigator.share){
+    try{await navigator.share({text});return true}catch(e){}
+  }
+  return false;
+}
+
 async function dbPut(s,d){return new Promise((res,rej)=>{const t=db.transaction(s,'readwrite'),r=t.objectStore(s).put(d);r.onsuccess=()=>{markSaved();res(r.result)};r.onerror=()=>rej(r.error)})}
 async function dbGet(s,k){return new Promise((res,rej)=>{const t=db.transaction(s,'readonly'),r=t.objectStore(s).get(k);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 async function dbGetAll(s){return new Promise((res,rej)=>{const t=db.transaction(s,'readonly'),r=t.objectStore(s).getAll();r.onsuccess=()=>res(r.result||[]);r.onerror=()=>rej(r.error)})}
@@ -949,6 +1006,7 @@ function showScreen(id){
 }
 
 async function updateMenuScreen(){
+  document.getElementById('activePanel').innerHTML='';
   await updateKronosStatus();await renderMenuProjectAlerts();await renderActivePanelSummary();
   try{const all=await dbGetAll('evidence');const today=all.filter(e=>e.date===getToday());document.getElementById('evidenceBadge').textContent=today.length?today.length+' today':'';}catch(e){}
 }
@@ -1171,8 +1229,29 @@ async function initConcurScreen(){
   mileageFromPractice=null;mileageToPractice=null;
   document.getElementById('concurFromType').value='practice';
   document.getElementById('concurToType').value='practice';
+  document.getElementById('concurFromPracticeDisplay').style.display='none';
+  document.getElementById('concurToPracticeDisplay').style.display='none';
   updateMileageFrom();updateMileageTo();
   await renderConcurEntries();
+}
+
+function openConcurMileage(){
+  window.__concurReturnTo='activeSessionScreen';
+  showScreen('concurScreen');
+  document.getElementById('concurType').value='mileage';
+  updateConcurForm();
+}
+
+function concurGoBack(){
+  const ret=window.__concurReturnTo||'menuScreen';
+  window.__concurReturnTo=null;
+  if(ret==='activeSessionScreen'&&activeSessionType){
+    document.querySelectorAll('.container > div').forEach(el=>el.classList.add('hidden'));
+    document.getElementById('activeSessionScreen').classList.remove('hidden');
+    renderActiveSessionLog();
+  }else{
+    showScreen('menuScreen');
+  }
 }
 
 // MILEAGE PRACTICE SELECTION
@@ -1725,17 +1804,12 @@ async function copyEvidenceJSON(){
   const today=all.filter(e=>e.date===getToday());
   if(!today.length){alert('No evidence records today');return}
   const json=JSON.stringify(today,null,2);
-  try{
-    await navigator.clipboard.writeText(json);
+  const ok=await wccCopyText(json);
+  if(ok){
     document.getElementById('evidenceCopied').classList.remove('hidden');
     setTimeout(()=>document.getElementById('evidenceCopied').classList.add('hidden'),3000);
-  }catch(e){
-    // Fallback: select text area
-    const ta=document.createElement('textarea');
-    ta.value=json;ta.style.position='fixed';ta.style.left='-9999px';
-    document.body.appendChild(ta);ta.select();
-    try{document.execCommand('copy');document.getElementById('evidenceCopied').classList.remove('hidden');setTimeout(()=>document.getElementById('evidenceCopied').classList.add('hidden'),3000)}catch(e2){alert('Copy failed — use Share instead')}
-    document.body.removeChild(ta);
+  }else{
+    alert('Copy failed — try sharing from the Daily Bundle export instead');
   }
 }
 
@@ -1768,8 +1842,8 @@ async function quickSession(category){
   document.getElementById('activeSessionLogTitle').textContent='Logged for '+category+' today';
   let extrasHtml='';
   if(!locked){
-    if(config.extras?.includes('practice'))extrasHtml+='<div class="card"><button class="btn btn-teal btn-full" onclick="showScreen(\'concurScreen\')">🏥 Log Practice Visit / Mileage</button></div>';
-    if(config.extras?.includes('mileage'))extrasHtml+='<div class="card"><button class="btn btn-teal btn-full" onclick="showScreen(\'concurScreen\')">💳 Log Mileage</button></div>';
+    if(config.extras?.includes('practice'))extrasHtml+='<div class="card"><button class="btn btn-teal btn-full" onclick="openConcurMileage()">🏥 Log Practice Visit / Mileage</button></div>';
+    if(config.extras?.includes('mileage'))extrasHtml+='<div class="card"><button class="btn btn-teal btn-full" onclick="openConcurMileage()">💳 Log Mileage</button></div>';
   }
   document.getElementById('activeSessionExtras').innerHTML=extrasHtml;
   clearInterval(activeSessionTimerInterval);
@@ -1977,7 +2051,7 @@ async function buildEODText(dateStr){
   return txt;
 }
 
-function copyEOD(){navigator.clipboard.writeText(document.getElementById('eodText').value);document.getElementById('eodCopied').classList.remove('hidden');setTimeout(()=>document.getElementById('eodCopied').classList.add('hidden'),2000)}
+async function copyEOD(){const ok=await wccCopyText(document.getElementById('eodText').value);if(ok){document.getElementById('eodCopied').classList.remove('hidden');setTimeout(()=>document.getElementById('eodCopied').classList.add('hidden'),2000)}else{alert('Copy failed — try Share button instead')}}
 async function shareEOD(){if(navigator.share){try{await navigator.share({title:'EOD Report',text:document.getElementById('eodText').value});return}catch(e){}}saveEOD()}
 function saveEOD(){downloadTextFile(document.getElementById('eodText').value,'eod_'+getToday()+'.txt')}
 function downloadTextFile(text,filename){const blob=new Blob([text],{type:'text/plain'}),link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download=filename;link.click()}
@@ -2121,7 +2195,99 @@ async function generateWeeklyConcur(){
   showScreen('weeklyOutputScreen');
 }
 
-function copyWeekly(){navigator.clipboard.writeText(document.getElementById('weeklyOutputText').value);document.getElementById('weeklyCopied').classList.remove('hidden');setTimeout(()=>document.getElementById('weeklyCopied').classList.add('hidden'),2000)}
+async function copyWeekly(){const ok=await wccCopyText(document.getElementById('weeklyOutputText').value);if(ok){document.getElementById('weeklyCopied').classList.remove('hidden');setTimeout(()=>document.getElementById('weeklyCopied').classList.add('hidden'),2000)}else{alert('Copy failed — try Share button instead')}}
+
+async function generateWeeklyBundle(){
+  const startDate=document.getElementById('weekStartDate').value;
+  if(!startDate){alert('Select week');return}
+  const dates=getWeekDates(startDate);
+  const allClarity=await dbGetAll('clarityEntries');
+  const allConcur=await dbGetAll('concurEntries');
+  const allSessions=await dbGetAll('sessions');
+  const categories=await getClarityCategories();
+
+  let txt='WEEKLY BUNDLE REPORT\n'+document.getElementById('weekRangeDisplay').textContent+'\n'+'='.repeat(44)+'\n\n';
+
+  // KRONOS SECTION
+  txt+='━━━ KRONOS ━━━\n\n';
+  const kLabels={in:'Clock In',out:'Clock Out',lunch_start:'Lunch Start',lunch_end:'Lunch End'};
+  let weekKronosTotal=0;
+  for(const date of dates){
+    const k=await dbGet('kronos',date);
+    const dayName=new Date(date+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
+    txt+=dayName+'\n';
+    if(k?.punches?.length){
+      k.punches.forEach(p=>{txt+='  '+p.kronosTime+' - '+kLabels[p.type]+(p.manual?' [manual]':'')+'\n'});
+      const dayMin=calculateKronosHours(k);weekKronosTotal+=dayMin;
+      txt+='  Total: '+Math.floor(dayMin/60)+':'+String(dayMin%60).padStart(2,'0')+'\n';
+      if(k.pto?.length)k.pto.forEach(p=>{txt+='  PTO: '+p.hours+'h - '+p.reason+'\n'});
+      if(k.overtimeReason)txt+='  OT: '+k.overtimeReason+'\n';
+    }else txt+='  (no punches)\n';
+    txt+='\n';
+  }
+  txt+='Kronos Week Total: '+Math.floor(weekKronosTotal/60)+':'+String(weekKronosTotal%60).padStart(2,'0')+'\n\n';
+
+  // CLARITY SECTION
+  txt+='━━━ CLARITY ━━━\n\n';
+  const catTotals={};let weekClarityTotal=0;
+  for(const date of dates){
+    const dayEntries=allClarity.filter(e=>e.date===date);
+    const dayName=new Date(date+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
+    txt+=dayName+'\n';
+    if(dayEntries.length){
+      let dayTotal=0;
+      dayEntries.forEach(e=>{
+        txt+='  '+e.categoryName+': '+Math.floor(e.minutes/60)+':'+String(e.minutes%60).padStart(2,'0')+(e.notes?' ('+e.notes+')':'')+'\n';
+        catTotals[e.category]=(catTotals[e.category]||0)+e.minutes;
+        dayTotal+=e.minutes;
+      });
+      weekClarityTotal+=dayTotal;
+      txt+='  Day Total: '+Math.floor(dayTotal/60)+':'+String(dayTotal%60).padStart(2,'0')+'\n';
+    }else txt+='  (no entries)\n';
+    txt+='\n';
+  }
+  txt+='Category Summary:\n';
+  for(const[catId,mins]of Object.entries(catTotals)){
+    const cat=categories.find(c=>c.id===catId);
+    txt+='  '+(cat?.name||catId)+': '+Math.floor(mins/60)+':'+String(mins%60).padStart(2,'0')+'\n';
+  }
+  txt+='Clarity Week Total: '+Math.floor(weekClarityTotal/60)+':'+String(weekClarityTotal%60).padStart(2,'0')+'\n\n';
+
+  // CONCUR SECTION
+  txt+='━━━ CONCUR ━━━\n\n';
+  let mileageCount=0,lodgingTotal=0,rentalTotal=0,mealTotal=0;
+  for(const date of dates){
+    const dayEntries=allConcur.filter(e=>e.date===date);
+    if(!dayEntries.length)continue;
+    const dayName=new Date(date+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
+    txt+=dayName+'\n';
+    dayEntries.forEach(e=>{
+      if(e.type==='mileage'){txt+='  🚗 '+(e.fromDisplay||e.fromAddr||'?')+' → '+(e.toDisplay||e.toAddr||'?')+'\n';mileageCount++}
+      else if(e.type==='lodging'){txt+='  🏨 '+e.location+' - $'+(e.amount?.toFixed(2)||'0.00')+'\n';lodgingTotal+=e.amount||0}
+      else if(e.type==='rental'){txt+='  🚙 '+e.description+' - $'+(e.amount?.toFixed(2)||'0.00')+'\n';rentalTotal+=e.amount||0}
+      else if(e.type==='meal'){txt+='  🍽️ '+e.mealType+' ('+e.dining+(e.companionId?' - '+e.companionId:'')+') - $'+(e.amount?.toFixed(2)||'0.00')+'\n';mealTotal+=e.amount||0}
+    });
+    txt+='\n';
+  }
+  txt+='Expenses Summary:\n  Mileage trips: '+mileageCount+'\n  Lodging: $'+lodgingTotal.toFixed(2)+'\n  Rental: $'+rentalTotal.toFixed(2)+'\n  Meals: $'+mealTotal.toFixed(2)+'\n  Total Expenses: $'+(lodgingTotal+rentalTotal+mealTotal).toFixed(2)+'\n\n';
+
+  // TICKETS SECTION
+  const weekTickets=allSessions.filter(s=>dates.includes(s.date) && (s.type==='ticket' || s.type==='work_item'));
+  if(weekTickets.length){
+    txt+='━━━ TICKETS & WORK ITEMS ━━━\n\n';
+    txt+='Total: '+weekTickets.length+'\n';
+    weekTickets.forEach((t,i)=>{
+      const title=(t.ticketNumber?(t.ticketNumber+' – '):'')+(t.subject||'Work Item');
+      txt+=(i+1)+'. ['+t.date+'] '+title+' — '+(t.status||'in_progress').replace(/_/g,' ')+'\n';
+      if(t.followUp==='yes'||t.followUpNote)txt+='   📌 '+( t.followUpNote||'Follow-up needed')+'\n';
+    });
+    txt+='\n';
+  }
+
+  document.getElementById('weeklyOutputTitle').textContent='📦 Weekly Bundle';
+  document.getElementById('weeklyOutputText').value=txt;
+  showScreen('weeklyOutputScreen');
+}
 async function shareWeekly(){if(navigator.share){try{await navigator.share({title:'Weekly Report',text:document.getElementById('weeklyOutputText').value});return}catch(e){}}saveWeekly()}
 function saveWeekly(){const title=document.getElementById('weeklyOutputTitle').textContent.replace(/[^\w]/g,'_');downloadTextFile(document.getElementById('weeklyOutputText').value,title+'_'+getToday()+'.txt')}
 
@@ -2153,6 +2319,7 @@ async function quickLog15(categoryId){
   if(!cat){alert('Category not found. Add it in Settings → Clarity Categories.');return}
   const entry={id:'CL'+Date.now(),date:getToday(),category:categoryId,categoryName:cat.name,minutes:15,rawMinutes:15,notes:'',time:getTime()};
   await dbPut('clarityEntries',entry);
+  showToast('+15m '+cat.name);
   if(document.getElementById('clarityTimeScreen') && !document.getElementById('clarityTimeScreen').classList.contains('hidden')){
     await renderClarityEntries();
   }
@@ -2174,7 +2341,7 @@ async function renderMenuProjectAlerts(){
     soon.map(p=>'<div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(8,145,178,0.25)"><b>'+escapeHtml(p.name)+'</b> — Due <b>'+p.dueDate+'</b>'+(p.notes?('<div style="font-size:12px;color:#0c4a6e;margin-top:4px">'+escapeHtml(p.notes).slice(0,120)+'</div>'):'')+'</div>').join('')+
     '<button class="btn btn-cyan btn-full" style="margin-top:10px" onclick="showScreen(\'projectsScreen\')">Open Projects</button>'+
     '</div>';
-  document.getElementById('activePanel').innerHTML=html;
+  document.getElementById('activePanel').innerHTML+=html;
 }
 
 async function renderActivePanelSummary(){
@@ -2200,9 +2367,7 @@ async function renderActivePanelSummary(){
       (follow.length>4?('<div style="margin-top:6px;font-size:12px;color:#9a3412">+'+(follow.length-4)+' more</div>'):'')+
       '</div>';
   }
-  // Append, don’t overwrite project alerts if present
-  const ap=document.getElementById('activePanel');
-  ap.innerHTML = (ap.innerHTML||'') + html;
+  document.getElementById('activePanel').innerHTML+=html;
 }
 
 function getProjectsDueSoon(projects,days){
