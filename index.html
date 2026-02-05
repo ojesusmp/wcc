@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Work Command Center v14.2</title>
+<title>Work Command Center v14.3</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui,-apple-system,sans-serif;background:#f5f5f5;max-width:500px;margin:0 auto}
@@ -80,7 +80,7 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
 <!-- MAIN MENU -->
 
 <div id="menuScreen">
-  <h1>🔧 Work Command Center v14.2</h1>
+  <h1>🔧 Work Command Center v14.3</h1>
   <div id="kronosStatus"></div>
   <div id="activePanel"></div>
 
@@ -98,6 +98,7 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
   </div>
 
 <button class="btn btn-blue btn-full" onclick="showScreen('newSessionScreen')" style="padding:16px;font-size:16px">▶️ Start New Session</button>
+<button class="btn btn-blue btn-full" onclick="showScreen('quickTripScreen')" style="padding:16px;font-size:16px;background:linear-gradient(135deg,#1e3a5f,#2563eb)">🚗 Quick Trip</button>
 <button class="btn btn-red btn-full" onclick="showScreen('evidenceScreen')" style="padding:14px;font-size:15px">🛡️ Evidence Capture <span id="evidenceBadge" style="background:rgba(255,255,255,0.25);padding:2px 8px;border-radius:10px;font-size:12px"></span></button>
 
 <button class="btn btn-purple btn-full" onclick="showScreen('notesHistoryScreen')" style="padding:14px;font-size:15px">📋 Notes History</button>
@@ -1027,6 +1028,40 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
   </div>
 </div>
 
+<!-- QUICK TRIP: START SCREEN -->
+<div id="quickTripScreen" class="hidden">
+  <h1>🚗 Quick Trip</h1>
+  <div class="card">
+    <label style="font-size:13px;color:#666;font-weight:600">Where are you going?</label>
+    <div style="position:relative">
+      <input type="text" id="tripDestInput" placeholder="Type destination or select..." autocomplete="off" oninput="filterTripDestDropdown()" onfocus="showTripDestDropdown()" style="font-size:16px">
+      <div id="tripDestDropdown" class="hidden" style="position:absolute;top:100%;left:0;right:0;background:white;border:1px solid #ddd;border-radius:0 0 8px 8px;max-height:250px;overflow-y:auto;z-index:50;margin-top:-10px"></div>
+    </div>
+    <label style="font-size:13px;color:#666;font-weight:600;margin-top:8px">Where are you coming from?</label>
+    <div style="position:relative">
+      <input type="text" id="tripFromInput" placeholder="Type origin or select..." autocomplete="off" oninput="filterTripFromDropdown()" onfocus="showTripFromDropdown()" style="font-size:16px">
+      <div id="tripFromDropdown" class="hidden" style="position:absolute;top:100%;left:0;right:0;background:white;border:1px solid #ddd;border-radius:0 0 8px 8px;max-height:250px;overflow-y:auto;z-index:50;margin-top:-10px"></div>
+    </div>
+  </div>
+  <button class="btn btn-green btn-full" onclick="startQuickTrip()" style="padding:18px;font-size:17px;font-weight:700">🚗 Start Trip</button>
+  <button class="btn btn-gray btn-full" onclick="showScreen('menuScreen')">Cancel</button>
+</div>
+
+<!-- QUICK TRIP: ACTIVE TRIP SCREEN -->
+<div id="activeTripScreen" class="hidden">
+  <div id="tripStatusBar" style="background:linear-gradient(135deg,#1e3a5f,#2563eb);color:white;padding:12px 14px;border-radius:10px;margin-bottom:10px">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div><span style="font-size:11px;opacity:.7">DRIVING TO</span><br><b id="tripDestDisplay" style="font-size:15px"></b></div>
+      <div style="text-align:right"><span id="tripElapsed" style="font-size:22px;font-weight:800;font-family:monospace">00:00</span><br><span style="font-size:11px;opacity:.7">ELAPSED</span></div>
+    </div>
+    <div style="font-size:11px;opacity:.6;margin-top:4px">From: <span id="tripFromDisplay"></span> &nbsp;|&nbsp; Started: <span id="tripStartDisplay"></span></div>
+  </div>
+  <textarea id="tripNoteText" placeholder="Dictate a note..." style="min-height:140px;font-size:16px;border-radius:10px"></textarea>
+  <button class="btn btn-purple btn-full" id="tripSaveNoteBtn" onclick="saveTripNote()" style="padding:18px;font-size:17px;font-weight:700;min-height:60px">💾 Save Note</button>
+  <div id="tripNoteCount" style="text-align:center;font-size:13px;color:#888;margin:6px 0">0 notes this trip</div>
+  <button class="btn btn-red btn-full" onclick="endQuickTrip()" style="padding:12px;font-size:14px;margin-top:12px;opacity:.85">⏹ End Trip</button>
+</div>
+
 <div id="ptoModal" class="modal hidden" style="display:none">
   <div class="modal-content">
     <div class="modal-header"><h2>⏳ Add PTO</h2></div>
@@ -1092,9 +1127,9 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
 </div>
 
 <script>
-const DB_NAME='WorkCommandCenter',DB_VERSION=12;let db=null;
+const DB_NAME='WorkCommandCenter',DB_VERSION=13;let db=null;
 
-async function initDB(){return new Promise((res,rej)=>{const r=indexedDB.open(DB_NAME,DB_VERSION);r.onerror=()=>rej(r.error);r.onsuccess=()=>{db=r.result;res(db)};r.onupgradeneeded=e=>{const d=e.target.result;['sessions','kronos','notes','settings','clarityEntries','concurEntries','practices','projects','evidence','quickNotes','actors','locations'].forEach(s=>{if(!d.objectStoreNames.contains(s))d.createObjectStore(s,{keyPath:s==='kronos'?'date':'id'})})}})}
+async function initDB(){return new Promise((res,rej)=>{const r=indexedDB.open(DB_NAME,DB_VERSION);r.onerror=()=>rej(r.error);r.onsuccess=()=>{db=r.result;res(db)};r.onupgradeneeded=e=>{const d=e.target.result;['sessions','kronos','notes','settings','clarityEntries','concurEntries','practices','projects','evidence','quickNotes','actors','locations','trips'].forEach(s=>{if(!d.objectStoreNames.contains(s))d.createObjectStore(s,{keyPath:s==='kronos'?'date':'id'})})}})}
 
 let __lastSavedAt=null;
 window.__wccDirty=false;
@@ -1219,12 +1254,16 @@ function roundTo15Min(minutes){
   return minutes+(15-r);
 }
 
-function showScreen(id){
+async function showScreen(id){
   if(window.__wccDirty){
     const ok = confirm('You have unsaved text.\n\nOK = Stay and save\nCancel = Leave without saving');
     if(ok) return;
     window.__wccDirty=false;
     updateSaveStatus();
+  }
+  if(window.__activeTripData&&id!=='activeTripScreen'){
+    if(!confirm('You have an active trip to '+window.__activeTripData.to+'.\n\nEnd trip first?')){return}
+    await forceEndTrip();
   }
   const allScreens=document.querySelectorAll('.container > div[id$="Screen"],.container > div[id$="Modal"],.container > div[id="toast"]');
   allScreens.forEach(el=>{if(el.id!==id)el.classList.add('hidden')});
@@ -1252,6 +1291,7 @@ function showScreen(id){
   if(id==='archiveScreen')initArchiveScreen();
   if(id==='settingsScreen'){renderActorsList();renderLocationsList()}
   if(id==='quickNotesScreen')initQuickNotesScreen();
+  if(id==='quickTripScreen')initQuickTripScreen();
   if(id==='notesHistoryScreen')initNotesHistory();
 }
 
@@ -1877,9 +1917,9 @@ function makeZip(fileMap){const encoder=new TextEncoder();const localParts=[];co
 
 function downloadBlob(blob,filename){const link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download=filename;link.click();setTimeout(()=>URL.revokeObjectURL(link.href),2000);}
 
-async function exportSnapshotNow(){try{const dateStr=getToday();const ts=new Date();const hhmm=ts.toTimeString().slice(0,5).replace(':','');const kronos=await dbGet('kronos',dateStr)||{date:dateStr,punches:[],pto:[],overtimeReason:null};const clarityAll=await dbGetAll('clarityEntries');const clarity=clarityAll.filter(e=>e.date===dateStr);const concurAll=await dbGetAll('concurEntries');const concur=concurAll.filter(e=>e.date===dateStr);const notesAll=await dbGetAll('notes');const notes=notesAll.filter(n=>n.date===dateStr);const sessionsAll=await dbGetAll('sessions');const sessions=sessionsAll.filter(s=>s.date===dateStr);const practices=await dbGetAll('practices');const projects=await dbGetAll('projects');const settings=await dbGetAll('settings');const evidenceAll=await dbGetAll('evidence');const evidence=evidenceAll.filter(e=>e.date===dateStr);const snapshot={schema:'wcc.snapshot.v14.2',date:dateStr,generatedAt:getTime(),kronos,clarityEntries:clarity,concurEntries:concur,quickNotes:notes,sessions,practices,projects,settings,evidence};const base='WCC_SNAPSHOT_'+dateStr+'_'+hhmm;const files={[base+'/snapshot_'+dateStr+'_'+hhmm+'.json']:JSON.stringify(snapshot,null,2)};const zip=makeZip(files);downloadBlob(zip,base+'.zip');await dbPut('settings',{id:'lastSnapshotAt',value:new Date().toISOString()});showToast('Snapshot exported: '+base+'.zip');}catch(err){alert('Snapshot failed: '+err);}}
+async function exportSnapshotNow(){try{const dateStr=getToday();const ts=new Date();const hhmm=ts.toTimeString().slice(0,5).replace(':','');const kronos=await dbGet('kronos',dateStr)||{date:dateStr,punches:[],pto:[],overtimeReason:null};const clarityAll=await dbGetAll('clarityEntries');const clarity=clarityAll.filter(e=>e.date===dateStr);const concurAll=await dbGetAll('concurEntries');const concur=concurAll.filter(e=>e.date===dateStr);const notesAll=await dbGetAll('notes');const notes=notesAll.filter(n=>n.date===dateStr);const sessionsAll=await dbGetAll('sessions');const sessions=sessionsAll.filter(s=>s.date===dateStr);const practices=await dbGetAll('practices');const projects=await dbGetAll('projects');const settings=await dbGetAll('settings');const evidenceAll=await dbGetAll('evidence');const evidence=evidenceAll.filter(e=>e.date===dateStr);const snapshot={schema:'wcc.snapshot.v14.3',date:dateStr,generatedAt:getTime(),kronos,clarityEntries:clarity,concurEntries:concur,quickNotes:notes,sessions,practices,projects,settings,evidence};const base='WCC_SNAPSHOT_'+dateStr+'_'+hhmm;const files={[base+'/snapshot_'+dateStr+'_'+hhmm+'.json']:JSON.stringify(snapshot,null,2)};const zip=makeZip(files);downloadBlob(zip,base+'.zip');await dbPut('settings',{id:'lastSnapshotAt',value:new Date().toISOString()});showToast('Snapshot exported: '+base+'.zip');}catch(err){alert('Snapshot failed: '+err);}}
 
-async function exportDailyBundle(){const balance=await getCloseDayBalance();const v=validateDayForEOD(balance);if(!v.ok){alert(v.message);return}const dateStr=getToday();const eodText=await buildEODText(dateStr);const kronos=await dbGet('kronos',dateStr)||{date:dateStr,punches:[],pto:[],overtimeReason:null};const clarityAll=await dbGetAll('clarityEntries');const clarity=clarityAll.filter(e=>e.date===dateStr);const concurAll=await dbGetAll('concurEntries');const concur=concurAll.filter(e=>e.date===dateStr);const notesAll=await dbGetAll('notes');const notes=notesAll.filter(n=>n.date===dateStr);const sessionsAll=await dbGetAll('sessions');const tickets=sessionsAll.filter(s=>s.date===dateStr&&(s.type==='ticket'||s.type==='work_item'));const projects=await dbGetAll('projects');const evidenceAll=await dbGetAll('evidence');const evidence=evidenceAll.filter(e=>e.date===dateStr);const dailyJson={schema:'wcc.daily.v14.2',date:dateStr,generatedAt:getTime(),kronos,clarityEntries:clarity,concurEntries:concur,quickNotes:notes,tickets,projects,evidence};const base='WCC_'+dateStr;const files={[base+'/eod_'+dateStr+'.txt']:eodText,[base+'/daily_'+dateStr+'.json']:JSON.stringify(dailyJson,null,2),[base+'/clarity_'+dateStr+'.json']:JSON.stringify(clarity,null,2),[base+'/concur_'+dateStr+'.json']:JSON.stringify(concur,null,2),[base+'/tickets_'+dateStr+'.json']:JSON.stringify(tickets,null,2),[base+'/kronos_'+dateStr+'.json']:JSON.stringify(kronos,null,2),[base+'/notes_'+dateStr+'.json']:JSON.stringify(notes,null,2),[base+'/evidence_'+dateStr+'.json']:JSON.stringify(evidence,null,2)};const zip=makeZip(files);downloadBlob(zip,base+'.zip');await dbPut('settings',{id:'lastDailyExportDate',value:dateStr});showToast('Daily bundle exported: '+base+'.zip');updateExportReminder().catch(()=>{});}
+async function exportDailyBundle(){const balance=await getCloseDayBalance();const v=validateDayForEOD(balance);if(!v.ok){alert(v.message);return}const dateStr=getToday();const eodText=await buildEODText(dateStr);const kronos=await dbGet('kronos',dateStr)||{date:dateStr,punches:[],pto:[],overtimeReason:null};const clarityAll=await dbGetAll('clarityEntries');const clarity=clarityAll.filter(e=>e.date===dateStr);const concurAll=await dbGetAll('concurEntries');const concur=concurAll.filter(e=>e.date===dateStr);const notesAll=await dbGetAll('notes');const notes=notesAll.filter(n=>n.date===dateStr);const sessionsAll=await dbGetAll('sessions');const tickets=sessionsAll.filter(s=>s.date===dateStr&&(s.type==='ticket'||s.type==='work_item'));const projects=await dbGetAll('projects');const evidenceAll=await dbGetAll('evidence');const evidence=evidenceAll.filter(e=>e.date===dateStr);const dailyJson={schema:'wcc.daily.v14.3',date:dateStr,generatedAt:getTime(),kronos,clarityEntries:clarity,concurEntries:concur,quickNotes:notes,tickets,projects,evidence};const base='WCC_'+dateStr;const files={[base+'/eod_'+dateStr+'.txt']:eodText,[base+'/daily_'+dateStr+'.json']:JSON.stringify(dailyJson,null,2),[base+'/clarity_'+dateStr+'.json']:JSON.stringify(clarity,null,2),[base+'/concur_'+dateStr+'.json']:JSON.stringify(concur,null,2),[base+'/tickets_'+dateStr+'.json']:JSON.stringify(tickets,null,2),[base+'/kronos_'+dateStr+'.json']:JSON.stringify(kronos,null,2),[base+'/notes_'+dateStr+'.json']:JSON.stringify(notes,null,2),[base+'/evidence_'+dateStr+'.json']:JSON.stringify(evidence,null,2)};const zip=makeZip(files);downloadBlob(zip,base+'.zip');await dbPut('settings',{id:'lastDailyExportDate',value:dateStr});showToast('Daily bundle exported: '+base+'.zip');updateExportReminder().catch(()=>{});}
 
 // ==============================
 
@@ -2300,7 +2340,12 @@ const DEFAULT_ACTORS=[
 {name:'Cambria Deal',role:'PM Waycross'},
 {name:'Monica Strauss',role:'HR Investigator'},
 {name:'JoVanna Simmons',role:'HR'},
-{name:'Alan Stevenson',role:'HR'}
+{name:'Alan Stevenson',role:'HR'},
+{name:'Michelle Beliveau',role:'Lead CPSS'},
+{name:'Amanda Spivey',role:'Staff - Bariatric Dublin'},
+{name:'Tanya Towler',role:'PM Dublin'},
+{name:'Stephen Smesny',role:'IT Colleague'},
+{name:'Dr. Gonzalez',role:'Provider - Urology Vidalia'}
 ];
 
 const DEFAULT_LOCATIONS=[
@@ -2322,7 +2367,11 @@ const DEFAULT_LOCATIONS=[
 {name:'Adult Primary Care Waters',address:'',coid:''},
 {name:'Peachtree Immediate Care',address:'Vidalia, GA',coid:''},
 {name:'Home/Remote',address:'',coid:''},
-{name:'Travel',address:'',coid:''}
+{name:'Travel',address:'',coid:''},
+{name:'Children\'s Care Vidalia',address:'Vidalia, GA',coid:'23868'},
+{name:'Bariatric & General Surgery Dublin',address:'Dublin, GA',coid:'22470'},
+{name:'Pediatric Surgery Dublin',address:'Dublin, GA',coid:'24514'},
+{name:'HROB Vidalia',address:'Vidalia, GA',coid:''}
 ];
 
 async function seedActorsAndLocations(){
@@ -2623,6 +2672,294 @@ document.addEventListener('click',function(e){
   }
   if(!e.target.closest('#qnWhere')&&!e.target.closest('#qnLocationDropdown')){
     const dd=document.getElementById('qnLocationDropdown');
+    if(dd)dd.classList.add('hidden');
+  }
+});
+
+
+// ==============================
+// QUICK TRIP MODULE — v14.3
+// ==============================
+
+let tripTimerInterval=null;
+let wakeLockSentinel=null;
+
+function initQuickTripScreen(){
+  document.getElementById('tripDestInput').value='';
+  document.getElementById('tripFromInput').value='';
+  document.getElementById('tripDestDropdown').classList.add('hidden');
+  document.getElementById('tripFromDropdown').classList.add('hidden');
+  // Pre-fill from with last known location
+  if(window.__lastTripDest){
+    document.getElementById('tripFromInput').value=window.__lastTripDest;
+  }else if(window.__lastSessionLocation){
+    document.getElementById('tripFromInput').value=window.__lastSessionLocation;
+  }
+  setTimeout(()=>document.getElementById('tripDestInput').focus(),150);
+}
+
+async function showTripDestDropdown(){
+  const locs=await dbGetAll('locations');
+  const input=document.getElementById('tripDestInput').value.toLowerCase();
+  const filtered=locs.filter(l=>l.name.toLowerCase().includes(input));
+  const dd=document.getElementById('tripDestDropdown');
+  if(!filtered.length){dd.classList.add('hidden');return}
+  dd.innerHTML=filtered.map(l=>'<div style="padding:12px;border-bottom:1px solid #eee;cursor:pointer;font-size:15px" onclick="selectTripDest(\''+escapeHtml(l.name).replace(/'/g,"\\'")+'\')"><b>'+escapeHtml(l.name)+'</b>'+(l.address?' <span style="color:#888;font-size:12px">'+escapeHtml(l.address)+'</span>':'')+'</div>').join('');
+  dd.classList.remove('hidden');
+}
+function filterTripDestDropdown(){showTripDestDropdown()}
+function selectTripDest(name){document.getElementById('tripDestInput').value=name;document.getElementById('tripDestDropdown').classList.add('hidden')}
+
+async function showTripFromDropdown(){
+  const locs=await dbGetAll('locations');
+  const input=document.getElementById('tripFromInput').value.toLowerCase();
+  const filtered=locs.filter(l=>l.name.toLowerCase().includes(input));
+  const dd=document.getElementById('tripFromDropdown');
+  if(!filtered.length){dd.classList.add('hidden');return}
+  dd.innerHTML=filtered.map(l=>'<div style="padding:12px;border-bottom:1px solid #eee;cursor:pointer;font-size:15px" onclick="selectTripFrom(\''+escapeHtml(l.name).replace(/'/g,"\\'")+'\')"><b>'+escapeHtml(l.name)+'</b>'+(l.address?' <span style="color:#888;font-size:12px">'+escapeHtml(l.address)+'</span>':'')+'</div>').join('');
+  dd.classList.remove('hidden');
+}
+function filterTripFromDropdown(){showTripFromDropdown()}
+function selectTripFrom(name){document.getElementById('tripFromInput').value=name;document.getElementById('tripFromDropdown').classList.add('hidden')}
+
+async function startQuickTrip(){
+  const dest=document.getElementById('tripDestInput').value.trim();
+  const from=document.getElementById('tripFromInput').value.trim();
+  if(!dest){showToast('Select a destination');return}
+  if(!from){showToast('Select where you are coming from');return}
+
+  const now=new Date();
+  const startTime=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+
+  // Create trip data
+  window.__activeTripData={
+    id:'TRIP'+Date.now(),
+    date:getToday(),
+    from:from,
+    to:dest,
+    startTime:startTime,
+    startTimestamp:Date.now(),
+    notes:[],
+    noteCount:0
+  };
+
+  // Auto-create Concur mileage entry
+  try{
+    const concurEntry={
+      id:'CON'+Date.now(),
+      date:getToday(),
+      type:'mileage',
+      time:startTime,
+      fromType:'address',
+      fromAddr:from,
+      fromDisplay:from,
+      toType:'address',
+      toAddr:dest,
+      toDisplay:dest,
+      tripId:window.__activeTripData.id
+    };
+    await dbPut('concurEntries',concurEntry);
+    window.__activeTripData.concurEntryId=concurEntry.id;
+  }catch(e){console.log('Concur auto-entry failed:',e)}
+
+  // Switch to active trip screen
+  const allScreens=document.querySelectorAll('.container > div[id$="Screen"],.container > div[id$="Modal"],.container > div[id="toast"]');
+  allScreens.forEach(el=>{if(el.id!=='activeTripScreen')el.classList.add('hidden')});
+  const target=document.getElementById('activeTripScreen');
+  target.classList.remove('hidden');
+  void target.offsetWidth;
+
+  // Set up display
+  document.getElementById('tripDestDisplay').textContent=dest;
+  document.getElementById('tripFromDisplay').textContent=from;
+  document.getElementById('tripStartDisplay').textContent=startTime;
+  document.getElementById('tripElapsed').textContent='00:00';
+  document.getElementById('tripNoteText').value='';
+  document.getElementById('tripNoteCount').textContent='0 notes this trip';
+
+  // Start elapsed timer
+  if(tripTimerInterval)clearInterval(tripTimerInterval);
+  tripTimerInterval=setInterval(updateTripTimer,1000);
+
+  // Request wake lock
+  requestWakeLock();
+
+  // Focus textarea
+  setTimeout(()=>document.getElementById('tripNoteText').focus(),200);
+
+  showToast('Trip started → '+dest);
+}
+
+function updateTripTimer(){
+  if(!window.__activeTripData)return;
+  const elapsed=Math.floor((Date.now()-window.__activeTripData.startTimestamp)/1000);
+  const mins=Math.floor(elapsed/60);
+  const secs=elapsed%60;
+  const hrs=Math.floor(mins/60);
+  const remMins=mins%60;
+  document.getElementById('tripElapsed').textContent=
+    hrs>0?(String(hrs)+':'+String(remMins).padStart(2,'0')+':'+String(secs).padStart(2,'0'))
+    :(String(remMins).padStart(2,'0')+':'+String(secs).padStart(2,'0'));
+}
+
+async function saveTripNote(){
+  const text=document.getElementById('tripNoteText').value.trim();
+  if(!text){showToast('Type or dictate a note first');return}
+  const now=new Date();
+  const time=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+
+  // Save to quickNotes store
+  const note={
+    id:'QN'+Date.now(),
+    date:getToday(),
+    time:time,
+    note_text:text,
+    who:null,
+    where:window.__activeTripData?window.__activeTripData.to:null,
+    ticket_number:null,
+    note_type:'Travel',
+    exported:false,
+    created_at:Date.now(),
+    tripId:window.__activeTripData?window.__activeTripData.id:null
+  };
+  await dbPut('quickNotes',note);
+
+  // Add to trip notes array
+  if(window.__activeTripData){
+    window.__activeTripData.notes.push({time:time,text:text});
+    window.__activeTripData.noteCount++;
+    document.getElementById('tripNoteCount').textContent=window.__activeTripData.noteCount+' note'+(window.__activeTripData.noteCount===1?'':'s')+' this trip';
+  }
+
+  // Clear and refocus
+  document.getElementById('tripNoteText').value='';
+  showToast('Note saved ✓');
+  setTimeout(()=>document.getElementById('tripNoteText').focus(),100);
+  try{navigator.vibrate&&navigator.vibrate(30)}catch(e){}
+}
+
+async function endQuickTrip(){
+  if(!window.__activeTripData)return;
+  const doNote=confirm('Add an arrival note?');
+  if(doNote){
+    const text=document.getElementById('tripNoteText').value.trim();
+    if(text)await saveTripNote();
+    else{
+      const arrivalText=prompt('Arrival note:');
+      if(arrivalText&&arrivalText.trim()){
+        document.getElementById('tripNoteText').value=arrivalText.trim();
+        await saveTripNote();
+      }
+    }
+  }
+  await finalizeTrip();
+}
+
+async function forceEndTrip(){
+  // Save any unsaved text
+  const text=document.getElementById('tripNoteText').value.trim();
+  if(text){
+    document.getElementById('tripNoteText').value=text;
+    await saveTripNote();
+  }
+  await finalizeTrip();
+}
+
+async function finalizeTrip(){
+  if(!window.__activeTripData)return;
+
+  // Stop timer
+  if(tripTimerInterval){clearInterval(tripTimerInterval);tripTimerInterval=null}
+
+  // Calculate travel minutes
+  const elapsedMs=Date.now()-window.__activeTripData.startTimestamp;
+  const travelMinutes=Math.round(elapsedMs/60000);
+  const rounded=roundTo15Min(travelMinutes);
+
+  const now=new Date();
+  const endTime=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+
+  // Auto-log Clarity travel time
+  try{
+    const cats=await getClarityCategories();
+    const travelCat=cats.find(c=>c.id==='nonproject_travel');
+    if(travelCat&&rounded>0){
+      const clarityEntry={
+        id:'CL'+Date.now(),
+        date:getToday(),
+        category:'nonproject_travel',
+        categoryName:travelCat.name,
+        minutes:rounded,
+        rawMinutes:travelMinutes,
+        notes:'Quick Trip: '+window.__activeTripData.from+' → '+window.__activeTripData.to,
+        time:endTime
+      };
+      await dbPut('clarityEntries',clarityEntry);
+      window.__activeTripData.clarityEntryId=clarityEntry.id;
+    }
+  }catch(e){console.log('Clarity auto-entry failed:',e)}
+
+  // Save complete trip record
+  const tripRecord={
+    id:window.__activeTripData.id,
+    date:window.__activeTripData.date,
+    from_location:window.__activeTripData.from,
+    to_location:window.__activeTripData.to,
+    start_time:window.__activeTripData.startTime,
+    end_time:endTime,
+    travel_minutes:travelMinutes,
+    travel_minutes_rounded:rounded,
+    concur_entry_id:window.__activeTripData.concurEntryId||null,
+    clarity_entry_id:window.__activeTripData.clarityEntryId||null,
+    notes:window.__activeTripData.notes,
+    note_count:window.__activeTripData.noteCount
+  };
+  await dbPut('trips',tripRecord);
+
+  // Remember destination for next trip's "from"
+  window.__lastTripDest=window.__activeTripData.to;
+
+  // Release wake lock
+  releaseWakeLock();
+
+  showToast('Trip ended — '+rounded+'m travel logged');
+
+  // Clean up
+  window.__activeTripData=null;
+  showScreen('menuScreen');
+}
+
+// Wake Lock API
+async function requestWakeLock(){
+  try{
+    if('wakeLock' in navigator){
+      wakeLockSentinel=await navigator.wakeLock.request('screen');
+      wakeLockSentinel.addEventListener('release',()=>{wakeLockSentinel=null});
+    }
+  }catch(e){console.log('Wake lock not available:',e)}
+}
+
+function releaseWakeLock(){
+  try{
+    if(wakeLockSentinel){wakeLockSentinel.release();wakeLockSentinel=null}
+  }catch(e){}
+}
+
+// Re-request wake lock on visibility change (iOS releases it when tabbing away)
+document.addEventListener('visibilitychange',async()=>{
+  if(document.visibilityState==='visible'&&window.__activeTripData){
+    await requestWakeLock();
+  }
+});
+
+// Close trip dropdowns when tapping outside
+document.addEventListener('click',function(e){
+  if(!e.target.closest('#tripDestInput')&&!e.target.closest('#tripDestDropdown')){
+    const dd=document.getElementById('tripDestDropdown');
+    if(dd)dd.classList.add('hidden');
+  }
+  if(!e.target.closest('#tripFromInput')&&!e.target.closest('#tripFromDropdown')){
+    const dd=document.getElementById('tripFromDropdown');
     if(dd)dd.classList.add('hidden');
   }
 });
