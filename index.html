@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Work Command Center v14.1</title>
+<title>Work Command Center v14.2</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui,-apple-system,sans-serif;background:#f5f5f5;max-width:500px;margin:0 auto}
@@ -80,7 +80,7 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
 <!-- MAIN MENU -->
 
 <div id="menuScreen">
-  <h1>🔧 Work Command Center v14.1</h1>
+  <h1>🔧 Work Command Center v14.2</h1>
   <div id="kronosStatus"></div>
   <div id="activePanel"></div>
 
@@ -100,13 +100,14 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
 <button class="btn btn-blue btn-full" onclick="showScreen('newSessionScreen')" style="padding:16px;font-size:16px">▶️ Start New Session</button>
 <button class="btn btn-red btn-full" onclick="showScreen('evidenceScreen')" style="padding:14px;font-size:15px">🛡️ Evidence Capture <span id="evidenceBadge" style="background:rgba(255,255,255,0.25);padding:2px 8px;border-radius:10px;font-size:12px"></span></button>
 
+<button class="btn btn-purple btn-full" onclick="showScreen('notesHistoryScreen')" style="padding:14px;font-size:15px">📋 Notes History</button>
   <div class="btn-row">
     <button class="btn btn-pink btn-half" onclick="showScreen('ticketsScreen')">🎫 Tickets</button>
     <button class="btn btn-cyan btn-half" onclick="showScreen('projectsScreen')">🧩 Projects</button>
   </div>
   <div class="btn-row">
     <button class="btn btn-orange btn-half" onclick="showScreen('kronosScreen')">⏰ Kronos</button>
-    <button class="btn btn-purple btn-half" onclick="showQuickNote()">📝 Quick Note</button>
+    <button class="btn btn-purple btn-half" onclick="openQuickNote()">📝 Quick Note</button>
   </div>
   <div class="btn-row">
     <button class="btn btn-indigo btn-half" onclick="showScreen('clarityTimeScreen')">⏱️ Clarity Time</button>
@@ -926,16 +927,103 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
 </div>
 
 
-<div id="quickNoteModal" class="modal hidden" style="display:none">
-  <div class="modal-content">
-    <div class="modal-header"><h2>📝 Quick Note</h2></div>
-    <div class="modal-body">
-      <textarea id="quickNoteText" placeholder="Note..." style="min-height:150px"></textarea>
+<div id="quickNotesScreen" class="hidden">
+  <h1>📝 Quick Note</h1>
+  <div class="card">
+    <div class="btn-row" style="margin-bottom:10px">
+      <div style="flex:1">
+        <label style="font-size:12px;color:#666;font-weight:600">Date</label>
+        <input type="date" id="qnDate" style="margin-bottom:0">
+      </div>
+      <div style="flex:1">
+        <label style="font-size:12px;color:#666;font-weight:600">Time</label>
+        <input type="time" id="qnTime" style="margin-bottom:0">
+      </div>
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-purple btn-full" onclick="saveQuickNote()">💾 Save</button>
-      <button class="btn btn-gray btn-full" onclick="closeQuickNoteModal()">Cancel</button>
+    <textarea id="qnText" placeholder="What happened?" style="min-height:120px"></textarea>
+    <button class="btn btn-gray btn-full btn-sm" id="qnToggleMore" onclick="toggleQNDetails()" style="margin-bottom:8px">+ More Details</button>
+    <div id="qnDetailsSection" class="hidden">
+      <label style="font-size:12px;color:#666;font-weight:600">Who is this about?</label>
+      <div style="position:relative">
+        <input type="text" id="qnWho" placeholder="Type name or select..." autocomplete="off" oninput="filterActorDropdown()" onfocus="showActorDropdown()">
+        <div id="qnActorDropdown" class="hidden" style="position:absolute;top:100%;left:0;right:0;background:white;border:1px solid #ddd;border-radius:0 0 8px 8px;max-height:200px;overflow-y:auto;z-index:50;margin-top:-10px"></div>
+      </div>
+      <label style="font-size:12px;color:#666;font-weight:600">Where?</label>
+      <div style="position:relative">
+        <input type="text" id="qnWhere" placeholder="Type location or select..." autocomplete="off" oninput="filterLocationDropdown()" onfocus="showLocationDropdown()">
+        <div id="qnLocationDropdown" class="hidden" style="position:absolute;top:100%;left:0;right:0;background:white;border:1px solid #ddd;border-radius:0 0 8px 8px;max-height:200px;overflow-y:auto;z-index:50;margin-top:-10px"></div>
+      </div>
+      <label style="font-size:12px;color:#666;font-weight:600">Ticket #</label>
+      <input type="text" id="qnTicket" placeholder="INC or RITM number (optional)">
+      <label style="font-size:12px;color:#666;font-weight:600">Type</label>
+      <select id="qnType">
+        <option value="General">General</option>
+        <option value="Work">Work</option>
+        <option value="Incident">Incident</option>
+        <option value="Conversation">Conversation</option>
+        <option value="Travel">Travel</option>
+        <option value="Medical">Medical</option>
+        <option value="Management">Management</option>
+        <option value="HR">HR</option>
+      </select>
     </div>
+    <button class="btn btn-purple btn-full" onclick="saveQuickNote()" style="padding:14px;font-size:15px">💾 Save Note</button>
+    <button class="btn btn-gray btn-full" onclick="showScreen(window.__qnReturnTo||'menuScreen')">Cancel</button>
+  </div>
+</div>
+
+<!-- NOTES HISTORY SCREEN -->
+<div id="notesHistoryScreen" class="hidden">
+  <h1>📋 Notes History</h1>
+  <div class="card">
+    <div class="btn-row" style="margin-bottom:8px">
+      <div style="flex:1">
+        <input type="date" id="nhDateFrom" style="margin-bottom:0;font-size:13px">
+      </div>
+      <div style="flex:1">
+        <input type="date" id="nhDateTo" style="margin-bottom:0;font-size:13px">
+      </div>
+    </div>
+    <div class="btn-row" style="margin-bottom:8px">
+      <select id="nhTypeFilter" style="flex:1;margin-bottom:0;font-size:13px" onchange="renderNotesHistory()">
+        <option value="">All Types</option>
+        <option value="General">General</option>
+        <option value="Work">Work</option>
+        <option value="Incident">Incident</option>
+        <option value="Conversation">Conversation</option>
+        <option value="Travel">Travel</option>
+        <option value="Medical">Medical</option>
+        <option value="Management">Management</option>
+        <option value="HR">HR</option>
+      </select>
+      <input type="text" id="nhSearch" placeholder="Search..." style="flex:1;margin-bottom:0;font-size:13px" oninput="renderNotesHistory()">
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-sm btn-cyan btn-half" onclick="renderNotesHistory()">🔍 Filter</button>
+      <button class="btn btn-sm btn-purple btn-half" onclick="exportQuickNotes()">📤 Export JSON</button>
+    </div>
+  </div>
+  <div id="notesHistoryList"></div>
+  <div style="margin-top:8px">
+  <div class="section-title" style="margin-top:16px">👥 Manage People</div>
+  <div class="card">
+    <div id="actorsManageList" style="max-height:250px;overflow-y:auto"></div>
+    <div class="btn-row" style="margin-top:8px">
+      <button class="btn btn-sm btn-green btn-half" onclick="addNewActor()">+ Add Person</button>
+      <button class="btn btn-sm btn-gray btn-half" onclick="resetDefaultActors()">Reset Defaults</button>
+    </div>
+  </div>
+
+  <div class="section-title">📍 Manage Locations</div>
+  <div class="card">
+    <div id="locationsManageList" style="max-height:250px;overflow-y:auto"></div>
+    <div class="btn-row" style="margin-top:8px">
+      <button class="btn btn-sm btn-green btn-half" onclick="addNewLocation()">+ Add Location</button>
+      <button class="btn btn-sm btn-gray btn-half" onclick="resetDefaultLocations()">Reset Defaults</button>
+    </div>
+  </div>
+
+    <button class="btn btn-gray btn-full" onclick="showScreen('menuScreen')">← Back to Menu</button>
   </div>
 </div>
 
@@ -1004,9 +1092,9 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
 </div>
 
 <script>
-const DB_NAME='WorkCommandCenter',DB_VERSION=11;let db=null;
+const DB_NAME='WorkCommandCenter',DB_VERSION=12;let db=null;
 
-async function initDB(){return new Promise((res,rej)=>{const r=indexedDB.open(DB_NAME,DB_VERSION);r.onerror=()=>rej(r.error);r.onsuccess=()=>{db=r.result;res(db)};r.onupgradeneeded=e=>{const d=e.target.result;['sessions','kronos','notes','settings','clarityEntries','concurEntries','practices','projects','evidence'].forEach(s=>{if(!d.objectStoreNames.contains(s))d.createObjectStore(s,{keyPath:s==='kronos'?'date':'id'})})}})}
+async function initDB(){return new Promise((res,rej)=>{const r=indexedDB.open(DB_NAME,DB_VERSION);r.onerror=()=>rej(r.error);r.onsuccess=()=>{db=r.result;res(db)};r.onupgradeneeded=e=>{const d=e.target.result;['sessions','kronos','notes','settings','clarityEntries','concurEntries','practices','projects','evidence','quickNotes','actors','locations'].forEach(s=>{if(!d.objectStoreNames.contains(s))d.createObjectStore(s,{keyPath:s==='kronos'?'date':'id'})})}})}
 
 let __lastSavedAt=null;
 window.__wccDirty=false;
@@ -1138,8 +1226,11 @@ function showScreen(id){
     window.__wccDirty=false;
     updateSaveStatus();
   }
-  document.querySelectorAll('.container > div').forEach(el=>el.classList.add('hidden'));
-  document.getElementById(id).classList.remove('hidden');
+  const allScreens=document.querySelectorAll('.container > div[id$="Screen"],.container > div[id$="Modal"],.container > div[id="toast"]');
+  allScreens.forEach(el=>{if(el.id!==id)el.classList.add('hidden')});
+  const target=document.getElementById(id);
+  target.classList.remove('hidden');
+  void target.offsetWidth;
   if(id==='menuScreen')updateMenuScreen();
   if(id==='kronosScreen'){renderKronosPunches();renderPTOList();isDayLocked().then(locked=>{document.getElementById('kronosLockBanner').classList.toggle('hidden',!locked);document.getElementById('kronosAddSection').classList.toggle('hidden',locked)})}
   if(id==='clarityTimeScreen')initClarityTimeScreen();
@@ -1159,6 +1250,9 @@ function showScreen(id){
   if(id==='dashboardViewScreen')initDashboardView();
   if(id==='csvExportScreen')initCSVExportScreen();
   if(id==='archiveScreen')initArchiveScreen();
+  if(id==='settingsScreen'){renderActorsList();renderLocationsList()}
+  if(id==='quickNotesScreen')initQuickNotesScreen();
+  if(id==='notesHistoryScreen')initNotesHistory();
 }
 
 async function updateMenuScreen(){
@@ -1399,13 +1493,7 @@ function openConcurMileage(){
 function concurGoBack(){
   const ret=window.__concurReturnTo||'menuScreen';
   window.__concurReturnTo=null;
-  if(ret==='activeSessionScreen'&&activeSessionType){
-    document.querySelectorAll('.container > div').forEach(el=>el.classList.add('hidden'));
-    document.getElementById('activeSessionScreen').classList.remove('hidden');
-    renderActiveSessionLog();
-  }else{
-    showScreen('menuScreen');
-  }
+  showScreen(ret);
 }
 
 // MILEAGE PRACTICE SELECTION
@@ -1651,14 +1739,9 @@ async function saveOTFromModal(){
 }
 
 // QUICK NOTE
-function showQuickNote(){document.getElementById('quickNoteText').value='';document.getElementById('quickNoteModal').classList.remove('hidden');document.getElementById('quickNoteModal').style.display='flex'}
-function closeQuickNoteModal(){document.getElementById('quickNoteModal').classList.add('hidden');document.getElementById('quickNoteModal').style.display='none'}
-async function saveQuickNote(){
-  const t=document.getElementById('quickNoteText').value.trim();
-  if(!t){closeQuickNoteModal();return}
-  await dbPut('notes',{id:'N'+Date.now(),date:getToday(),time:getTime(),text:t});
-  closeQuickNoteModal();alert('Saved!');
-}
+// showQuickNote removed - replaced by openQuickNote/quickNotesScreen
+// closeQuickNoteModal removed - replaced by quickNotesScreen
+async // old saveQuickNote removed - replaced in Quick Notes module
 
 // EVIDENCE CAPTURE MODULE
 let editingEvidenceId=null;let evActors=[];let evQuotes=[];
@@ -1794,9 +1877,9 @@ function makeZip(fileMap){const encoder=new TextEncoder();const localParts=[];co
 
 function downloadBlob(blob,filename){const link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download=filename;link.click();setTimeout(()=>URL.revokeObjectURL(link.href),2000);}
 
-async function exportSnapshotNow(){try{const dateStr=getToday();const ts=new Date();const hhmm=ts.toTimeString().slice(0,5).replace(':','');const kronos=await dbGet('kronos',dateStr)||{date:dateStr,punches:[],pto:[],overtimeReason:null};const clarityAll=await dbGetAll('clarityEntries');const clarity=clarityAll.filter(e=>e.date===dateStr);const concurAll=await dbGetAll('concurEntries');const concur=concurAll.filter(e=>e.date===dateStr);const notesAll=await dbGetAll('notes');const notes=notesAll.filter(n=>n.date===dateStr);const sessionsAll=await dbGetAll('sessions');const sessions=sessionsAll.filter(s=>s.date===dateStr);const practices=await dbGetAll('practices');const projects=await dbGetAll('projects');const settings=await dbGetAll('settings');const evidenceAll=await dbGetAll('evidence');const evidence=evidenceAll.filter(e=>e.date===dateStr);const snapshot={schema:'wcc.snapshot.v14.1',date:dateStr,generatedAt:getTime(),kronos,clarityEntries:clarity,concurEntries:concur,quickNotes:notes,sessions,practices,projects,settings,evidence};const base='WCC_SNAPSHOT_'+dateStr+'_'+hhmm;const files={[base+'/snapshot_'+dateStr+'_'+hhmm+'.json']:JSON.stringify(snapshot,null,2)};const zip=makeZip(files);downloadBlob(zip,base+'.zip');await dbPut('settings',{id:'lastSnapshotAt',value:new Date().toISOString()});showToast('Snapshot exported: '+base+'.zip');}catch(err){alert('Snapshot failed: '+err);}}
+async function exportSnapshotNow(){try{const dateStr=getToday();const ts=new Date();const hhmm=ts.toTimeString().slice(0,5).replace(':','');const kronos=await dbGet('kronos',dateStr)||{date:dateStr,punches:[],pto:[],overtimeReason:null};const clarityAll=await dbGetAll('clarityEntries');const clarity=clarityAll.filter(e=>e.date===dateStr);const concurAll=await dbGetAll('concurEntries');const concur=concurAll.filter(e=>e.date===dateStr);const notesAll=await dbGetAll('notes');const notes=notesAll.filter(n=>n.date===dateStr);const sessionsAll=await dbGetAll('sessions');const sessions=sessionsAll.filter(s=>s.date===dateStr);const practices=await dbGetAll('practices');const projects=await dbGetAll('projects');const settings=await dbGetAll('settings');const evidenceAll=await dbGetAll('evidence');const evidence=evidenceAll.filter(e=>e.date===dateStr);const snapshot={schema:'wcc.snapshot.v14.2',date:dateStr,generatedAt:getTime(),kronos,clarityEntries:clarity,concurEntries:concur,quickNotes:notes,sessions,practices,projects,settings,evidence};const base='WCC_SNAPSHOT_'+dateStr+'_'+hhmm;const files={[base+'/snapshot_'+dateStr+'_'+hhmm+'.json']:JSON.stringify(snapshot,null,2)};const zip=makeZip(files);downloadBlob(zip,base+'.zip');await dbPut('settings',{id:'lastSnapshotAt',value:new Date().toISOString()});showToast('Snapshot exported: '+base+'.zip');}catch(err){alert('Snapshot failed: '+err);}}
 
-async function exportDailyBundle(){const balance=await getCloseDayBalance();const v=validateDayForEOD(balance);if(!v.ok){alert(v.message);return}const dateStr=getToday();const eodText=await buildEODText(dateStr);const kronos=await dbGet('kronos',dateStr)||{date:dateStr,punches:[],pto:[],overtimeReason:null};const clarityAll=await dbGetAll('clarityEntries');const clarity=clarityAll.filter(e=>e.date===dateStr);const concurAll=await dbGetAll('concurEntries');const concur=concurAll.filter(e=>e.date===dateStr);const notesAll=await dbGetAll('notes');const notes=notesAll.filter(n=>n.date===dateStr);const sessionsAll=await dbGetAll('sessions');const tickets=sessionsAll.filter(s=>s.date===dateStr&&(s.type==='ticket'||s.type==='work_item'));const projects=await dbGetAll('projects');const evidenceAll=await dbGetAll('evidence');const evidence=evidenceAll.filter(e=>e.date===dateStr);const dailyJson={schema:'wcc.daily.v14.1',date:dateStr,generatedAt:getTime(),kronos,clarityEntries:clarity,concurEntries:concur,quickNotes:notes,tickets,projects,evidence};const base='WCC_'+dateStr;const files={[base+'/eod_'+dateStr+'.txt']:eodText,[base+'/daily_'+dateStr+'.json']:JSON.stringify(dailyJson,null,2),[base+'/clarity_'+dateStr+'.json']:JSON.stringify(clarity,null,2),[base+'/concur_'+dateStr+'.json']:JSON.stringify(concur,null,2),[base+'/tickets_'+dateStr+'.json']:JSON.stringify(tickets,null,2),[base+'/kronos_'+dateStr+'.json']:JSON.stringify(kronos,null,2),[base+'/notes_'+dateStr+'.json']:JSON.stringify(notes,null,2),[base+'/evidence_'+dateStr+'.json']:JSON.stringify(evidence,null,2)};const zip=makeZip(files);downloadBlob(zip,base+'.zip');await dbPut('settings',{id:'lastDailyExportDate',value:dateStr});showToast('Daily bundle exported: '+base+'.zip');updateExportReminder().catch(()=>{});}
+async function exportDailyBundle(){const balance=await getCloseDayBalance();const v=validateDayForEOD(balance);if(!v.ok){alert(v.message);return}const dateStr=getToday();const eodText=await buildEODText(dateStr);const kronos=await dbGet('kronos',dateStr)||{date:dateStr,punches:[],pto:[],overtimeReason:null};const clarityAll=await dbGetAll('clarityEntries');const clarity=clarityAll.filter(e=>e.date===dateStr);const concurAll=await dbGetAll('concurEntries');const concur=concurAll.filter(e=>e.date===dateStr);const notesAll=await dbGetAll('notes');const notes=notesAll.filter(n=>n.date===dateStr);const sessionsAll=await dbGetAll('sessions');const tickets=sessionsAll.filter(s=>s.date===dateStr&&(s.type==='ticket'||s.type==='work_item'));const projects=await dbGetAll('projects');const evidenceAll=await dbGetAll('evidence');const evidence=evidenceAll.filter(e=>e.date===dateStr);const dailyJson={schema:'wcc.daily.v14.2',date:dateStr,generatedAt:getTime(),kronos,clarityEntries:clarity,concurEntries:concur,quickNotes:notes,tickets,projects,evidence};const base='WCC_'+dateStr;const files={[base+'/eod_'+dateStr+'.txt']:eodText,[base+'/daily_'+dateStr+'.json']:JSON.stringify(dailyJson,null,2),[base+'/clarity_'+dateStr+'.json']:JSON.stringify(clarity,null,2),[base+'/concur_'+dateStr+'.json']:JSON.stringify(concur,null,2),[base+'/tickets_'+dateStr+'.json']:JSON.stringify(tickets,null,2),[base+'/kronos_'+dateStr+'.json']:JSON.stringify(kronos,null,2),[base+'/notes_'+dateStr+'.json']:JSON.stringify(notes,null,2),[base+'/evidence_'+dateStr+'.json']:JSON.stringify(evidence,null,2)};const zip=makeZip(files);downloadBlob(zip,base+'.zip');await dbPut('settings',{id:'lastDailyExportDate',value:dateStr});showToast('Daily bundle exported: '+base+'.zip');updateExportReminder().catch(()=>{});}
 
 // ==============================
 
@@ -2192,7 +2275,360 @@ function initArchiveScreen(){
 }
 
 
-initDB().then(()=>{showScreen('menuScreen');initRestoreListeners();updateKronosStatus();updateSaveStatus();updateExportReminder().catch(()=>{})}).catch(e=>alert('DB Error: '+e.message));
+// ==============================
+// QUICK NOTES MODULE — v14.2
+// ==============================
+
+// --- Default actors and locations ---
+const DEFAULT_ACTORS=[
+{name:'Walter Lopez',role:'Manager'},
+{name:'Linda Mimms',role:'Director'},
+{name:'Candi Barfield',role:'CPSS'},
+{name:'Keenan Robinson',role:'Senior TA'},
+{name:'Kevin Rab',role:'Senior TA'},
+{name:'Steve Townsend',role:'Senior TA'},
+{name:'Colin Matz',role:'TA II'},
+{name:'Byron Calahan',role:'Senior TA'},
+{name:'Mid McCain',role:'Market Leader'},
+{name:'Mandy Smith',role:'DPS II'},
+{name:'Mark Ruff',role:'DPS I'},
+{name:'Christina Miller',role:'DPS Waycross'},
+{name:'Elizabeth Edge',role:'PM'},
+{name:'Tina Watson',role:'PM Heartcare'},
+{name:'Lisa Bush',role:'PM'},
+{name:'Jill Studstill',role:'PM Waycross'},
+{name:'Cambria Deal',role:'PM Waycross'},
+{name:'Monica Strauss',role:'HR Investigator'},
+{name:'JoVanna Simmons',role:'HR'},
+{name:'Alan Stevenson',role:'HR'}
+];
+
+const DEFAULT_LOCATIONS=[
+{name:'Heartcare',address:'500 Maple Dr, Vidalia, GA',coid:'23873'},
+{name:'Urology (Lucy Pearson)',address:'Vidalia, GA',coid:''},
+{name:'RT Stanley',address:'Vidalia, GA',coid:''},
+{name:'Meadows Hospital',address:'Vidalia, GA',coid:''},
+{name:'Clark Building',address:'Vidalia, GA',coid:''},
+{name:'Dublin Gastro',address:'Dublin, GA',coid:''},
+{name:'Dublin Bariatrics',address:'Dublin, GA',coid:''},
+{name:'Dublin Primary Care',address:'Dublin, GA',coid:''},
+{name:'Hazlehurst Satellite',address:'11 Johnstons St, Hazlehurst, GA',coid:''},
+{name:'Memorial Satilla Cardiology',address:'Waycross, GA',coid:'23209'},
+{name:'Memorial Satilla Orthopedics',address:'Waycross, GA',coid:'23211'},
+{name:'Memorial Satilla General Surgery',address:'Waycross, GA',coid:'23211'},
+{name:'Memorial Satilla Neurology',address:'Waycross, GA',coid:'23214'},
+{name:'Memorial Satilla Pulmonology',address:'Waycross, GA',coid:'23219'},
+{name:'Lung & Sleep Center',address:'Vidalia, GA',coid:''},
+{name:'Adult Primary Care Waters',address:'',coid:''},
+{name:'Peachtree Immediate Care',address:'Vidalia, GA',coid:''},
+{name:'Home/Remote',address:'',coid:''},
+{name:'Travel',address:'',coid:''}
+];
+
+async function seedActorsAndLocations(){
+  const existingActors=await dbGetAll('actors');
+  if(!existingActors.length){
+    for(const a of DEFAULT_ACTORS){
+      await dbPut('actors',{id:'A_'+a.name.replace(/\s+/g,'_'),name:a.name,role:a.role});
+    }
+  }
+  const existingLocs=await dbGetAll('locations');
+  if(!existingLocs.length){
+    for(const l of DEFAULT_LOCATIONS){
+      await dbPut('locations',{id:'L_'+l.name.replace(/\s+/g,'_'),name:l.name,address:l.address,coid:l.coid});
+    }
+  }
+}
+
+// --- Quick Notes Screen ---
+function openQuickNote(returnTo){
+  window.__qnReturnTo=returnTo||'menuScreen';
+  showScreen('quickNotesScreen');
+}
+
+function initQuickNotesScreen(){
+  const now=new Date();
+  document.getElementById('qnDate').value=getToday();
+  document.getElementById('qnTime').value=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  document.getElementById('qnText').value='';
+  document.getElementById('qnWho').value='';
+  document.getElementById('qnWhere').value='';
+  document.getElementById('qnTicket').value='';
+  document.getElementById('qnType').value='General';
+  document.getElementById('qnDetailsSection').classList.add('hidden');
+  document.getElementById('qnToggleMore').textContent='+ More Details';
+  document.getElementById('qnActorDropdown').classList.add('hidden');
+  document.getElementById('qnLocationDropdown').classList.add('hidden');
+  setTimeout(()=>document.getElementById('qnText').focus(),150);
+}
+
+function toggleQNDetails(){
+  const sec=document.getElementById('qnDetailsSection');
+  const btn=document.getElementById('qnToggleMore');
+  if(sec.classList.contains('hidden')){
+    sec.classList.remove('hidden');
+    btn.textContent='− Less Details';
+  }else{
+    sec.classList.add('hidden');
+    btn.textContent='+ More Details';
+  }
+}
+
+async function showActorDropdown(){
+  const actors=await dbGetAll('actors');
+  const input=document.getElementById('qnWho').value.toLowerCase();
+  const filtered=actors.filter(a=>a.name.toLowerCase().includes(input));
+  const dd=document.getElementById('qnActorDropdown');
+  if(!filtered.length){dd.classList.add('hidden');return}
+  dd.innerHTML=filtered.map(a=>'<div style="padding:10px 12px;border-bottom:1px solid #eee;cursor:pointer;font-size:14px" onclick="selectActor(\''+escapeHtml(a.name)+'\')"><b>'+escapeHtml(a.name)+'</b> <span style="color:#888;font-size:12px">'+escapeHtml(a.role)+'</span></div>').join('');
+  dd.classList.remove('hidden');
+}
+
+function filterActorDropdown(){showActorDropdown()}
+
+function selectActor(name){
+  document.getElementById('qnWho').value=name;
+  document.getElementById('qnActorDropdown').classList.add('hidden');
+}
+
+async function showLocationDropdown(){
+  const locs=await dbGetAll('locations');
+  const input=document.getElementById('qnWhere').value.toLowerCase();
+  const filtered=locs.filter(l=>l.name.toLowerCase().includes(input));
+  const dd=document.getElementById('qnLocationDropdown');
+  if(!filtered.length){dd.classList.add('hidden');return}
+  dd.innerHTML=filtered.map(l=>'<div style="padding:10px 12px;border-bottom:1px solid #eee;cursor:pointer;font-size:14px" onclick="selectLocation(\''+escapeHtml(l.name)+'\')"><b>'+escapeHtml(l.name)+'</b>'+(l.address?' <span style="color:#888;font-size:11px">'+escapeHtml(l.address)+'</span>':'')+'</div>').join('');
+  dd.classList.remove('hidden');
+}
+
+function filterLocationDropdown(){showLocationDropdown()}
+
+function selectLocation(name){
+  document.getElementById('qnWhere').value=name;
+  document.getElementById('qnLocationDropdown').classList.add('hidden');
+}
+
+async function saveQuickNote(){
+  const text=document.getElementById('qnText').value.trim();
+  if(!text){showToast('Note text is required');return}
+  const note={
+    id:window.__qnEditId||'QN'+Date.now(),
+    date:document.getElementById('qnDate').value||getToday(),
+    time:document.getElementById('qnTime').value||new Date().toLocaleTimeString('en-US',{hour12:false,hour:'2-digit',minute:'2-digit'}),
+    note_text:text,
+    who:document.getElementById('qnWho').value.trim()||null,
+    where:document.getElementById('qnWhere').value.trim()||null,
+    ticket_number:document.getElementById('qnTicket').value.trim()||null,
+    note_type:document.getElementById('qnType').value||'General',
+    exported:false,
+    created_at:Date.now()
+  };
+  await dbPut('quickNotes',note);
+  showToast('Note saved');
+  window.__qnEditId=null;
+  showScreen(window.__qnReturnTo||'menuScreen');
+}
+
+// --- Notes History ---
+async function initNotesHistory(){
+  const today=getToday();
+  const thirtyAgo=addDaysISO(today,-30);
+  document.getElementById('nhDateFrom').value=thirtyAgo;
+  document.getElementById('nhDateTo').value=today;
+  document.getElementById('nhTypeFilter').value='';
+  document.getElementById('nhSearch').value='';
+  await renderNotesHistory();
+}
+
+async function renderNotesHistory(){
+  const from=document.getElementById('nhDateFrom').value;
+  const to=document.getElementById('nhDateTo').value;
+  const typeFilter=document.getElementById('nhTypeFilter').value;
+  const search=document.getElementById('nhSearch').value.toLowerCase().trim();
+  const all=await dbGetAll('quickNotes');
+  let notes=all.filter(n=>{
+    if(from&&n.date<from)return false;
+    if(to&&n.date>to)return false;
+    if(typeFilter&&n.note_type!==typeFilter)return false;
+    if(search){
+      const haystack=(n.note_text+' '+(n.who||'')+' '+(n.where||'')+' '+(n.ticket_number||'')).toLowerCase();
+      if(!haystack.includes(search))return false;
+    }
+    return true;
+  });
+  notes.sort((a,b)=>(b.date+b.time).localeCompare(a.date+a.time));
+  const el=document.getElementById('notesHistoryList');
+  if(!notes.length){el.innerHTML='<div class="card"><p style="color:#888;text-align:center">No notes found.</p></div>';return}
+  const typeColors={General:'#718096',Work:'#2563eb',Incident:'#dc2626',Conversation:'#7c3aed',Travel:'#0891b2',Medical:'#059669',Management:'#d97706',HR:'#be185d'};
+  el.innerHTML=notes.map(n=>{
+    const color=typeColors[n.note_type]||'#718096';
+    const exportBadge=n.exported?'<span style="font-size:10px;color:#059669;font-weight:600">✓ exported</span>':'';
+    const meta=[(n.who?'👤 '+escapeHtml(n.who):''),(n.where?'📍 '+escapeHtml(n.where):''),(n.ticket_number?'🎫 '+escapeHtml(n.ticket_number):'')].filter(Boolean).join(' &nbsp;|&nbsp; ');
+    return '<div class="card" style="border-left:4px solid '+color+'"><div style="display:flex;justify-content:space-between;align-items:center"><div><span style="font-weight:700;font-size:13px">'+n.date+'</span> <span style="color:#888;font-size:12px;font-family:monospace">'+n.time+'</span></div><div><span style="font-size:11px;color:'+color+';font-weight:700;background:'+color+'15;padding:2px 8px;border-radius:4px">'+escapeHtml(n.note_type)+'</span> '+exportBadge+'</div></div>'+(meta?'<div style="font-size:12px;color:#666;margin-top:4px">'+meta+'</div>':'')+'<div style="margin-top:6px;font-size:13px;line-height:1.5;white-space:pre-wrap">'+escapeHtml(n.note_text)+'</div><div class="btn-row" style="margin-top:8px"><button class="btn btn-sm btn-cyan btn-half" onclick="editQuickNote(\''+n.id+'\')">Edit</button><button class="btn btn-sm btn-red btn-half" onclick="deleteQuickNote(\''+n.id+'\')">Delete</button></div></div>';
+  }).join('');
+}
+
+async function editQuickNote(id){
+  const note=await dbGet('quickNotes',id);
+  if(!note)return;
+  window.__qnReturnTo='notesHistoryScreen';
+  window.__qnEditId=id;
+  showScreen('quickNotesScreen');
+  // Pre-fill with existing data after screen init
+  setTimeout(()=>{
+    document.getElementById('qnDate').value=note.date;
+    document.getElementById('qnTime').value=note.time;
+    document.getElementById('qnText').value=note.note_text;
+    if(note.who||note.where||note.ticket_number||(note.note_type&&note.note_type!=='General')){
+      document.getElementById('qnDetailsSection').classList.remove('hidden');
+      document.getElementById('qnToggleMore').textContent='− Less Details';
+    }
+    document.getElementById('qnWho').value=note.who||'';
+    document.getElementById('qnWhere').value=note.where||'';
+    document.getElementById('qnTicket').value=note.ticket_number||'';
+    document.getElementById('qnType').value=note.note_type||'General';
+  },50);
+}
+
+async function deleteQuickNote(id){
+  if(!confirm('Delete this note?'))return;
+  await dbDelete('quickNotes',id);
+  showToast('Note deleted');
+  await renderNotesHistory();
+}
+
+// --- Notes Export ---
+async function exportQuickNotes(){
+  const all=await dbGetAll('quickNotes');
+  const from=document.getElementById('nhDateFrom').value;
+  const to=document.getElementById('nhDateTo').value;
+  const typeFilter=document.getElementById('nhTypeFilter').value;
+  let notes=all.filter(n=>{
+    if(from&&n.date<from)return false;
+    if(to&&n.date>to)return false;
+    if(typeFilter&&n.note_type!==typeFilter)return false;
+    return true;
+  });
+  notes.sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
+  if(!notes.length){showToast('No notes to export');return}
+  const exportData={
+    source:'WCC_QuickNote',
+    exported_date:getToday(),
+    export_time:new Date().toISOString(),
+    total_notes:notes.length,
+    notes:notes.map(n=>({
+      date:n.date,
+      time:n.time,
+      note_text:n.note_text,
+      who:n.who||null,
+      where:n.where||null,
+      ticket_number:n.ticket_number||null,
+      note_type:n.note_type||'General',
+      needs_classification:true
+    }))
+  };
+  const json=JSON.stringify(exportData,null,2);
+  const blob=new Blob([json],{type:'application/json'});
+  const filename='wcc_notes_'+getToday()+'_'+Date.now()+'.json';
+  if(navigator.share&&navigator.canShare&&navigator.canShare({files:[new File([blob],filename,{type:'application/json'})]})){
+    try{
+      await navigator.share({files:[new File([blob],filename,{type:'application/json'})],title:'WCC Notes Export',text:'Quick Notes from Work Command Center'});
+    }catch(e){downloadBlob(blob,filename)}
+  }else{downloadBlob(blob,filename)}
+  // Mark as exported
+  for(const n of notes){
+    n.exported=true;
+    n.export_date=getToday();
+    await dbPut('quickNotes',n);
+  }
+  showToast(notes.length+' notes exported');
+  await renderNotesHistory();
+}
+
+// --- Actors & Locations Management (Settings) ---
+async function renderActorsList(){
+  const actors=await dbGetAll('actors');
+  actors.sort((a,b)=>a.name.localeCompare(b.name));
+  const el=document.getElementById('actorsManageList');
+  if(!el)return;
+  if(!actors.length){el.innerHTML='<p style="color:#888;text-align:center;font-size:13px">No people added yet.</p>';return}
+  el.innerHTML=actors.map(a=>'<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #eee"><div><b style="font-size:13px">'+escapeHtml(a.name)+'</b> <span style="color:#888;font-size:12px">'+escapeHtml(a.role||'')+'</span></div><button class="btn btn-sm btn-red" onclick="deleteActor(\''+a.id+'\')">✕</button></div>').join('');
+}
+
+async function addNewActor(){
+  const name=prompt('Name:');
+  if(!name||!name.trim())return;
+  const role=prompt('Role (optional):');
+  await dbPut('actors',{id:'A_'+Date.now(),name:name.trim(),role:(role||'').trim()});
+  showToast('Added '+name.trim());
+  await renderActorsList();
+}
+
+async function deleteActor(id){
+  if(!confirm('Remove this person?'))return;
+  await dbDelete('actors',id);
+  showToast('Removed');
+  await renderActorsList();
+}
+
+async function resetDefaultActors(){
+  if(!confirm('Reset to default list? This replaces all current entries.'))return;
+  const existing=await dbGetAll('actors');
+  for(const a of existing)await dbDelete('actors',a.id);
+  for(const a of DEFAULT_ACTORS)await dbPut('actors',{id:'A_'+a.name.replace(/\s+/g,'_'),name:a.name,role:a.role});
+  showToast('Reset to defaults');
+  await renderActorsList();
+}
+
+async function renderLocationsList(){
+  const locs=await dbGetAll('locations');
+  locs.sort((a,b)=>a.name.localeCompare(b.name));
+  const el=document.getElementById('locationsManageList');
+  if(!el)return;
+  if(!locs.length){el.innerHTML='<p style="color:#888;text-align:center;font-size:13px">No locations added yet.</p>';return}
+  el.innerHTML=locs.map(l=>'<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #eee"><div><b style="font-size:13px">'+escapeHtml(l.name)+'</b>'+(l.address?' <span style="color:#888;font-size:11px">'+escapeHtml(l.address)+'</span>':'')+(l.coid?' <span style="color:#0891b2;font-size:11px">['+escapeHtml(l.coid)+']</span>':'')+'</div><button class="btn btn-sm btn-red" onclick="deleteLocation(\''+l.id+'\')">✕</button></div>').join('');
+}
+
+async function addNewLocation(){
+  const name=prompt('Location name:');
+  if(!name||!name.trim())return;
+  const address=prompt('Address (optional):');
+  const coid=prompt('COID (optional):');
+  await dbPut('locations',{id:'L_'+Date.now(),name:name.trim(),address:(address||'').trim(),coid:(coid||'').trim()});
+  showToast('Added '+name.trim());
+  await renderLocationsList();
+}
+
+async function deleteLocation(id){
+  if(!confirm('Remove this location?'))return;
+  await dbDelete('locations',id);
+  showToast('Removed');
+  await renderLocationsList();
+}
+
+async function resetDefaultLocations(){
+  if(!confirm('Reset to default list? This replaces all current entries.'))return;
+  const existing=await dbGetAll('locations');
+  for(const l of existing)await dbDelete('locations',l.id);
+  for(const l of DEFAULT_LOCATIONS)await dbPut('locations',{id:'L_'+l.name.replace(/\s+/g,'_'),name:l.name,address:l.address,coid:l.coid});
+  showToast('Reset to defaults');
+  await renderLocationsList();
+}
+
+// Close dropdowns when tapping outside
+document.addEventListener('click',function(e){
+  if(!e.target.closest('#qnWho')&&!e.target.closest('#qnActorDropdown')){
+    const dd=document.getElementById('qnActorDropdown');
+    if(dd)dd.classList.add('hidden');
+  }
+  if(!e.target.closest('#qnWhere')&&!e.target.closest('#qnLocationDropdown')){
+    const dd=document.getElementById('qnLocationDropdown');
+    if(dd)dd.classList.add('hidden');
+  }
+});
+
+
+initDB().then(()=>{seedActorsAndLocations();showScreen('menuScreen');initRestoreListeners();updateKronosStatus();updateSaveStatus();updateExportReminder().catch(()=>{})}).catch(e=>alert('DB Error: '+e.message));
 </script>
 
 <script>
