@@ -1781,7 +1781,7 @@ async function saveOTFromModal(){
 // QUICK NOTE
 // showQuickNote removed - replaced by openQuickNote/quickNotesScreen
 // closeQuickNoteModal removed - replaced by quickNotesScreen
-async // old saveQuickNote removed - replaced in Quick Notes module
+// old saveQuickNote removed - replaced in Quick Notes module
 
 // EVIDENCE CAPTURE MODULE
 let editingEvidenceId=null;let evActors=[];let evQuotes=[];
@@ -2965,7 +2965,7 @@ document.addEventListener('click',function(e){
 });
 
 
-initDB().then(()=>{seedActorsAndLocations();showScreen('menuScreen');initRestoreListeners();updateKronosStatus();updateSaveStatus();updateExportReminder().catch(()=>{})}).catch(e=>alert('DB Error: '+e.message));
+initDB().then(()=>{seedActorsAndLocations();showScreen('menuScreen');initRestoreListeners();updateKronosStatus();updateSaveStatus();updateExportReminder().catch(()=>{})}).catch(e=>{if(typeof indexedDB!=='undefined')alert('DB Error: '+e.message);else console.log('Preview mode - IndexedDB unavailable')});
 </script>
 
 <script>
