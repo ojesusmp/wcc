@@ -64,6 +64,9 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
 .save-status{font-size:12px;opacity:.9;margin-top:2px}
 .export-reminder{font-size:12px;margin-top:4px;padding:4px 8px;border-radius:8px;background:#b91c1c;color:#fff;cursor:pointer;display:inline-block}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;z-index:9999;background:#111;color:#fff;padding:10px 14px;border-radius:12px;font-size:13px;max-width:92%;text-align:center;box-shadow:0 8px 20px rgba(0,0,0,.25)}
+
+.menu-hub{margin-bottom:8px}
+.menu-hub-toggle{text-align:left;font-weight:700;letter-spacing:0.3px}
 </style>
 
 </head>
@@ -84,48 +87,73 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
   <div id="kronosStatus"></div>
   <div id="activePanel"></div>
 
-  <div class="card" style="padding:12px">
-    <div class="section-title">⚡ Quick Log (15 min)</div>
-    <div class="btn-row" style="margin-top:6px">
-      <button class="btn btn-sm btn-gray btn-half" onclick="quickLog15('nonproject_meeting')">+15 Meeting</button>
-      <button class="btn btn-sm btn-gray btn-half" onclick="quickLog15('comms')">+15 Comms</button>
+  <!-- PRIMARY ACTIONS — always visible -->
+  <button class="btn btn-purple btn-full" onclick="openQuickNote()" style="padding:16px;font-size:16px">📝 Quick Note</button>
+  <button class="btn btn-blue btn-full" onclick="showScreen('quickTripScreen')" style="padding:16px;font-size:16px;background:linear-gradient(135deg,#1e3a5f,#2563eb)">🚗 Quick Trip</button>
+
+  <!-- WORK HUB -->
+  <div class="card menu-hub" style="padding:0;overflow:hidden;margin-top:10px">
+    <button class="btn btn-full menu-hub-toggle" onclick="toggleHub('workHub')" style="padding:14px;font-size:15px;background:#2563eb;color:white;border-radius:10px 10px 0 0;margin:0;border:0">🔨 Work <span id="workHubArrow" style="float:right">▸</span></button>
+    <div id="workHub" class="hidden" style="padding:10px">
+      <button class="btn btn-blue btn-full" onclick="showScreen('newSessionScreen')" style="padding:14px">▶️ Start New Session</button>
+      <div class="btn-row">
+        <button class="btn btn-pink btn-half" onclick="showScreen('ticketsScreen')">🎫 Tickets</button>
+        <button class="btn btn-cyan btn-half" onclick="showScreen('projectsScreen')">🧩 Projects</button>
+      </div>
+      <button class="btn btn-teal btn-full" onclick="showScreen('practicesScreen')" style="padding:12px">🏥 Practices</button>
     </div>
-    <div class="btn-row">
-      <button class="btn btn-sm btn-gray btn-half" onclick="quickLog15('admin')">+15 Admin</button>
-      <button class="btn btn-sm btn-gray btn-half" onclick="quickLog15('nonproject_travel')">+15 Travel</button>
-    </div>
-    <div style="font-size:11px;color:#666;margin-top:6px">Tip: tap fast now, add details later in Clarity notes.</div>
   </div>
 
-<button class="btn btn-blue btn-full" onclick="showScreen('newSessionScreen')" style="padding:16px;font-size:16px">▶️ Start New Session</button>
-<button class="btn btn-blue btn-full" onclick="showScreen('quickTripScreen')" style="padding:16px;font-size:16px;background:linear-gradient(135deg,#1e3a5f,#2563eb)">🚗 Quick Trip</button>
-<button class="btn btn-red btn-full" onclick="showScreen('evidenceScreen')" style="padding:14px;font-size:15px">🛡️ Evidence Capture <span id="evidenceBadge" style="background:rgba(255,255,255,0.25);padding:2px 8px;border-radius:10px;font-size:12px"></span></button>
+  <!-- TIME & EXPENSE HUB -->
+  <div class="card menu-hub" style="padding:0;overflow:hidden">
+    <button class="btn btn-full menu-hub-toggle" onclick="toggleHub('timeHub')" style="padding:14px;font-size:15px;background:#d97706;color:white;border-radius:10px 10px 0 0;margin:0;border:0">⏰ Time & Expense <span id="timeHubArrow" style="float:right">▸</span></button>
+    <div id="timeHub" class="hidden" style="padding:10px">
+      <button class="btn btn-orange btn-full" onclick="showScreen('kronosScreen')" style="padding:14px">⏰ Kronos Time Clock</button>
+      <div class="btn-row">
+        <button class="btn btn-indigo btn-half" onclick="showScreen('clarityTimeScreen')">⏱️ Clarity</button>
+        <button class="btn btn-teal btn-half" onclick="showScreen('concurScreen')">💳 Concur</button>
+      </div>
+      <div class="card" style="padding:8px;margin-top:6px;background:#f8f9fa">
+        <div style="font-size:11px;color:#666;font-weight:600;margin-bottom:4px">⚡ Quick Log (+15 min)</div>
+        <div class="btn-row">
+          <button class="btn btn-sm btn-gray btn-half" onclick="quickLog15('nonproject_meeting')">Meeting</button>
+          <button class="btn btn-sm btn-gray btn-half" onclick="quickLog15('comms')">Comms</button>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-sm btn-gray btn-half" onclick="quickLog15('admin')">Admin</button>
+          <button class="btn btn-sm btn-gray btn-half" onclick="quickLog15('nonproject_travel')">Travel</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-<button class="btn btn-purple btn-full" onclick="showScreen('notesHistoryScreen')" style="padding:14px;font-size:15px">📋 Notes History</button>
-  <div class="btn-row">
-    <button class="btn btn-pink btn-half" onclick="showScreen('ticketsScreen')">🎫 Tickets</button>
-    <button class="btn btn-cyan btn-half" onclick="showScreen('projectsScreen')">🧩 Projects</button>
+  <!-- END OF DAY HUB -->
+  <div class="card menu-hub" style="padding:0;overflow:hidden">
+    <button class="btn btn-full menu-hub-toggle" onclick="toggleHub('eodHub')" style="padding:14px;font-size:15px;background:#059669;color:white;border-radius:10px 10px 0 0;margin:0;border:0">📋 End of Day <span id="eodHubArrow" style="float:right">▸</span></button>
+    <div id="eodHub" class="hidden" style="padding:10px">
+      <button class="btn btn-green btn-full" onclick="showCloseDayScreen()" style="padding:14px;font-size:15px">✅ Close My Day / EOD</button>
+      <div class="btn-row">
+        <button class="btn btn-gray btn-half" onclick="showScreen('todayScreen')">📊 Today</button>
+        <button class="btn btn-indigo btn-half" onclick="showHistory()">📅 History</button>
+      </div>
+      <button class="btn btn-purple btn-full" onclick="showScreen('weeklyReportsScreen')" style="padding:12px">📊 Weekly Reports</button>
+    </div>
   </div>
-  <div class="btn-row">
-    <button class="btn btn-orange btn-half" onclick="showScreen('kronosScreen')">⏰ Kronos</button>
-    <button class="btn btn-purple btn-half" onclick="openQuickNote()">📝 Quick Note</button>
+
+  <!-- FIELD JOURNAL HUB -->
+  <div class="card menu-hub" style="padding:0;overflow:hidden">
+    <button class="btn btn-full menu-hub-toggle" onclick="toggleHub('journalHub')" style="padding:14px;font-size:15px;background:#7c3aed;color:white;border-radius:10px 10px 0 0;margin:0;border:0">📓 Field Journal <span id="journalHubArrow" style="float:right">▸</span></button>
+    <div id="journalHub" class="hidden" style="padding:10px">
+      <button class="btn btn-purple btn-full" onclick="showScreen('notesHistoryScreen')" style="padding:12px">📋 Notes History</button>
+      <button class="btn btn-purple btn-full" onclick="showScreen('evidenceScreen')" style="padding:12px">📓 Journal Entries</button>
+    </div>
   </div>
-  <div class="btn-row">
-    <button class="btn btn-indigo btn-half" onclick="showScreen('clarityTimeScreen')">⏱️ Clarity Time</button>
-    <button class="btn btn-teal btn-half" onclick="showScreen('concurScreen')">💳 Concur</button>
+
+  <!-- BOTTOM — Settings & Data -->
+  <div class="btn-row" style="margin-top:10px">
+    <button class="btn btn-gray btn-half" onclick="showScreen('settingsScreen')">⚙️ Settings</button>
+    <button class="btn btn-gray btn-half" onclick="showScreen('dashboardDataScreen')">💾 Data</button>
   </div>
-  <button class="btn btn-green btn-full" onclick="showCloseDayScreen()">✅ Close My Day</button>
-  <button class="btn btn-gray btn-full" onclick="exportSnapshotNow()" style="margin-top:8px">💾 Quick Backup Now</button>
-  <div class="btn-row">
-    <button class="btn btn-gray btn-half" onclick="showScreen('todayScreen')">📊 Today</button>
-    <button class="btn btn-green btn-half" onclick="showCloseDayScreen()">📝 EOD</button>
-  </div>
-  <div class="btn-row">
-    <button class="btn btn-indigo btn-half" onclick="showHistory()">📅 History</button>
-    <button class="btn btn-purple btn-half" onclick="showScreen('weeklyReportsScreen')">📊 Weekly</button>
-  </div>
-  <button class="btn btn-gray btn-full" onclick="showScreen('settingsScreen')">⚙️ Settings</button>
-  <button class="btn btn-purple btn-full" onclick="showScreen('dashboardDataScreen')">📊 Dashboard & Data</button>
 </div>
 
 <!-- KRONOS SCREEN -->
@@ -592,21 +620,21 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
 <!-- EVIDENCE LIST -->
 
 <div id="evidenceScreen" class="hidden">
-  <h1>🛡️ Evidence Capture</h1>
+  <h1>📓 Field Journal</h1>
   <div id="evidenceLockBanner" class="hidden">
-    <div class="warning-box">🔒 Day locked — EOD exported. Evidence is read-only.</div>
+    <div class="warning-box">🔒 Day locked — EOD exported. Journal is read-only.</div>
   </div>
   <div id="evidenceAddSection">
-    <button class="btn btn-red btn-full" onclick="openEvidenceCapture(null)" style="padding:14px">+ Capture New Event</button>
+    <button class="btn btn-red btn-full" onclick="openEvidenceCapture(null)" style="padding:14px">+ New Entry</button>
   </div>
   <div class="card" style="margin-top:8px">
-    <div class="section-title">Today's Evidence</div>
+    <div class="section-title">Today's Entries</div>
     <div id="evidenceTodayCount" style="font-size:12px;color:#666;margin-bottom:8px"></div>
     <div id="evidenceList"></div>
   </div>
   <div class="card">
     <div class="section-title">Export</div>
-    <button class="btn btn-purple btn-full" onclick="copyEvidenceJSON()">📋 Copy Evidence JSON (for Claude)</button>
+    <button class="btn btn-purple btn-full" onclick="copyEvidenceJSON()">📋 Export Journal (for Claude)</button>
     <div id="evidenceCopied" class="hidden"><div class="success-box">✅ Copied to clipboard</div></div>
   </div>
   <button class="btn btn-gray btn-full" onclick="showScreen('menuScreen')">← Back</button>
@@ -615,7 +643,7 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
 <!-- EVIDENCE CAPTURE / EDIT -->
 
 <div id="evidenceCaptureScreen" class="hidden">
-  <h1 id="evidenceCaptureTitle">+ Capture Event</h1>
+  <h1 id="evidenceCaptureTitle">📓 New Journal Entry</h1>
   <div class="card">
     <div class="section-title">What happened? *</div>
     <textarea id="evDescription" placeholder="Describe the event factually. Who did what, when, where." style="min-height:100px"></textarea>
@@ -641,7 +669,7 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
       <option value="iMessage">iMessage / Text</option>
       <option value="Observation">Observation</option>
       <option value="Site_Visit">Site Visit</option>
-      <option value="Photo_Evidence">Photo Evidence</option>
+      <option value="Photo_Documentation">Photo Evidence</option>
     </select>
 
     <div class="section-title">Category</div>
@@ -717,8 +745,8 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
     <input type="text" id="evNotes" placeholder="Additional factual context">
   </div>
 
-<button class="btn btn-green btn-full" onclick="saveEvidence()" style="padding:14px">💾 Save Evidence</button>
-<button class="btn btn-gray btn-full" onclick="showScreen('evidenceScreen')">← Cancel</button>
+<button class="btn btn-green btn-full" onclick="saveEvidence()" style="padding:14px">💾 Save Entry</button>
+<button class="btn btn-gray btn-full" onclick="showScreen('evidenceScreen')">← Back to Journal</button>
 
 </div>
 
@@ -898,7 +926,7 @@ h2{font-size:16px;margin-bottom:10px;color:#333}
     <button class="btn btn-indigo btn-full" onclick="exportClarityCSV()">⏱️ Clarity Time → CSV</button>
     <button class="btn btn-teal btn-full" onclick="exportConcurCSV()">💳 Concur Expenses → CSV</button>
     <button class="btn btn-pink btn-full" onclick="exportTicketsCSV()">🎫 Tickets → CSV</button>
-    <button class="btn btn-red btn-full" onclick="exportEvidenceCSV()">🛡️ Evidence → CSV</button>
+    <button class="btn btn-red btn-full" onclick="exportEvidenceCSV()">📓 Journal → CSV</button>
   </div>
   <div id="csvExportResult" class="hidden"></div>
   <button class="btn btn-gray btn-full" onclick="showScreen('dashboardDataScreen')">← Back</button>
@@ -1298,7 +1326,7 @@ async function showScreen(id){
 async function updateMenuScreen(){
   document.getElementById('activePanel').innerHTML='';
   await updateKronosStatus();await renderMenuProjectAlerts();await renderActivePanelSummary();
-  try{const all=await dbGetAll('evidence');const today=all.filter(e=>e.date===getToday());document.getElementById('evidenceBadge').textContent=today.length?today.length+' today':'';}catch(e){}
+  try{}catch(e){}
 }
 
 // KRONOS
@@ -2963,6 +2991,20 @@ document.addEventListener('click',function(e){
     if(dd)dd.classList.add('hidden');
   }
 });
+
+
+// Menu Hub Toggle
+function toggleHub(hubId){
+  const hub=document.getElementById(hubId);
+  const arrow=document.getElementById(hubId+'Arrow');
+  if(hub.classList.contains('hidden')){
+    hub.classList.remove('hidden');
+    if(arrow)arrow.textContent='▾';
+  }else{
+    hub.classList.add('hidden');
+    if(arrow)arrow.textContent='▸';
+  }
+}
 
 
 initDB().then(()=>{seedActorsAndLocations();showScreen('menuScreen');initRestoreListeners();updateKronosStatus();updateSaveStatus();updateExportReminder().catch(()=>{})}).catch(e=>{if(typeof indexedDB!=='undefined')alert('DB Error: '+e.message);else console.log('Preview mode - IndexedDB unavailable')});

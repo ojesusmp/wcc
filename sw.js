@@ -1,4 +1,4 @@
-const CACHE_NAME='wcc-v14-pwa-cache-9';
+const CACHE_NAME='wcc-v14-pwa-cache-10';
 self.addEventListener('install',e=>{
   e.waitUntil(
     caches.open(CACHE_NAME).then(c=>c.addAll(['./','./index.html','./manifest.json']))
